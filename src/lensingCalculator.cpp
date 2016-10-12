@@ -66,7 +66,13 @@ int main(int arg,char **argv){
   ///////READ IN USERINFO///////////
   //////////////////////////////////
 
-/*
+  userInfo userInput;
+
+  std::string userFile = "lensUserParams.dat";
+
+  readInpFile( userInput, userFile );
+
+
 
   // Generates Fox H tables for interpolating over the Einasto profiles
 
@@ -77,29 +83,34 @@ int main(int arg,char **argv){
 
   std::cout << "              Done."  << std::endl << std::endl;
 
-    ////////////////////////////////////////////////////////////
-    ///////////////////Generate sources/////////////////////////
-    ////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////
+  ///////////////////Generate sources/////////////////////////
+  ////////////////////////////////////////////////////////////
 
 
-    // Generates random source positions, distances, and errors for the shape measurements
-    // Random positions are stored in a 1D array, with pixelmap index
-    // Distance is also stored in a 1D array
+  // Generates random source positions, distances, and errors for the shape measurements
+  // Random positions are stored in a 1D array, with pixelmap index
+  // Distance is also stored in a 1D array
 
-    std::cout << "Generating sources..." << std::endl;
+  std::cout << "Generating sources..." << std::endl;
 
-    double *srcErrArr ;
-    double *srcDArr   ;
-    int    *indexes   ;
+// Need to allocate bins
+// Based on N_bins, M_bins, b and g?
+
+/*
+  double *srcErrArr ;
+  double *srcDArr   ;
+  int    *indexes   ;
 
 
-    double *srcErrArrTemp;
-    double *srcDArrTemp  ;
-    int    *indexesTemp  ;
+  double *srcErrArrTemp;
+  double *srcDArrTemp  ;
+  int    *indexesTemp  ;
 
-    srcErrArrTemp = new double[ userInput.getNsrc() ];
-    srcDArrTemp   = new double[ userInput.getNsrc() ];
-    indexesTemp   = new int   [ userInput.getNsrc() ];
+
+  srcErrArrTemp = new double[ userInput.getNsrc() ];
+  srcDArrTemp   = new double[ userInput.getNsrc() ];
+  indexesTemp   = new int   [ userInput.getNsrc() ];
 
 
     logMessage( std::string("Allocated src arrays of size: ") + std::to_string((long long) userInput.getNsrc()) );

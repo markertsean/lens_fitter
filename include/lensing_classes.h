@@ -86,14 +86,9 @@ class userInfo{
 
     userInfo();
 
-    void setFOV             ( double inpF ) {   angFOV       = inpF ; }
-    void setImageMass       ( double inpF ) {   totMass      = inpF ; }
-    void setNpix            ( int    inpI ) {   N_pixels     = inpI ; }
-    void setNpart           ( int    inpI ) {   N_particles  = inpI ; }
     void setJacknifeBins    ( int    inpI ) {   jacknifeBins = inpI ; }
 
-    void setSourceZ         ( double inpF ) {        sourceZ = inpF ; }
-    void setSourceDens      ( double inpF ) {     sourceDens = inpF ; }
+    void setSigmaCrit       ( double inpF ) {      sigmaC    = inpF ; }
     void setChiMin          ( double inpF ) {           cMin = inpF ; }
     void setChiMax          ( double inpF ) {           cMax = inpF ; }
     void setMaxFitNum       ( int    inpI ) { maxFitAttempts = inpI ; }
@@ -112,49 +107,23 @@ class userInfo{
     void setConMax          ( double inpF ) {           cMax = inpF ; }
     void setAlphaMin        ( double inpF ) {       alphaMin = inpF ; }
     void setAlphaMax        ( double inpF ) {       alphaMax = inpF ; }
-    void setEdgePix         ( int    inpI ) {   N_edgepixels = inpI ; }
-    void setMinNeighborDist ( int    inpI ) { nearestSourceNeighbor = inpI; }
     void setNbins           ( int    inpI ) {   N_bins       = inpI ; }
-    void setNbins_R2D       ( int    inpI ) {   N_bins_R2D   = inpI ; }
-    void setNbins_A2D       ( int    inpI ) {   N_bins_A2D   = inpI ; }
-    void setNsrc            ( int    inpI ) {   N_sources    = inpI ; }
     void setNthreads        ( int    inpI ) {   num_threads  = inpI ; }
-    void setNpixH           ( int    inpI ) {   N_pixels_h   = inpI ; }
-    void setNpixV           ( int    inpI ) {   N_pixels_v   = inpI ; }
-    void setNgridPoints     ( int    inpI ) {   N_gridPoints = inpI ; }
-    void setIntegLength     ( double inpF ) {   integLength  = inpF ; }
-    void setSourceRadius    ( double inpF ) {   sourceR      = inpF ; }
-    void setPhysFOV         ( double inpF ) {   physFOV      = inpF ; }
-    void setAngFOV          ( double inpF ) {   angFOV       = inpF ; }
-    void setCatType         ( std::string inpS ) {   catType = inpS ; }
-    void setCosmology       ( std::string inpS ) {     cosmo = inpS ; }
     void setFoxH2012F       ( std::string inpS ) {  fox2012F = inpS ; }
     void setFoxH2123F       ( std::string inpS ) {  fox2123F = inpS ; }
     void setOutputPath      ( std::string inpS ) {outputPath = inpS ; }
 
-    double getIntegLength     () const { return  integLength   ; }
-    int    getNpixH           () const { return  N_pixels_h    ; }
-    int    getNpixV           () const { return  N_pixels_v    ; }
     int    getJacknifeBins    () const { return  jacknifeBins  ; }
-    double getImageMass       () const { return  totMass       ; }
-    double getPhysFOV         () const { return  physFOV       ; }
-    double getAngFOV          () const { return  angFOV        ; }
-    double getSourceRadius    () const { return  sourceR       ; }
-    double getSourceDensity   () const { return  sourceDens    ; }
     double getShapeNoise      () const { return  shapeNoise    ; }
-    int    getNpix            () const { return   N_pixels     ; }
     int    getNbins           () const { return   N_bins       ; }
-    int    getNbins_R2D       () const { return   N_bins_R2D   ; }
-    int    getNbins_A2D       () const { return   N_bins_A2D   ; }
     int    getNthreads        () const { return    num_threads ; }
-    int    getNgridPoints     () const { return   N_gridPoints ; }
-    double getMinNeighborDist () const { return nearestSourceNeighbor ; }
-    int    getEdgePix         () const { return   N_edgepixels ; }
+
     std::string getOutputPath () const { return  outputPath    ; }
-    std::string getCatType    () const { return  catType       ; }
-    std::string getCosmology  () const { return  cosmo         ; }
     std::string getFoxH2012F  () const { return  fox2012F      ; }
     std::string getFoxH2123F  () const { return  fox2123F      ; }
+
+    double getSigmaCrit       () const { return       sigmaC   ; }
+
     double getAlphaMin        () const { return       alphaMin ; }
     double getAlphaMax        () const { return       alphaMax ; }
     double getConMin          () const { return           cMin ; }
@@ -172,60 +141,39 @@ class userInfo{
     int    getNConsistent     () const { return  consistent    ; }
     double getChiMin          () const { return           cMin ; }
     double getChiMax          () const { return           cMax ; }
-    double getSourceZ         () const { return       sourceZ  ; }
-
-    int    getNsrc            () const { if (    N_sources != -1 ) // If users provided a number, use that
-                                          return N_sources     ;
-                                          return (int) (           // Otherwise use source density and size
-                                                 sourceDens  *     //   of our FOV in arcmin
-                                                 angFOV * 60 *
-                                                 angFOV * 60 )  ; }
-
-
-
-
-    double getFOV             () { return   angFOV       ; }
-    int    getNpart           () { return   N_particles  ; }
 
 
   private:
 
     // Stuff to read in
-    double      angFOV;  // Angular size of image
-    double     physFOV;  // Physical size of image
-    double integLength;  // Integration length of current image
-    double       R_max;  // ?
 
-    double    sourceR ;  // Radius of sources in pixels
-    double    sourceZ ;
-
-    double    sourceDens ; // Source Number Density, in gal/arcmin^2
     double shapeNoise ;
-    double totMass    ;  // Total mass in image
-
-    int    N_pixels   ;  // Number of pixels on grid
-    int    N_pixels_h ;  // Number of pixels on x-axis
-    int    N_pixels_v ;  // Number of pixels on y-axis
 
     int    N_bins     ;  // Number of bins for radial averaging
-    int    N_sources  ;  // Number of sources to generate
-    int    N_particles;  // Number of particles in simulation
-    int    N_gridPoints; // Number of grid points to interpolate mass to
     int    num_threads;  // Number of threads for parallel processing
-    int   N_edgepixels;  // Number of pixels to leave on an edge
 
-    int     N_bins_R2D;  // Number of bins in each direction for 2D g output
-    int     N_bins_A2D;
-
-    double nearestSourceNeighbor; // Gap in distance between sources
 
   std::string fox2012F;
   std::string fox2123F;
-  std::string readFile;
-  std::string catType ;
-  std::string cosmo   ;
 
   std::string outputPath;
+
+
+  double sigmaC   ; // For all sources
+  double M_minBin ; // Min and max bin values
+  double M_maxBin ;
+  double B_minBin ;
+  double B_maxBin ;
+  double G_minBin ;
+  double G_maxBin ;
+  double I_minBin ;
+  double I_maxBin ;
+
+
+  int    M_Nbins  ; // Number of bins for each
+  int    B_Nbins  ;
+  int    G_Nbins  ;
+  int    I_Nbins  ;
 
 
   // Chi2 & genetic algorithm fitting values

@@ -22,8 +22,7 @@ void rollingFitDensProfile(
                     const userInfo               u ,  // Info from the user
                     const double       *      gArr ,  // RTS binned array we "observed"
                     const double       *      dArr ,  // Distance binned array
-                    const double       *   gErrArr ,
-                    const COSMOLOGY          cosmo ); // Error array in RTS
+                    const double       *   gErrArr ); // Error array in RTS
 
 
 void generateNFWTruncRTS(
@@ -75,8 +74,7 @@ void fitDensProfile(
                     const userInfo               u ,  // Info from the user
                     const double       *      gArr ,  // RTS binned array we "observed"
                     const double       *      dArr ,  // Distance binned array
-                    const double       *   gErrArr ,  // Error array in RTS
-                    const COSMOLOGY          cosmo );
+                    const double       *   gErrArr );
 
 
 

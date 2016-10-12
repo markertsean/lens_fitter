@@ -20,29 +20,10 @@ haloInfo::haloInfo(){
 
 
 userInfo::userInfo(){
-        angFOV = -1.  ; //  Angular size of image
-       physFOV = -1.  ; // Physical size of image
-       totMass = -1.  ; // Total mass in image
-         R_max = -1.  ; // ?
-   sourceR     =  3.0 ; // Radius of source in pixels
-   sourceZ     = -1.  ; // Redshift of sources
-   sourceDens  = 10.0 ; // Surface density of background sources, gal/arcmin^2
+    sigmaC     =  1.0 ;
    shapeNoise  =  0.3 ; // Intrinsic shape noise in the sources
-   N_pixels    = -1   ; // Number of pixels on the grid
-   N_pixels_h  = -1   ; // Number of pixels on x-axis
-   N_pixels_v  = -1   ; // Number of pixels on y-axis
    N_bins      = 20   ; // Number of bins for radial averaging
-   N_bins_R2D  =100   ; // Number of bins for 2D map averaging
-   N_bins_A2D  =100   ; // Number of bins for 2D map averaging
-   N_sources   = -1   ; // Number of sources to generate
-   N_particles = -1   ; // Number of particles in simulation
    num_threads =  1   ; // Number of threads for parallel processing
-  N_edgepixels =  3   ; // Number of pixels to leave on an edge
-
-  nearestSourceNeighbor = 3.0;   // Minimum distance between sources
-  readFile     = " ";            // Fits file to read
-  catType      = " ";            // Catalog file to read
-  cosmo        = " ";            // Type of cosmology
 
   fox2012F = "src/foxH2012.dat"; // FoxH files to read
   fox2123F = "src/foxH2123.dat";

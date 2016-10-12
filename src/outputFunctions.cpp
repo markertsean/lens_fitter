@@ -71,8 +71,7 @@ std::string getHaloFile ( int index ){
 
 
 
-
-
+/*
 void writeProfileFits( userInfo        u ,   // User input
                        haloInfo        h ,   // Info on our halo
                        densProfile   ein ,   // Einasto   density profile
@@ -143,6 +142,6 @@ void writeProfileFits( userInfo        u ,   // User input
   std::cout << "Appended file: " << fileName << std::endl << std::endl;
 
 }
-
+//*/
 
 

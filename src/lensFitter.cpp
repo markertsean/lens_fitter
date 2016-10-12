@@ -236,8 +236,7 @@ void rollingFitDensProfile(
                     const userInfo               u ,  // Info from the user
                     const double       *      gArr ,  // RTS binned array we "observed"
                     const double       *      dArr ,  // Distance binned array
-                    const double       *   gErrArr ,
-                    const COSMOLOGY          cosmo ){ // Error array in RTS
+                    const double       *   gErrArr ){ // Error array in RTS
 
 
   densProfile ball[ u.getNchrome() ];
@@ -262,7 +261,7 @@ void rollingFitDensProfile(
     ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
 
 
-    rollBall( ball[i], chi2[i], gArr, dArr, gErrArr, cosmo.SigmaCrit( halo.getZ(), u.getSourceZ() ), u );
+    rollBall( ball[i], chi2[i], gArr, dArr, gErrArr, u.getSigmaCrit(), u );
   }
 
   // Now take weighted average of the balls, weighted by their chi2
@@ -307,8 +306,7 @@ void fitDensProfile(
                     userInfo               u ,  // Info from the user
                     const double       *      gArr ,  // RTS binned array we "observed"
                     const double       *      dArr ,  // Distance binned array
-                    const double       *   gErrArr ,
-                    const COSMOLOGY          cosmo ){ // Error array in RTS
+                    const double       *   gErrArr ){ // Error array in RTS
 
   // Percent closeness to edge we can be
   double edgeTolerance = 1e-2;
@@ -345,7 +343,7 @@ void fitDensProfile(
 //     child[i].setR_max( halo.getRmax() );
   }
 
-  double sigmaC = cosmo.SigmaCrit( halo.getZ(), u.getSourceZ() );
+  double sigmaC = u.getSigmaCrit();
 
   // Generate first parent values
 //  #pragma omp parallel for
