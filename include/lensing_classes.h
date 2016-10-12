@@ -116,7 +116,7 @@ class userInfo{
     void setM_BinMin        ( double inpF ) {     M_minBin   = inpF ; }
     void setB_BinMin        ( double inpF ) {     B_minBin   = inpF ; }
     void setG_BinMin        ( double inpF ) {     G_minBin   = inpF ; }
-    void setI_BinMax        ( double inpF ) {     I_maxBin   = inpF ; }
+    void setI_step          ( double inpF ) {     I_step     = inpF ; }
     void setM_BinMax        ( double inpF ) {     M_maxBin   = inpF ; }
     void setB_BinMax        ( double inpF ) {     B_maxBin   = inpF ; }
     void setG_BinMax        ( double inpF ) {     G_maxBin   = inpF ; }
@@ -130,7 +130,12 @@ class userInfo{
     void setFoxH2123F       ( std::string inpS ) {  fox2123F = inpS ; }
     void setOutputPath      ( std::string inpS ) {outputPath = inpS ; }
 
+    void setFirstFile       ( int    inpI ) {     firstFile  = inpI ; }
+    void setLastFile        ( int    inpI ) {      lastFile  = inpI ; }
 
+
+    int    getFirstFile       () const { return firstFile      ; }
+    int    getLastFile        () const { return lastFile       ; }
     int    getJacknifeBins    () const { return jacknifeBins   ; }
     int    getNbins           () const { return N_bins         ; }
     int    getNthreads        () const { return num_threads    ; }
@@ -142,6 +147,7 @@ class userInfo{
     int    getN_MBin          () const { return M_Nbins        ; }
     int    getN_BBin          () const { return B_Nbins        ; }
     int    getN_GBin          () const { return G_Nbins        ; }
+    int    getN_srcBin        () const { return N_bins * I_Nbins * M_Nbins * B_Nbins * G_Nbins ; }
 
     double getShapeNoise      () const { return  shapeNoise    ; }
     double getSigmaCrit       () const { return  sigmaC        ; }
@@ -165,7 +171,7 @@ class userInfo{
     std::string getFoxH2012F  () const { return  fox2012F      ; }
     std::string getFoxH2123F  () const { return  fox2123F      ; }
 
-    double getI_bin    ( int i ) const { return I_minBin + i * ( I_maxBin - I_minBin ) / I_Nbins ; } // Returns the bin value at the index
+    double getI_bin    ( int i ) const { return I_minBin + i *   I_step                          ; } // Returns the bin value at the index
     double getM_bin    ( int i ) const { return M_minBin + i * ( M_maxBin - M_minBin ) / M_Nbins ; } // Returns the bin value at the index
     double getB_bin    ( int i ) const { return B_minBin + i * ( B_maxBin - B_minBin ) / B_Nbins ; } // Returns the bin value at the index
     double getG_bin    ( int i ) const { return G_minBin + i * ( G_maxBin - G_minBin ) / G_Nbins ; } // Returns the bin value at the index
@@ -193,7 +199,7 @@ class userInfo{
     double G_minBin ;
     double G_maxBin ;
     double I_minBin ;
-    double I_maxBin ;
+    double I_step   ; // No max value for I, just a step
 
 
     int    M_Nbins  ; // Number of bins for each
@@ -221,6 +227,9 @@ class userInfo{
     double   tolerance ; // Average residual must be below tolerance
     double   mutChance ; // Likelihood of mutation
     double  avgTestVal ; // chiAvg*this is random range
+
+    int      firstFile ; // First file haloID to read in
+    int       lastFile ;
 };
 
 

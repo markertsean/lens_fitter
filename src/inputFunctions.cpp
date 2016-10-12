@@ -79,6 +79,10 @@ void readInpFile(          userInfo  &inpInfo  ,   // Info needed for the rest o
       else if ( inpS=="fox2012F"    ){        inpInfo.setFoxH2012F       ( std::string(inpC2) ); }  // Location of foxH files we will interpolate over
       else if ( inpS=="fox2123F"    ){        inpInfo.setFoxH2123F       ( std::string(inpC2) ); }  // Location of foxH files we will interpolate over
       else if ( inpS=="outputPath"  ){        inpInfo.setOutputPath      ( std::string(inpC2) ); }  // Directory to place output files in
+
+      else if ( inpS=="firstFile"   ){        inpInfo.setFirstFile       (        atoi(inpC2) ); }  // First file halo ID to use
+      else if ( inpS== "lastFile"   ){        inpInfo.setLastFile        (        atoi(inpC2) ); }  // Last  file halo ID to use
+
       else{
 
           // Abort if unrecognized variables

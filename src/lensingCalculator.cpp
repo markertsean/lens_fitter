@@ -69,9 +69,9 @@ int main(int arg,char **argv){
   userInfo userInput;
 
   std::string userFile = "lensUserParams.dat";
+  std::cout << "Reading user input" << userFile         << std::endl;
 
   readInpFile( userInput, userFile );
-
 
 
   // Generates Fox H tables for interpolating over the Einasto profiles
@@ -84,99 +84,30 @@ int main(int arg,char **argv){
   std::cout << "              Done."  << std::endl << std::endl;
 
   ////////////////////////////////////////////////////////////
-  ///////////////////Generate sources/////////////////////////
+  ///////////////////Read in the sources//////////////////////
   ////////////////////////////////////////////////////////////
-
-
-  // Generates random source positions, distances, and errors for the shape measurements
-  // Random positions are stored in a 1D array, with pixelmap index
-  // Distance is also stored in a 1D array
 
   std::cout << "Generating sources..." << std::endl;
 
 // Need to allocate bins
-// Based on N_bins, M_bins, b and g?
+// Based on N_bins, M_bins, b and g?, i, can do I on a loop if read only one integ length at a time
+// gvalues, tot & tan, errors, dist, N
+// read in files, place in bins
+// Fit & jackknife
+
+  double * gTotArr ;
+  double * gTanArr ;
+  double * gErrArr ;
+  int    *    nArr ;
+
+  gTotArr = new double[ userInput.getN_srcBin() ] () ;
+  gTanArr = new double[ userInput.getN_srcBin() ] () ;
+  gErrArr = new double[ userInput.getN_srcBin() ] () ;
+     nArr = new    int[ userInput.getN_srcBin() ] () ;
+
 
 /*
-  double *srcErrArr ;
-  double *srcDArr   ;
-  int    *indexes   ;
 
-
-  double *srcErrArrTemp;
-  double *srcDArrTemp  ;
-  int    *indexesTemp  ;
-
-
-  srcErrArrTemp = new double[ userInput.getNsrc() ];
-  srcDArrTemp   = new double[ userInput.getNsrc() ];
-  indexesTemp   = new int   [ userInput.getNsrc() ];
-
-
-    logMessage( std::string("Allocated src arrays of size: ") + std::to_string((long long) userInput.getNsrc()) );
-
-    for (int i = 0; i < userInput.getNsrc(); ++i ){
-      srcErrArrTemp[i] = userInput.getShapeNoise();                           // Errors all a temporary 0.3
-    }
-
-
-
-    // Place in random index locations
-
-    std::cout << "  generating indexes..." << std::endl;
-
-    getRandomSourcesIndexes( indexesTemp, userInput );
-
-    logMessage( std::string("Sources placed") );
-
-
-
-    // Generate distances based on index
-
-    std::cout << "  calculating distances..." << std::endl;
-
-
-    // Comb through sources and only keep those outside our halo radius
-    {
-
-      int new_Nsrc = 0;
-
-      // Determine distances of the sources from center of cluster, if within Rmax flag as -1
-      new_Nsrc = distArrCalc( srcDArrTemp, indexesTemp, &distMap, userInput.getPhysFOV() / userInput.getAngFOV() * 180 / M_PI, userInput.getNsrc(), myHalo.getRmax() );
-
-      logMessage( std::string("Source distances from center found") );
-
-
-      srcErrArr = new double [ new_Nsrc ];
-      srcDArr   = new double [ new_Nsrc ];
-      indexes   = new int    [ new_Nsrc ];
-
-      int validCounter = 0;
-
-      for ( int i = 0; i < userInput.getNsrc(); ++i ){
-        if ( srcDArrTemp[i] != -1 ){
-          srcErrArr[ validCounter ] = srcErrArrTemp[i];
-          srcDArr  [ validCounter ] = srcDArrTemp  [i];
-          indexes  [ validCounter ] = indexesTemp  [i];
-          ++validCounter;
-        }
-      }
-      userInput.setNsrc( new_Nsrc );
-
-    }
-
-    delete[] srcErrArrTemp ;
-    delete[] srcDArrTemp   ;
-    delete[] indexesTemp   ;
-
-
-    std::cout << "Done." << std::endl << std::endl;
-
-    // Write the sources to file
-    writeDataPoints( userInput, myHalo, srcDArr, indexes, g_totMap, g_tanMap );
-
-// Remove fitting, it's slow and can do later
-/*
 
     ////////////////////////////////////////////////////////////
     ///////////////////To calculate errors//////////////////////

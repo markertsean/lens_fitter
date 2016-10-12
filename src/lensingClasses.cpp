@@ -1,5 +1,5 @@
+#include <math.h>
 #include "lensing_classes.h"
-
 
 
 haloInfo::haloInfo(){
@@ -21,8 +21,8 @@ haloInfo::haloInfo(){
 
 userInfo::userInfo(){
 
-  I_minBin =  1.0        ;
-  I_maxBin =  2.60205999 ;
+  I_step   =  0.20026     ; // Step in I to make in log
+  I_minBin =  1.0        ; // Bin min and max values for input sources
   M_minBin = 13.0        ;
   M_maxBin = 16.0        ;
   B_minBin =  0.5        ;
@@ -35,6 +35,8 @@ userInfo::userInfo(){
   B_Nbins  =  5 ;
   G_Nbins  =  4 ;
 
+  firstFile = 0   ;
+  lastFile  = 1e6 ;
 
   fox2012F = "src/foxH2012.dat"; // FoxH files to read
   fox2123F = "src/foxH2123.dat";
