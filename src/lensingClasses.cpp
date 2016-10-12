@@ -20,15 +20,32 @@ haloInfo::haloInfo(){
 
 
 userInfo::userInfo(){
-    sigmaC     =  1.0 ;
-   shapeNoise  =  0.3 ; // Intrinsic shape noise in the sources
-   N_bins      = 20   ; // Number of bins for radial averaging
-   num_threads =  1   ; // Number of threads for parallel processing
+
+  I_minBin =  1.0        ;
+  I_maxBin =  2.60205999 ;
+  M_minBin = 13.0        ;
+  M_maxBin = 16.0        ;
+  B_minBin =  0.5        ;
+  B_maxBin =  1.0        ;
+  G_minBin =  0.0        ;
+  G_maxBin =  0.5 * M_PI ;
+
+  I_Nbins  =  9 ;
+  M_Nbins  =  6 ;
+  B_Nbins  =  5 ;
+  G_Nbins  =  4 ;
+
 
   fox2012F = "src/foxH2012.dat"; // FoxH files to read
   fox2123F = "src/foxH2123.dat";
 
   outputPath = "data/";
+
+    sigmaC     =  1.0 ;
+   shapeNoise  =  0.3 ; // Intrinsic shape noise in the sources
+   N_bins      = 20   ; // Number of bins for radial averaging
+   num_threads =  1   ; // Number of threads for parallel processing
+
 
       cMin =  2.5;     // Range of concentration values to fit
       cMax =  7.5;

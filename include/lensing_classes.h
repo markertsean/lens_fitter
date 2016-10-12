@@ -87,42 +87,64 @@ class userInfo{
     userInfo();
 
     void setJacknifeBins    ( int    inpI ) {   jacknifeBins = inpI ; }
+    void setShapeNoise      ( double inpF ) {     shapeNoise = inpF ; }
 
-    void setSigmaCrit       ( double inpF ) {      sigmaC    = inpF ; }
-    void setChiMin          ( double inpF ) {           cMin = inpF ; }
-    void setChiMax          ( double inpF ) {           cMax = inpF ; }
     void setMaxFitNum       ( int    inpI ) { maxFitAttempts = inpI ; }
     void setNConsistent     ( int    inpI ) {  consistent    = inpI ; }
     void setTolerance       ( double inpF ) {      tolerance = inpF ; }
     void setMutChance       ( double inpF ) {      mutChance = inpF ; }
     void setTestVal         ( double inpF ) {     avgTestVal = inpF ; }
     void setNtrack          ( int    inpI ) {  N_chiTrack    = inpI ; }
+    void setNchrome         ( int    inpI ) {  N_chromosomes = inpI ; }
+
+    void setChiMin          ( double inpF ) {           cMin = inpF ; }
+    void setChiMax          ( double inpF ) {           cMax = inpF ; }
     void setMassMin         ( double inpF ) {           mMin = inpF ; }
     void setMassMax         ( double inpF ) {           mMax = inpF ; }
     void setRMinFit         ( double inpF ) {           rMin = inpF ; }
     void setRMaxFit         ( double inpF ) {           rMax = inpF ; }
-    void setNchrome         ( int    inpI ) {  N_chromosomes = inpI ; }
-    void setShapeNoise      ( double inpF ) {     shapeNoise = inpF ; }
     void setConMin          ( double inpF ) {           cMin = inpF ; }
     void setConMax          ( double inpF ) {           cMax = inpF ; }
     void setAlphaMin        ( double inpF ) {       alphaMin = inpF ; }
     void setAlphaMax        ( double inpF ) {       alphaMax = inpF ; }
+
     void setNbins           ( int    inpI ) {   N_bins       = inpI ; }
     void setNthreads        ( int    inpI ) {   num_threads  = inpI ; }
+    void setSigmaCrit       ( double inpF ) {      sigmaC    = inpF ; }
+
+    void setI_BinMin        ( double inpF ) {     I_minBin   = inpF ; }
+    void setM_BinMin        ( double inpF ) {     M_minBin   = inpF ; }
+    void setB_BinMin        ( double inpF ) {     B_minBin   = inpF ; }
+    void setG_BinMin        ( double inpF ) {     G_minBin   = inpF ; }
+    void setI_BinMax        ( double inpF ) {     I_maxBin   = inpF ; }
+    void setM_BinMax        ( double inpF ) {     M_maxBin   = inpF ; }
+    void setB_BinMax        ( double inpF ) {     B_maxBin   = inpF ; }
+    void setG_BinMax        ( double inpF ) {     G_maxBin   = inpF ; }
+
+    void setN_IBin          ( int    inpI ) {     M_Nbins    = inpI ; }
+    void setN_MBin          ( int    inpI ) {     M_Nbins    = inpI ; }
+    void setN_BBin          ( int    inpI ) {     M_Nbins    = inpI ; }
+    void setN_GBin          ( int    inpI ) {     M_Nbins    = inpI ; }
+
     void setFoxH2012F       ( std::string inpS ) {  fox2012F = inpS ; }
     void setFoxH2123F       ( std::string inpS ) {  fox2123F = inpS ; }
     void setOutputPath      ( std::string inpS ) {outputPath = inpS ; }
 
-    int    getJacknifeBins    () const { return  jacknifeBins  ; }
+
+    int    getJacknifeBins    () const { return jacknifeBins   ; }
+    int    getNbins           () const { return N_bins         ; }
+    int    getNthreads        () const { return num_threads    ; }
+    int    getNchrome         () const { return N_chromosomes  ; }
+    int    getNtrack          () const { return N_chiTrack     ; }
+    int    getMaxFitNum       () const { return maxFitAttempts ; }
+    int    getNConsistent     () const { return consistent     ; }
+    int    getN_IBin          () const { return I_Nbins        ; }
+    int    getN_MBin          () const { return M_Nbins        ; }
+    int    getN_BBin          () const { return B_Nbins        ; }
+    int    getN_GBin          () const { return G_Nbins        ; }
+
     double getShapeNoise      () const { return  shapeNoise    ; }
-    int    getNbins           () const { return   N_bins       ; }
-    int    getNthreads        () const { return    num_threads ; }
-
-    std::string getOutputPath () const { return  outputPath    ; }
-    std::string getFoxH2012F  () const { return  fox2012F      ; }
-    std::string getFoxH2123F  () const { return  fox2123F      ; }
-
-    double getSigmaCrit       () const { return       sigmaC   ; }
+    double getSigmaCrit       () const { return  sigmaC        ; }
 
     double getAlphaMin        () const { return       alphaMin ; }
     double getAlphaMax        () const { return       alphaMax ; }
@@ -130,17 +152,23 @@ class userInfo{
     double getConMax          () const { return           cMax ; }
     double getRMinFit         () const { return           rMin ; }
     double getRMaxFit         () const { return           rMax ; }
-    int    getNchrome         () const { return  N_chromosomes ; }
     double getMassMin         () const { return           mMin ; }
     double getMassMax         () const { return           mMax ; }
-    int    getNtrack          () const { return  N_chiTrack    ; }
+    double getChiMin          () const { return           cMin ; }
+    double getChiMax          () const { return           cMax ; }
+
     double getTestVal         () const { return     avgTestVal ; }
     double getTolerance       () const { return      tolerance ; }
     double getMutChance       () const { return      mutChance ; }
-    int    getMaxFitNum       () const { return maxFitAttempts ; }
-    int    getNConsistent     () const { return  consistent    ; }
-    double getChiMin          () const { return           cMin ; }
-    double getChiMax          () const { return           cMax ; }
+
+    std::string getOutputPath () const { return  outputPath    ; }
+    std::string getFoxH2012F  () const { return  fox2012F      ; }
+    std::string getFoxH2123F  () const { return  fox2123F      ; }
+
+    double getI_bin    ( int i ) const { return I_minBin + i * ( I_maxBin - I_minBin ) / I_Nbins ; } // Returns the bin value at the index
+    double getM_bin    ( int i ) const { return M_minBin + i * ( M_maxBin - M_minBin ) / M_Nbins ; } // Returns the bin value at the index
+    double getB_bin    ( int i ) const { return B_minBin + i * ( B_maxBin - B_minBin ) / B_Nbins ; } // Returns the bin value at the index
+    double getG_bin    ( int i ) const { return G_minBin + i * ( G_maxBin - G_minBin ) / G_Nbins ; } // Returns the bin value at the index
 
 
   private:
@@ -152,49 +180,47 @@ class userInfo{
     int    N_bins     ;  // Number of bins for radial averaging
     int    num_threads;  // Number of threads for parallel processing
 
+    std::string fox2012F;
+    std::string fox2123F;
+    std::string outputPath;
 
-  std::string fox2012F;
-  std::string fox2123F;
+    double sigmaC   ; // For all sources, same critical surface density
 
-  std::string outputPath;
-
-
-  double sigmaC   ; // For all sources
-  double M_minBin ; // Min and max bin values
-  double M_maxBin ;
-  double B_minBin ;
-  double B_maxBin ;
-  double G_minBin ;
-  double G_maxBin ;
-  double I_minBin ;
-  double I_maxBin ;
+    double M_minBin ; // Min and max bin values for sources to be grouped into
+    double M_maxBin ;
+    double B_minBin ;
+    double B_maxBin ;
+    double G_minBin ;
+    double G_maxBin ;
+    double I_minBin ;
+    double I_maxBin ;
 
 
-  int    M_Nbins  ; // Number of bins for each
-  int    B_Nbins  ;
-  int    G_Nbins  ;
-  int    I_Nbins  ;
+    int    M_Nbins  ; // Number of bins for each
+    int    B_Nbins  ;
+    int    G_Nbins  ;
+    int    I_Nbins  ;
 
 
-  // Chi2 & genetic algorithm fitting values
-  double     cMin;
-  double     cMax;
-  double     mMin;
-  double     mMax;
-  double     rMin;
-  double     rMax;
-  double alphaMin;
-  double alphaMax;
+    // Chi2 & genetic algorithm fitting boundaries
+    double     cMin ;
+    double     cMax ;
+    double     mMin ;
+    double     mMax ;
+    double     rMin ;
+    double     rMax ;
+    double alphaMin ;
+    double alphaMax ;
 
-  int jacknifeBins;
 
-  int maxFitAttempts; // Max attempts at fitting before abort
-  int  N_chromosomes; // Number of chromosomes in population
-  int     N_chiTrack; // Number of chi's to track for convergence
-  int     consistent; // Number of times need avg below tolerance
-  double   tolerance; // Average residual must be below tolerance
-  double   mutChance; // Likelihood of mutation
-  double  avgTestVal; // chiAvg*this is random range
+    int jacknifeBins   ; // Number of bins used for jackknife errors
+    int maxFitAttempts ; // Max attempts at fitting before abort
+    int  N_chromosomes ; // Number of chromosomes in population
+    int     N_chiTrack ; // Number of chi's to track for convergence
+    int     consistent ; // Number of times need avg below tolerance
+    double   tolerance ; // Average residual must be below tolerance
+    double   mutChance ; // Likelihood of mutation
+    double  avgTestVal ; // chiAvg*this is random range
 };
 
 
