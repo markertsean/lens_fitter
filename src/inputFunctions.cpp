@@ -1,14 +1,13 @@
 #include <cstring>
+#include <cmath>
 #include <CCfits/CCfits>
 #include <slsimlib.h>
-#include <lensing_classes.h>
-
-
-
-
+#include <stdio.h>
+#include "lensing_classes.h"
 
 
 /*
+"%sHalo_%010li_%06.1f_Sources.dat, u.getOutputPath.c_str(), h.getID(), integ"
   FILE *pFile;
 
   pFile = fopen( fileName, "w" );
@@ -42,6 +41,154 @@ n_srcs += 1;
 
 fprintf( pFile , "%10.6f %14.8e %14.8e\n", dArr[i], avgVal / n_srcs, avgVal2 / n_srcs );
 //*/
+
+
+void readSourceFile(   FILE      * pFile ,
+                       userInfo    u     ,  // User input
+                       double    * dist  ,  // Array of distances
+                       double    * gTot  ,  // Array of gTot
+                       double    * gTan  ,  // Array of gTan
+                       int       * N     ,  // Array counting number in each bin
+                       int       * N_h   ,
+                       int         I_bin )
+{
+
+    char   inpC1[35],inpC2[35], inpC3[35];
+    double M, ba, gamma, dMax;
+    int    N_src;
+
+
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // ID
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // M
+    M     = atof( inpC2 );
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // C
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // R_max
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // ba
+    ba    = atof( inpC2 );
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // ca
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // phi
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // theta
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // alpha
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // gamma
+    gamma = atof( inpC2 );
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // Integ
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // IntegM
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // FOV
+    dMax   = atof( inpC2 ) / 2.0;
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // NpH
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // NpV
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // N_src
+    N_src = atoi( inpC2 );
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
+
+
+         I_bin   = I_bin + 1;
+    int  M_bin   = std::min(std::max(   int( ( M     - u.getM_minBin() ) / ( u.getM_maxBin() - u.getM_minBin() ) * u.getN_MBin() )    ,0),u.getN_MBin()-1);
+    int  B_bin   = std::min(std::max(   int( ( ba    - u.getB_minBin() ) / ( u.getB_maxBin() - u.getB_minBin() ) * u.getN_BBin() )    ,0),u.getN_BBin()-1);
+    int  G_bin   = std::min(std::max(   int( ( gamma - u.getG_minBin() ) / ( u.getG_maxBin() - u.getG_minBin() ) * u.getN_GBin() )    ,0),u.getN_GBin()-1);
+
+    int  H_bin   = u.getSrcBin( I_bin, M_bin, B_bin, G_bin, 0 ) / u.getNbins() ;
+    N_h[ H_bin ] = N_h[ H_bin ] + 1 ;
+
+
+    while( fscanf( pFile, "%s%s%s", inpC1, inpC2, inpC3 ) != EOF )
+    {
+
+        // Dist, tot, tan
+        double d = atof( inpC1 );
+        double o = atof( inpC2 );
+        double a = atof( inpC3 );
+
+        int    d_bin = std::min(std::max(   int( d / dMax * u.getNbins() )    ,0),u.getNbins()-1);
+
+        int myBin = u.getSrcBin( I_bin, M_bin, B_bin, G_bin, d_bin );
+
+        dist[ myBin ] += d ;
+        gTot[ myBin ] += o ;
+        gTan[ myBin ] += a ;
+        N   [ myBin ] += 1 ;
+    }
+}
+
+
+// Wrapper function for reading source files, will locate files and invoke reader function
+int  readSources(  userInfo    u    ,  // User input
+                   double    * d    ,  // Array of distances
+                   double    * gTot ,  // Array of gTot
+                   double    * gTan ,  // Array of gTan
+                   int       * N    ,  // Array counting number in each bin
+                   int       * N_h  )  // Array counting number of halos in bin
+{
+    // Make sure all output arrays 0
+    for ( int i = 0; i < u.getN_srcBin(); ++i )
+    {
+        gTot[i] = 0 ;
+        gTan[i] = 0 ;
+        d   [i] = 0 ;
+        N   [i] = 0 ;
+    }
+    for ( int i = 0; i < u.getN_srcBin()/u.getNbins(); ++i )
+    {
+        N_h [i] = 0 ;
+    }
+
+
+
+    int     halo_id = u.getFirstFile() ;  // Halo ids of files we are looking for
+    int     halo_c  = 0                ;  // Count number of halos read
+
+    char inputFile[100];
+    FILE *pFile;
+
+
+    while ( halo_id < u.getLastFile() ) // Check the id numbers for at least base halo file
+    {
+
+        sprintf(       inputFile, "%sHalo_%010li_%06.1f_Sources.dat", u.getInputPath().c_str(), halo_id, 0.0 );
+        pFile = fopen( inputFile, "r");
+
+        if (pFile!=NULL)               // If file exists, read it, attempt to read others
+        {
+
+                readSourceFile( pFile, u, d, gTot, gTan, N, N_h, -1 ); // -1 indicates no integration
+
+                fclose( pFile );
+/*
+            for ( int i = 0; i < u.getN_IBin(); ++ i )
+            {
+                sprintf(       inputFile,  "%sHalo_%010li_%06.1f_Sources.dat", u.getInputPath().c_str(), halo_id, pow( 10, u.getI_bin( i ) ) );
+                pFile = fopen( inputFile,  "r");
+
+
+                if ( pFile != NULL ){
+                readSourceFile( pFile, u, d, gTot, gTan, N, N_h, i );
+                fclose( pFile );
+                }
+            }
+//*/
+            ++halo_c;
+        } // File exists
+
+        ++halo_id;
+    }  // Halo_id loop
+
+    // Current gTot, tan, values are sums, makes them averages
+    for ( int i = 0; i < u.getN_srcBin(); ++i )
+    {
+        gTot[i] = gTot[i] / N[i] ;
+        gTan[i] = gTan[i] / N[i] ;
+        d   [i] = d   [i] / N[i] ;
+    }
+
+
+    return halo_c;
+}
+
+
+
+
 
 // Max/min/N M, b, g, i's?
 // Sc
@@ -79,6 +226,7 @@ void readInpFile(          userInfo  &inpInfo  ,   // Info needed for the rest o
       else if ( inpS=="fox2012F"    ){        inpInfo.setFoxH2012F       ( std::string(inpC2) ); }  // Location of foxH files we will interpolate over
       else if ( inpS=="fox2123F"    ){        inpInfo.setFoxH2123F       ( std::string(inpC2) ); }  // Location of foxH files we will interpolate over
       else if ( inpS=="outputPath"  ){        inpInfo.setOutputPath      ( std::string(inpC2) ); }  // Directory to place output files in
+      else if ( inpS=="inputPath"   ){        inpInfo.setInputPath       ( std::string(inpC2) ); }  // Directory to read input files from
 
       else if ( inpS=="firstFile"   ){        inpInfo.setFirstFile       (        atoi(inpC2) ); }  // First file halo ID to use
       else if ( inpS== "lastFile"   ){        inpInfo.setLastFile        (        atoi(inpC2) ); }  // Last  file halo ID to use

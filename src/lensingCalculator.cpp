@@ -87,25 +87,38 @@ int main(int arg,char **argv){
   ///////////////////Read in the sources//////////////////////
   ////////////////////////////////////////////////////////////
 
-  std::cout << "Generating sources..." << std::endl;
+  std::cout << "Reading sources..." << std::endl;
 
-// Need to allocate bins
-// Based on N_bins, M_bins, b and g?, i, can do I on a loop if read only one integ length at a time
-// gvalues, tot & tan, errors, dist, N
-// read in files, place in bins
-// Fit & jackknife
 
+  // Arrays containing avgs, binned
   double * gTotArr ;
   double * gTanArr ;
-  double * gErrArr ;
-  int    *    nArr ;
+  double *    dArr ;
+  int    *    nArr ; // Source counts in a I, M, B, G, R bin
 
-  gTotArr = new double[ userInput.getN_srcBin() ] () ;
-  gTanArr = new double[ userInput.getN_srcBin() ] () ;
-  gErrArr = new double[ userInput.getN_srcBin() ] () ;
-     nArr = new    int[ userInput.getN_srcBin() ] () ;
+  int    *  ninArr ; // Halo   counts in a I, M, B, G    bin
+
+  gTotArr = new double[ userInput.getN_srcBin()                        ] () ;
+  gTanArr = new double[ userInput.getN_srcBin()                        ] () ;
+     dArr = new double[ userInput.getN_srcBin()                        ] () ;
+     nArr = new    int[ userInput.getN_srcBin()                        ] () ;
+   ninArr = new    int[ userInput.getN_srcBin() / userInput.getNbins() ] () ;
 
 
+
+
+// Only reading in halo files
+  {
+    int N_files = readSources( userInput, dArr, gTotArr,gTanArr, nArr, ninArr ) ;
+
+    if( N_files == 0 )
+    {
+        std::cout << "Did not read any files" << std::endl;
+        exit(1);
+    }
+
+        std::cout << "Read " << N_files << " files" << std::endl;
+  }
 /*
 
 

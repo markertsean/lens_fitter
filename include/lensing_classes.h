@@ -129,6 +129,7 @@ class userInfo{
     void setFoxH2012F       ( std::string inpS ) {  fox2012F = inpS ; }
     void setFoxH2123F       ( std::string inpS ) {  fox2123F = inpS ; }
     void setOutputPath      ( std::string inpS ) {outputPath = inpS ; }
+    void setInputPath       ( std::string inpS ) { inputPath = inpS ; }
 
     void setFirstFile       ( int    inpI ) {     firstFile  = inpI ; }
     void setLastFile        ( int    inpI ) {      lastFile  = inpI ; }
@@ -147,7 +148,7 @@ class userInfo{
     int    getN_MBin          () const { return M_Nbins        ; }
     int    getN_BBin          () const { return B_Nbins        ; }
     int    getN_GBin          () const { return G_Nbins        ; }
-    int    getN_srcBin        () const { return N_bins * I_Nbins * M_Nbins * B_Nbins * G_Nbins ; }
+    int    getN_srcBin        () const { return N_bins * ( I_Nbins+1 ) * M_Nbins * B_Nbins * G_Nbins ; }
 
     double getShapeNoise      () const { return  shapeNoise    ; }
     double getSigmaCrit       () const { return  sigmaC        ; }
@@ -167,14 +168,29 @@ class userInfo{
     double getTolerance       () const { return      tolerance ; }
     double getMutChance       () const { return      mutChance ; }
 
+    std::string getInputPath  () const { return  inputPath     ; }
     std::string getOutputPath () const { return  outputPath    ; }
     std::string getFoxH2012F  () const { return  fox2012F      ; }
     std::string getFoxH2123F  () const { return  fox2123F      ; }
+
+    double getM_minBin () const { return M_minBin; }
+    double getM_maxBin () const { return M_maxBin; }
+    double getB_minBin () const { return B_minBin; }
+    double getB_maxBin () const { return B_maxBin; }
+    double getG_minBin () const { return G_minBin; }
+    double getG_maxBin () const { return G_maxBin; }
 
     double getI_bin    ( int i ) const { return I_minBin + i *   I_step                          ; } // Returns the bin value at the index
     double getM_bin    ( int i ) const { return M_minBin + i * ( M_maxBin - M_minBin ) / M_Nbins ; } // Returns the bin value at the index
     double getB_bin    ( int i ) const { return B_minBin + i * ( B_maxBin - B_minBin ) / B_Nbins ; } // Returns the bin value at the index
     double getG_bin    ( int i ) const { return G_minBin + i * ( G_maxBin - G_minBin ) / G_Nbins ; } // Returns the bin value at the index
+
+
+    double getSrcBin   ( int i, int m, int b, int g, int bin ) { return   i * N_bins * G_Nbins * B_Nbins * M_Nbins
+                                                                        + m * N_bins * G_Nbins * B_Nbins
+                                                                        + b * N_bins * G_Nbins
+                                                                        + g * N_bins
+                                                                        + bin;                                      }
 
 
   private:
@@ -188,6 +204,7 @@ class userInfo{
 
     std::string fox2012F;
     std::string fox2123F;
+    std::string  inputPath;
     std::string outputPath;
 
     double sigmaC   ; // For all sources, same critical surface density
