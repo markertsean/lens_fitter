@@ -50,84 +50,40 @@ einTable einKappaAvg ;
 int main(int arg,char **argv){
 
 
-  // Initializes the log file, generates logfiles directory
-  //  and a file name based on current time
-  initLogFile();
+    // Initializes the log file, generates logfiles directory
+    //  and a file name based on current time
+    initLogFile();
 
-  // Default values that will not be changing
-  long    seed    = time(NULL); //-1827674;
+    // Default values that will not be changing
+    long    seed    = time(NULL); //-1827674;
 
-  logMessage( std::string("Seed = ") + std::to_string( (long long) seed ) );
+    logMessage( std::string("Seed = ") + std::to_string( (long long) seed ) );
 
-  srand(seed); // Sets random seed
-
-
-  //////////////////////////////////
-  ///////READ IN USERINFO///////////
-  //////////////////////////////////
-
-  userInfo userInput;
-
-  std::string userFile = "lensUserParams.dat";
-  std::cout << "Reading user input" << userFile         << std::endl;
-
-  readInpFile( userInput, userFile );
+    srand(seed); // Sets random seed
 
 
-  // Generates Fox H tables for interpolating over the Einasto profiles
+    //////////////////////////////////
+    ///////READ IN USERINFO///////////
+    //////////////////////////////////
 
-  std::cout << "Reading foxH tables: "                  << std::endl;
+    userInfo userInput;
 
-  einKappa    = readFoxH( userInput, 1 );
-  einKappaAvg = readFoxH( userInput, 2 );
+    std::string userFile = "lensUserParams.dat";
+    std::cout << "Reading user input" << userFile         << std::endl;
 
-  std::cout << "              Done."  << std::endl << std::endl;
-
-  ////////////////////////////////////////////////////////////
-  ///////////////////Read in the sources//////////////////////
-  ////////////////////////////////////////////////////////////
-
-  std::cout << "Reading sources..." << std::endl;
+    readInpFile( userInput, userFile );
 
 
-  // Arrays containing avgs, binned
-  double * gTotArr ;
-  double * gTanArr ;
-  double *    dArr ;
-  int    *    nArr ; // Source counts in a I, M, B, G, R bin
+    // Generates Fox H tables for interpolating over the Einasto profiles
 
-  int    *  ninArr ; // Halo   counts in a I, M, B, G    bin
+    std::cout << "Reading foxH tables: "                  << std::endl;
 
-  gTotArr = new double[ userInput.getN_srcBin()                        ] () ;
-  gTanArr = new double[ userInput.getN_srcBin()                        ] () ;
-     dArr = new double[ userInput.getN_srcBin()                        ] () ;
-     nArr = new    int[ userInput.getN_srcBin()                        ] () ;
-   ninArr = new    int[ userInput.getN_srcBin() / userInput.getNbins() ] () ;
+    einKappa    = readFoxH( userInput, 1 );
+    einKappaAvg = readFoxH( userInput, 2 );
 
+    std::cout << "              Done."  << std::endl << std::endl;
 
-
-
-// Only reading in halo files
-  {
-    int N_files = readSources( userInput, dArr, gTotArr,gTanArr, nArr, ninArr ) ;
-
-    if( N_files == 0 )
-    {
-        std::cout << "Did not read any files" << std::endl;
-        exit(1);
-    }
-
-        std::cout << "Read " << N_files << " files" << std::endl;
-  }
-/*
-
-
-    ////////////////////////////////////////////////////////////
-    ///////////////////To calculate errors//////////////////////
-    //////////////Loop over and jacknife sample/////////////////
-    ////////////////////////////////////////////////////////////
-
-    int N_jackbins = userInput.getJacknifeBins() * userInput.getJacknifeBins() ;
+    int N_jackbins = userInput.getJacknifeBins() ;
 
 
                 std::cout <<"Using " <<     N_jackbins    << " subsets to calculate errors" << std::endl;
@@ -135,6 +91,94 @@ int main(int arg,char **argv){
                 std::to_string( (long long) N_jackbins    ) );
 
 
+    ////////////////////////////////////////////////////////////
+    ///////////////////Read in the sources//////////////////////
+    ////////////////////////////////////////////////////////////
+
+    std::cout << "Reading sources..." << std::endl;
+
+
+    // Arrays containing avgs, binned
+    double * gTotJackArr ;
+    double * gTanJackArr ;
+    double *    dJackArr ;
+    int    *    nJackArr ; // Source counts in a I, M, B, G, R bin
+
+    int    *      ninArr ; // Halo   counts in a I, M, B, G    bin
+
+    gTotJackArr = new double[ userInput.getN_srcJackBin()                        ] () ;
+    gTanJackArr = new double[ userInput.getN_srcJackBin()                        ] () ;
+       dJackArr = new double[ userInput.getN_srcJackBin()                        ] () ;
+       nJackArr = new    int[ userInput.getN_srcJackBin()                        ] () ;
+         ninArr = new    int[ userInput.getN_srcJackBin() / userInput.getNbins() ] () ;
+
+
+
+// Only reading in halo files
+    {
+        int N_files = readSources( userInput, dJackArr, gTotJackArr,gTanJackArr, nJackArr, ninArr ) ;
+
+        if( N_files == 0 )
+        {
+            std::cout << "Did not read any files" << std::endl;
+            exit(1);
+        }
+
+            std::cout << "Read " << N_files << " files" << std::endl;
+    }
+
+for( int j = 0; j < userInput.getN_JBin() ; ++j ){
+for( int i = 0; i < userInput.getN_IBin() ; ++i ){
+for( int m = 0; m < userInput.getN_MBin() ; ++m ){
+for( int b = 0; b < userInput.getN_BBin() ; ++b ){
+for( int g = 0; g < userInput.getN_GBin() ; ++g ){
+
+    int n_bin = userInput.getN_haloBin( i, m, b, g    );
+    int p_bin = userInput.getSrcBin( j, i, m, b, g, 0 );
+
+    if ( ninArr[ n_bin ] > 0 )
+    {
+
+        printf("j =%2i i =%2i m =%2i b =%2i g =%2i   ", j,i,m,b,g);
+        for ( int r = 0; r < userInput.getNbins(); ++r )
+        {
+            printf("%6i ",nJackArr[p_bin+r]);
+        }
+        printf("\n");
+    }
+}
+}
+}
+}
+}
+
+
+//    writeShort( userInput, gTotArr, gTanArr, dArr, nArr, ninArr );
+
+    ////////////////////////////////////////////////////////////
+    ///////////////////Loops over source bins///////////////////
+    /////////////////////Calculate the fits/////////////////////
+    ////////////////////////////////////////////////////////////
+
+/*
+    for ( int i = 0; i <    1;++i){//userInput.getN_IBin(); ++i ){
+    for ( int m = 0; m <    1;++m){//userInput.getN_MBin(); ++m ){
+    for ( int b = 0; b <    1;++b){//userInput.getN_BBin(); ++b ){
+    for ( int g = 0; g <    1;++g){//userInput.getN_GBin(); ++g ){
+
+        densProfile nfwFits[ N_jackbins + 1 ];
+        densProfile nfTFits[ N_jackbins + 1 ];
+        densProfile einFits[ N_jackbins + 1 ];
+
+
+    }
+    }
+    }
+    }
+
+
+
+/*
     densProfile nfwFits[ N_jackbins + 1 ];
     densProfile nfTFits[ N_jackbins + 1 ];
     densProfile einFits[ N_jackbins + 1 ];

@@ -144,11 +144,13 @@ class userInfo{
     int    getNtrack          () const { return N_chiTrack     ; }
     int    getMaxFitNum       () const { return maxFitAttempts ; }
     int    getNConsistent     () const { return consistent     ; }
+    int    getN_JBin          () const { return jacknifeBins   ; }
     int    getN_IBin          () const { return I_Nbins        ; }
     int    getN_MBin          () const { return M_Nbins        ; }
     int    getN_BBin          () const { return B_Nbins        ; }
     int    getN_GBin          () const { return G_Nbins        ; }
     int    getN_srcBin        () const { return N_bins * ( I_Nbins+1 ) * M_Nbins * B_Nbins * G_Nbins ; }
+    int    getN_srcJackBin    () const { return N_bins * ( I_Nbins+1 ) * M_Nbins * B_Nbins * G_Nbins * jacknifeBins ; }
 
     double getShapeNoise      () const { return  shapeNoise    ; }
     double getSigmaCrit       () const { return  sigmaC        ; }
@@ -184,6 +186,19 @@ class userInfo{
     double getM_bin    ( int i ) const { return M_minBin + i * ( M_maxBin - M_minBin ) / M_Nbins ; } // Returns the bin value at the index
     double getB_bin    ( int i ) const { return B_minBin + i * ( B_maxBin - B_minBin ) / B_Nbins ; } // Returns the bin value at the index
     double getG_bin    ( int i ) const { return G_minBin + i * ( G_maxBin - G_minBin ) / G_Nbins ; } // Returns the bin value at the index
+
+
+    double getN_haloBin ( int i, int m, int b, int g ) { return   i * G_Nbins * B_Nbins * M_Nbins
+                                                                + m * G_Nbins * B_Nbins
+                                                                + b * G_Nbins
+                                                                + g ;                                      }
+
+    double getSrcBin   (  int j, int i, int m, int b, int g, int bin ) { return   j * N_bins * G_Nbins * B_Nbins * M_Nbins * ( I_Nbins + 1 )
+                                                                                + i * N_bins * G_Nbins * B_Nbins * M_Nbins
+                                                                                + m * N_bins * G_Nbins * B_Nbins
+                                                                                + b * N_bins * G_Nbins
+                                                                                + g * N_bins
+                                                                                + bin;                                      }
 
 
     double getSrcBin   ( int i, int m, int b, int g, int bin ) { return   i * N_bins * G_Nbins * B_Nbins * M_Nbins

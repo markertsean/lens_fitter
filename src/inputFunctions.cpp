@@ -89,9 +89,10 @@ void readSourceFile(   FILE      * pFile ,
     int  B_bin   = std::min(std::max(   int( ( ba    - u.getB_minBin() ) / ( u.getB_maxBin() - u.getB_minBin() ) * u.getN_BBin() )    ,0),u.getN_BBin()-1);
     int  G_bin   = std::min(std::max(   int( ( gamma - u.getG_minBin() ) / ( u.getG_maxBin() - u.getG_minBin() ) * u.getN_GBin() )    ,0),u.getN_GBin()-1);
 
-    int  H_bin   = u.getSrcBin( I_bin, M_bin, B_bin, G_bin, 0 ) / u.getNbins() ;
+    int  H_bin   = u.getN_haloBin( I_bin, M_bin, B_bin, G_bin ) ;
     N_h[ H_bin ] = N_h[ H_bin ] + 1 ;
 
+    int jCounter = 0 ; // Count for jacknife binning
 
     while( fscanf( pFile, "%s%s%s", inpC1, inpC2, inpC3 ) != EOF )
     {
@@ -102,8 +103,11 @@ void readSourceFile(   FILE      * pFile ,
         double a = atof( inpC3 );
 
         int    d_bin = std::min(std::max(   int( d / dMax * u.getNbins() )    ,0),u.getNbins()-1);
+        int    j_bin =    jCounter % u.getJacknifeBins() ;
 
-        int myBin = u.getSrcBin( I_bin, M_bin, B_bin, G_bin, d_bin );
+                        ++jCounter ;
+
+        int myBin = u.getSrcBin( j_bin, I_bin, M_bin, B_bin, G_bin, d_bin );
 
         dist[ myBin ] += d ;
         gTot[ myBin ] += o ;

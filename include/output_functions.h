@@ -30,5 +30,14 @@ void writeProfileFits( userInfo        u ,   // User input
                        double    *nfTErr ,   // NFW trunc errors
                        int       haloNum );  // How many times we've written, first time we need to write halo info
 
+// Writes a short, easy read in file
+void writeShort( userInfo    u ,
+                 double * gTot ,
+                 double * gTan ,
+                 double * d    ,
+                 int    * n_s  ,
+                 int    * n_h  );
+
+
 
 #endif // OUTPUT_FUNCTIONS
