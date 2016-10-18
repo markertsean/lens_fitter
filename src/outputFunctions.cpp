@@ -87,13 +87,14 @@ void writeShort( userInfo    u ,
     for ( int i = 0; i < u.getN_IBin(); ++i ){
     for ( int m = 0; m < u.getN_MBin(); ++m ){
     for ( int b = 0; b < u.getN_BBin(); ++b ){
+
     for ( int g = 0; g < u.getN_GBin(); ++g ){
 
         int  h = u.getN_haloBin( i, m, b, g    );
-        char     nh_outLine[ 20 ] ;
-        sprintf( nh_outLine, "%10i\n", n_h [ h ] );
-        fprintf( pFile, "%s", nh_outLine );
+        fprintf( pFile, "%10i ", n_h[ h ] );
     }
+        fprintf( pFile, "\n" );
+
     }
     }
     }
@@ -104,12 +105,6 @@ void writeShort( userInfo    u ,
     for ( int m = 0; m < u.getN_MBin(); ++m ){
     for ( int b = 0; b < u.getN_BBin(); ++b ){
     for ( int g = 0; g < u.getN_GBin(); ++g ){
-
-
-        char ns_outLine[ 700 ] ;
-        char  d_outLine[ 700 ] ;
-        char go_outLine[ 700 ] ;
-        char ga_outLine[ 700 ] ;
 
         int k = u.getSrcBin( j, i, m, b, g, 0 );
 
