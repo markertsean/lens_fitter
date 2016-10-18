@@ -125,35 +125,12 @@ int main(int arg,char **argv){
         }
 
             std::cout << "Read " << N_files << " files" << std::endl;
+
+        writeShort( userInput, gTotJackArr, gTanJackArr, dJackArr, nJackArr, ninArr );
+
+
     }
 
-for( int j = 0; j < userInput.getN_JBin() ; ++j ){
-for( int i = 0; i < userInput.getN_IBin() ; ++i ){
-for( int m = 0; m < userInput.getN_MBin() ; ++m ){
-for( int b = 0; b < userInput.getN_BBin() ; ++b ){
-for( int g = 0; g < userInput.getN_GBin() ; ++g ){
-
-    int n_bin = userInput.getN_haloBin( i, m, b, g    );
-    int p_bin = userInput.getSrcBin( j, i, m, b, g, 0 );
-
-    if ( ninArr[ n_bin ] > 0 )
-    {
-
-        printf("j =%2i i =%2i m =%2i b =%2i g =%2i   ", j,i,m,b,g);
-        for ( int r = 0; r < userInput.getNbins(); ++r )
-        {
-            printf("%6i ",nJackArr[p_bin+r]);
-        }
-        printf("\n");
-    }
-}
-}
-}
-}
-}
-
-
-//    writeShort( userInput, gTotArr, gTanArr, dArr, nArr, ninArr );
 
     ////////////////////////////////////////////////////////////
     ///////////////////Loops over source bins///////////////////

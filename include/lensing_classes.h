@@ -145,7 +145,7 @@ class userInfo{
     int    getMaxFitNum       () const { return maxFitAttempts ; }
     int    getNConsistent     () const { return consistent     ; }
     int    getN_JBin          () const { return jacknifeBins   ; }
-    int    getN_IBin          () const { return I_Nbins        ; }
+    int    getN_IBin          () const { return I_Nbins+1      ; }
     int    getN_MBin          () const { return M_Nbins        ; }
     int    getN_BBin          () const { return B_Nbins        ; }
     int    getN_GBin          () const { return G_Nbins        ; }

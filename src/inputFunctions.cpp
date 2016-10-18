@@ -133,7 +133,7 @@ int  readSources(  userInfo    u    ,  // User input
         d   [i] = 0 ;
         N   [i] = 0 ;
     }
-    for ( int i = 0; i < u.getN_srcBin()/u.getNbins(); ++i )
+    for ( int i = 0; i < u.getN_srcBin()/u.getNbins()/u.getN_JBin(); ++i )
     {
         N_h [i] = 0 ;
     }
@@ -160,7 +160,7 @@ int  readSources(  userInfo    u    ,  // User input
 
                 fclose( pFile );
 /*
-            for ( int i = 0; i < u.getN_IBin(); ++ i )
+            for ( int i = 0; i < u.getN_IBin()-1; ++ i )
             {
                 sprintf(       inputFile,  "%sHalo_%010li_%06.1f_Sources.dat", u.getInputPath().c_str(), halo_id, pow( 10, u.getI_bin( i ) ) );
                 pFile = fopen( inputFile,  "r");
@@ -181,9 +181,12 @@ int  readSources(  userInfo    u    ,  // User input
     // Current gTot, tan, values are sums, makes them averages
     for ( int i = 0; i < u.getN_srcBin(); ++i )
     {
-        gTot[i] = gTot[i] / N[i] ;
-        gTan[i] = gTan[i] / N[i] ;
-        d   [i] = d   [i] / N[i] ;
+        if ( N[i] > 0 )
+        {
+            gTot[i] = gTot[i] / N[i] ;
+            gTan[i] = gTan[i] / N[i] ;
+            d   [i] = d   [i] / N[i] ;
+        }
     }
 
 

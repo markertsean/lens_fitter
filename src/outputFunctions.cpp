@@ -79,40 +79,48 @@ void writeShort( userInfo    u ,
 {
     std::string storedData = "storedData.dat";
 
-
     FILE *pFile ;
     pFile = fopen( storedData.c_str(), "w" );
 
+
+    // Prints N_halo info
     for ( int i = 0; i < u.getN_IBin(); ++i ){
     for ( int m = 0; m < u.getN_MBin(); ++m ){
     for ( int b = 0; b < u.getN_BBin(); ++b ){
     for ( int g = 0; g < u.getN_GBin(); ++g ){
 
-        int  j = u.getSrcBin( i, m, b, g, 0 );
-
-        char nh_outLine[  20 ] ;
-        char ns_outLine[ 500 ] ;
-        char  d_outLine[ 500 ] ;
-        char go_outLine[ 500 ] ;
-        char ga_outLine[ 500 ] ;
-
-            sprintf( nh_outLine, "%10i\n",            n_h [ j     ] );
-
-        for ( int r = 0; r < u.getNbins(); ++r ){
-
-            sprintf( ns_outLine, "%s %s", ns_outLine, n_s [ j + r ] );
-            sprintf(  d_outLine, "%s %s",  d_outLine, d   [ j + r ] );
-            sprintf( go_outLine, "%s %s", go_outLine, gTan[ j + r ] );
-            sprintf( ga_outLine, "%s %s", ga_outLine, gTot[ j + r ] );
-
-        }
-
+        int  h = u.getN_haloBin( i, m, b, g    );
+        char     nh_outLine[ 20 ] ;
+        sprintf( nh_outLine, "%10i\n", n_h [ h ] );
         fprintf( pFile, "%s", nh_outLine );
-        fprintf( pFile, "%s", ns_outLine );
-        fprintf( pFile, "%s",  d_outLine );
-        fprintf( pFile, "%s", ga_outLine );
-        fprintf( pFile, "%s", go_outLine );
+    }
+    }
+    }
+    }
 
+    // Prints tables
+    for ( int j = 0; j < u.getN_JBin(); ++j ){
+    for ( int i = 0; i < u.getN_IBin(); ++i ){
+    for ( int m = 0; m < u.getN_MBin(); ++m ){
+    for ( int b = 0; b < u.getN_BBin(); ++b ){
+    for ( int g = 0; g < u.getN_GBin(); ++g ){
+
+
+        char ns_outLine[ 700 ] ;
+        char  d_outLine[ 700 ] ;
+        char go_outLine[ 700 ] ;
+        char ga_outLine[ 700 ] ;
+
+        int k = u.getSrcBin( j, i, m, b, g, 0 );
+
+        // Outputs each row as group
+        for ( int r = 0; r < u.getNbins(); ++r ){  fprintf(pFile, "%14i "  ,  n_s[ k + r ] ); } fprintf( pFile, "\n" );
+        for ( int r = 0; r < u.getNbins(); ++r ){  fprintf(pFile, "%14.6e ",    d[ k + r ] ); } fprintf( pFile, "\n" );
+        for ( int r = 0; r < u.getNbins(); ++r ){  fprintf(pFile, "%14.6e ", gTan[ k + r ] ); } fprintf( pFile, "\n" );
+        for ( int r = 0; r < u.getNbins(); ++r ){  fprintf(pFile, "%14.6e ", gTot[ k + r ] ); } fprintf( pFile, "\n" );
+
+
+    }
     }
     }
     }
