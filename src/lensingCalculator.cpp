@@ -155,59 +155,77 @@ Loops:
 absorb all halos data into new structure, haloinfo maybe, binned
 //*/
 
-    // Generate collapsed mass stuff
-
-    double * gTotM ;
-    double * gTanM ;
-    double *    dM ;
-    int    *    nM ;
-
-    collapseM( userInput, gTotJackArr, nJackArr, &gTotM );
-    collapseM( userInput, gTanJackArr, nJackArr, &gTanM );
-    collapseM( userInput,    dJackArr, nJackArr, &   dM,  &nM );
-
     // Loop over each bin, doing jacknife analysis
-/*
+    // Will generate fits for gTot, gTan, 3 profiles
     for ( int i = 0; i <    1;++i){//userInput.getN_IBin(); ++i ){
-    for ( int m = 0; m <    1;++m){//userInput.getN_MBin(); ++m ){
     for ( int b = 0; b <    1;++b){//userInput.getN_BBin(); ++b ){
     for ( int g = 0; g <    1;++g){//userInput.getN_GBin(); ++g ){
 
 
+        // Will store density profile fits for each jacknife bin, + full sample as 0th index
+        densProfile nfwFits_tot[ N_jackbins + 1 ];
+        densProfile nfTFits_tot[ N_jackbins + 1 ];
+        densProfile einFits_tot[ N_jackbins + 1 ];
 
-    for ( int i = 0; i < userInput.getN_Jbin(); ++j ){
-
-        densProfile nfwFits[ N_jackbins + 1 ];
-        densProfile nfTFits[ N_jackbins + 1 ];
-        densProfile einFits[ N_jackbins + 1 ];
+        densProfile nfwFits_tan[ N_jackbins + 1 ];
+        densProfile nfTFits_tan[ N_jackbins + 1 ];
+        densProfile einFits_tan[ N_jackbins + 1 ];
 
 
+        // Loop over jacknife bins, ommiting from the sum whichever jack knife bins
+        // if omitindex == -1, full sample
+        for ( int j = 0; j < N_jackbins + 1; ++j )
+        {
+
+            int omitIndex = j - 1 ;
+
+            // Here loop over sources, indicating which index to omit (start at -1)
+            // Pass to dist and shear calculators, to indicate ommited index
+            if ( omitIndex > -1 )
+            {
+                            std::cout <<"  Omitting subset " << omitIndex << std::endl;
+                logMessage( std::string("  Omitting subset ") +
+                            std::to_string(    (long long)      omitIndex ) );
+            }
+
+
+            // Arrays to populate by calculating averages at index w/ collapsed M
+            double *gTot ;
+            double *gTan ;
+            double *dArr ;
+
+                         avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTot );
+                         avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTan );
+            int* N_arr = avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &dArr );
+
+
+// Need to generate errors
+
+
+
+
+
+
+
+            delete [] gTot  ;
+            delete [] gTan  ;
+            delete [] dArr  ;
+            delete [] N_arr ;
+
+        }
+    }
+    }
     }
 
-
-
-
-    }
-    }
-    }
-    }
-
-    delete [] gTotM;
-    delete [] gTanM;
-    delete []    gM;
-    delete []    nM;
 
 /*
-    densProfile nfwFits[ N_jackbins + 1 ];
-    densProfile nfTFits[ N_jackbins + 1 ];
-    densProfile einFits[ N_jackbins + 1 ];
 
 
-                std::cout <<"Generating fits... "  << std::endl;
-    logMessage( std::string("Generating fits... ") );
 
 
-    for ( int  omitIndex = -1; omitIndex < N_jackbins ; ++ omitIndex ) {
+      //////////////////////////////////////////////////////////
+      ////////////////////////FIT PROFILE///////////////////////
+      //////////////////////////////////////////////////////////
 
       nfwFits[ omitIndex + 1 ].setR_max( myHalo.getRmax() );
       nfTFits[ omitIndex + 1 ].setR_max( myHalo.getRmax() );
@@ -215,42 +233,6 @@ absorb all halos data into new structure, haloinfo maybe, binned
       einFits[ omitIndex + 1 ].setType( 2 );
       nfTFits[ omitIndex + 1 ].setType( 0 );
 
-
-      ////////////////////////////////////////////////////////////
-      ///////////////////Determine radial average/////////////////
-      ///////////////////Bin different source vals////////////////
-      ////////////////////////////////////////////////////////////
-
-
-
-      // Here loop over sources, indicating which index to omit (start at -1)
-      // Pass to dist and shear calculators, to indicate ommited index
-      if ( omitIndex > -1 ){
-                  std::cout <<"  Omitting subset " << omitIndex << std::endl;
-      logMessage( std::string("  Omitting subset ") +
-                  std::to_string( (long long) omitIndex ) );
-      }
-
-      // Array to bin distances, RTS, and their errors
-      double    distArr[ userInput.getNbins() ],
-                gTanArr[ userInput.getNbins() ],
-                gErrArr[ userInput.getNbins() ];
-
-
-      radialDistAverage( distArr, srcDArr, userInput, indexes, center, omitIndex );
-
-      logMessage( std::string("  Source distances averaged") );
-
-      radialShearAverage( gTanArr, gErrArr, indexes, g_totMap, srcErrArr, srcDArr, userInput, center, omitIndex );
-
-      logMessage( std::string("  Shear values averaged") );
-
-      std::cout << "  Sources averaged" << std::endl;
-
-
-      //////////////////////////////////////////////////////////
-      ////////////////////////FIT PROFILE///////////////////////
-      //////////////////////////////////////////////////////////
 
       // Attempts to fit the density using the radial averages of distance and RTS
 

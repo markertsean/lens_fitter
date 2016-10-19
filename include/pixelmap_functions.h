@@ -6,18 +6,19 @@
 #include "lensing_classes.h"
 #include "my_utilities.h"
 
-// Collapses axis into M, using weighted sum
-void    collapseM(  userInfo       u ,
-                    double  *    arr ,
-                    int     *      N ,
-                    double  ** m_Arr );
 
-// Collapses axis into M, using weighted sum
-void    collapseM(  userInfo       u ,
-                    double  *    arr ,
-                    int     *      N ,
-                    double  ** m_Arr ,
-                    int     ** n_Arr );
+// Will take and fill outArr with weighted average of a collapsed mass,
+//   setting as our 1D arrays to pass to fitter
+int *   avgMArr  (  userInfo        u ,  // User info
+                    double   * inpArr ,  // JIMBGR array to collapse into R
+                    int      * inpN   ,  // Array containing number of sources to weight by
+                    int             i ,  // Integration index
+                    int             b ,  // b/a ratio   index
+                    int             g ,  // gamma       index
+                    int     omitIndex ,  // Index to omit for jack knifing
+                    double  ** outArr ); // Array to allocate and populate with average
+
+
 
 
 // Box-Muller transformation to provide gaussian distribution

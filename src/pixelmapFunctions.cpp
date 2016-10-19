@@ -2,6 +2,48 @@
 #include "lensing_classes.h"
 #include "pixelmap_functions.h"
 
+
+// Will take and fill outArr with weighted average of a collapsed mass,
+//   setting as our 1D arrays to pass to fitter
+int *   avgMArr  (  userInfo        u ,  // User info
+                    double   * inpArr ,  // JIMBGR array to collapse into R
+                    int      * inpN   ,  // Array containing number of sources to weight by
+                    int             i ,  // Integration index
+                    int             b ,  // b/a ratio   index
+                    int             g ,  // gamma       index
+                    int     omitIndex ,  // Index to omit for jack knifing
+                    double  ** outArr )  // Array to allocate and populate with average
+{
+
+           * outArr = new double[ u.getNbins() ] (); // Allocate our output array
+    int    * outN   = new int   [ u.getNbins() ] (); // Allocate our return array
+
+    for ( int m = 0 ; m < u.getN_MBin() ; ++m ){     // We are collapsing M
+    for ( int r = 0 ; r < u.getNbins () ; ++r ){
+    for ( int j = 0 ; j < u.getN_JBin() ; ++j ){
+
+        if ( j != omitIndex )                        // Will omit an index from jacknifing, to avoid use -1
+        {
+            int k = u.getSrcBin( j, i, m, b, g, r ) ;
+
+            (*outArr)[ r ] += inpArr[k] * inpN[k] ;  // Weighted sum
+              outN   [ r ] +=             inpN[k] ;
+        }
+    }
+    }
+    }
+
+
+    for ( int r = 0 ; r < u.getNbins() ; ++r )       // Normalize the sum
+    {
+        (*outArr)[ r ] /= outN[ r ];
+    }
+
+    return outN;
+}
+
+
+
 // Collapses axis into M, using weighted sum
 void    collapseM(  userInfo       u ,
                     double  *    arr ,
