@@ -199,14 +199,17 @@ absorb all halos data into new structure, haloinfo maybe, binned
             int* N_arr = avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &dArr );
 
 
-// Need to generate errors
+            // Uncertainty array
+            double *eArr = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
+
+                        addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
+                        addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
 
 
 
 
-
-
+            delete [] eArr  ;
             delete [] gTot  ;
             delete [] gTan  ;
             delete [] dArr  ;

@@ -44,113 +44,6 @@ int *   avgMArr  (  userInfo        u ,  // User info
 
 
 
-// Collapses axis into M, using weighted sum
-void    collapseM(  userInfo       u ,
-                    double  *    arr ,
-                    int     *      N ,
-                    double  ** m_Arr )
-{
-
-    int      n_m   = u.getN_srcJackBin() / u.getN_MBin();
-           * m_Arr = new double [ n_m ];
-    int    * n_Arr = new int    [ n_m ];
-
-    // Does weighted sum
-    for ( int j = 0; j < u.getN_JBin(); ++j ) {
-    for ( int i = 0; j < u.getN_IBin(); ++i ) {
-    for ( int m = 0; j < u.getN_MBin(); ++m ) {
-    for ( int b = 0; j < u.getN_BBin(); ++b ) {
-    for ( int g = 0; j < u.getN_GBin(); ++g ) {
-    for ( int r = 0; j < u.getNbins (); ++r ) {
-
-        int     k    = u.getSrcBin  ( j, i, m, b, g, r );
-        int    kk    = u.getSrcMBin ( j, i,    b, g, r );
-
-        (*m_Arr)[ kk ] += arr[k] * N[k] ;
-          n_Arr [ kk ] +=          N[k] ;
-
-    }
-    }
-    }
-    }
-    }
-    }
-
-    // Does division of weighted sum
-    for ( int j = 0; j < u.getN_JBin(); ++j ) {
-    for ( int i = 0; j < u.getN_IBin(); ++i ) {
-    for ( int b = 0; j < u.getN_BBin(); ++b ) {
-    for ( int g = 0; j < u.getN_GBin(); ++g ) {
-    for ( int r = 0; j < u.getNbins (); ++r ) {
-
-        int    kk    = u.getSrcMBin ( j, i,    b, g, r );
-
-        (*m_Arr)[ kk ] /= n_Arr[ kk ] ;
-
-    }
-    }
-    }
-    }
-    }
-
-}
-
-
-// Collapses axis into M, using weighted sum
-void    collapseM(  userInfo       u ,
-                    double  *    arr ,
-                    int     *      N ,
-                    double  ** m_Arr ,
-                    int     ** n_Arr )
-{
-
-    int      n_m   = u.getN_srcJackBin() / u.getN_MBin();
-           * m_Arr = new double [ n_m ];
-           * n_Arr = new int    [ n_m ];
-
-    // Does weighted sum
-    for ( int j = 0; j < u.getN_JBin(); ++j ) {
-    for ( int i = 0; j < u.getN_IBin(); ++i ) {
-    for ( int m = 0; j < u.getN_MBin(); ++m ) {
-    for ( int b = 0; j < u.getN_BBin(); ++b ) {
-    for ( int g = 0; j < u.getN_GBin(); ++g ) {
-    for ( int r = 0; j < u.getNbins (); ++r ) {
-
-        int        k    = u.getSrcBin  ( j, i, m, b, g, r );
-        int       kk    = u.getSrcMBin ( j, i,    b, g, r );
-
-        (*m_Arr)[ kk ] += arr[k] * N[k] ;
-        (*n_Arr)[ kk ] +=          N[k] ;
-
-    }
-    }
-    }
-    }
-    }
-    }
-
-    // Does division of weighted sum
-    for ( int j = 0; j < u.getN_JBin(); ++j ) {
-    for ( int i = 0; j < u.getN_IBin(); ++i ) {
-    for ( int b = 0; j < u.getN_BBin(); ++b ) {
-    for ( int g = 0; j < u.getN_GBin(); ++g ) {
-    for ( int r = 0; j < u.getNbins (); ++r ) {
-
-        int       kk    = u.getSrcMBin ( j, i,    b, g, r );
-
-        (*m_Arr)[ kk ] /= (*n_Arr)[ kk ] ;
-
-    }
-    }
-    }
-    }
-    }
-
-}
-
-
-
-
 // Bon-Muller transformation to provide gaussian distribution
 double gaussErr( double sigma ,
                  int     Ngal )
@@ -171,6 +64,31 @@ double gaussErr( double sigma ,
 
   return x1 * w * sigma / std::sqrt( Ngal );
 }
+
+
+
+// Add gaussian error to arrays to fit
+void  addgaussUncertaintyArr( double       *inpArr ,
+                              double         sigma ,  // Amplitude of shape noise
+                              int          * Nsrc  ,  // Array containing number of sources in each bin
+                              int       N_elements )  // Number of elements in the array
+{
+    for ( int i = 0; i < N_elements; ++i )
+        inpArr[i] = inpArr[i] + gaussErr( sigma, Nsrc[i] );
+}
+
+
+// Generates gaussian error to include in error arrays
+double * gaussUncertaintyArr( double         sigma ,  // Amplitude of shape noise
+                              int          * Nsrc  ,  // Array containing number of sources in each bin
+                              int       N_elements )  // Number of elements in the array
+{
+    double * outArr = new double [ N_elements ] ;
+
+    for ( int i = 0; i < N_elements; ++i )
+        outArr[i] = std::sqrt( sigma*sigma / Nsrc[i]);
+}
+
 
 
 

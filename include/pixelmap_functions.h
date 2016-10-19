@@ -18,7 +18,17 @@ int *   avgMArr  (  userInfo        u ,  // User info
                     int     omitIndex ,  // Index to omit for jack knifing
                     double  ** outArr ); // Array to allocate and populate with average
 
+// Add gaussian error to arrays to fit
+void  addgaussUncertaintyArr( double       *inpArr ,
+                              double         sigma ,  // Amplitude of shape noise
+                              int          * Nsrc  ,  // Array containing number of sources in each bin
+                              int       N_elements ); // Number of elements in the array
 
+
+// Generates gaussian error array to include in error arrays
+double * gaussUncertaintyArr( double         sigma ,  // Amplitude of shape noise
+                              int          * Nsrc  ,  // Array containing number of sources in each bin
+                              int       N_elements ); // Number of elements in the array
 
 
 // Box-Muller transformation to provide gaussian distribution
