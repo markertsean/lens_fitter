@@ -5,6 +5,14 @@
 #include <iostream>
 
 
+bool readShortFile( userInfo    u ,
+                    double * gTot ,
+                    double * gTan ,
+                    double * d    ,
+                    int    * n_s  ,
+                    int    * n_h  );
+
+
 void readInpFile   (  	      userInfo        &inpInfo ,  // Object we write to, contains parameters governing options
                     const std::string     userFileName ); // Name of the file to read
 

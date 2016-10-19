@@ -114,7 +114,8 @@ int main(int arg,char **argv){
 
 
 
-// Only reading in halo files
+    // Only reading in halo files
+    if ( !readShortFile(userInput, gTotJackArr, gTanJackArr, dJackArr, nJackArr, ninArr) )
     {
         int N_files = readSources( userInput, dJackArr, gTotJackArr,gTanJackArr, nJackArr, ninArr ) ;
 
@@ -129,6 +130,9 @@ int main(int arg,char **argv){
         writeShort( userInput, gTotJackArr, gTanJackArr, dJackArr, nJackArr, ninArr );
 
 
+    } else
+    {
+            std::cout << "Read stored file" << std::endl;
     }
 
 
@@ -136,12 +140,42 @@ int main(int arg,char **argv){
     ///////////////////Loops over source bins///////////////////
     /////////////////////Calculate the fits/////////////////////
     ////////////////////////////////////////////////////////////
+/*
+Loops:
+    j errs
+    i=0, i=1
+    All M
+    b&g looked at
 
+    j errs
+    Collapsed b&g into M
+    All i
+    All M
+
+absorb all halos data into new structure, haloinfo maybe, binned
+//*/
+
+    // Generate collapsed mass stuff
+
+    double * gTotM ;
+    double * gTanM ;
+    double *    dM ;
+    int    *    nM ;
+
+    collapseM( userInput, gTotJackArr, nJackArr, &gTotM );
+    collapseM( userInput, gTanJackArr, nJackArr, &gTanM );
+    collapseM( userInput,    dJackArr, nJackArr, &   dM,  &nM );
+
+    // Loop over each bin, doing jacknife analysis
 /*
     for ( int i = 0; i <    1;++i){//userInput.getN_IBin(); ++i ){
     for ( int m = 0; m <    1;++m){//userInput.getN_MBin(); ++m ){
     for ( int b = 0; b <    1;++b){//userInput.getN_BBin(); ++b ){
     for ( int g = 0; g <    1;++g){//userInput.getN_GBin(); ++g ){
+
+
+
+    for ( int i = 0; i < userInput.getN_Jbin(); ++j ){
 
         densProfile nfwFits[ N_jackbins + 1 ];
         densProfile nfTFits[ N_jackbins + 1 ];
@@ -149,11 +183,19 @@ int main(int arg,char **argv){
 
 
     }
+
+
+
+
+    }
     }
     }
     }
 
-
+    delete [] gTotM;
+    delete [] gTanM;
+    delete []    gM;
+    delete []    nM;
 
 /*
     densProfile nfwFits[ N_jackbins + 1 ];

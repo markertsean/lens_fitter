@@ -6,6 +6,18 @@
 #include "lensing_classes.h"
 #include "my_utilities.h"
 
+// Collapses axis into M, using weighted sum
+void    collapseM(  userInfo       u ,
+                    double  *    arr ,
+                    int     *      N ,
+                    double  ** m_Arr );
+
+// Collapses axis into M, using weighted sum
+void    collapseM(  userInfo       u ,
+                    double  *    arr ,
+                    int     *      N ,
+                    double  ** m_Arr ,
+                    int     ** n_Arr );
 
 
 // Box-Muller transformation to provide gaussian distribution

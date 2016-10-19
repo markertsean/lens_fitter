@@ -207,6 +207,13 @@ class userInfo{
                                                                         + g * N_bins
                                                                         + bin;                                      }
 
+    int    getSrcMBin  (  int j, int i, int b, int g, int bin ) { return   j * N_bins * G_Nbins * B_Nbins * ( I_Nbins + 1 )
+                                                                         + i * N_bins * G_Nbins * B_Nbins
+                                                                         + b * N_bins * G_Nbins
+                                                                         + g * N_bins
+                                                                         + bin;                                      }
+
+
 
   private:
 

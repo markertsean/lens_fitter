@@ -1,47 +1,65 @@
 #include <cstring>
 #include <cmath>
+#include <vector>
 #include <CCfits/CCfits>
 #include <slsimlib.h>
 #include <stdio.h>
 #include "lensing_classes.h"
 
 
-/*
-"%sHalo_%010li_%06.1f_Sources.dat, u.getOutputPath.c_str(), h.getID(), integ"
-  FILE *pFile;
+bool readShortFile( userInfo    u ,
+                    double * gTot ,
+                    double * gTan ,
+                    double * d    ,
+                    int    * n_s  ,
+                    int    * n_h  )
+{
+    std::string storedData = "storedData.dat";
 
-  pFile = fopen( fileName, "w" );
+    std::ifstream file( storedData.c_str() );
 
-  fprintf( pFile , "ID          %10li\n" , h.getID   () );
-  fprintf( pFile , "M           %14.6e\n", h.getM    () );
-  fprintf( pFile , "C           %10.6f\n", h.getC    () );
-  fprintf( pFile , "R_max       %10.6f\n", h.getRmax () );
-  fprintf( pFile , "Z           %10.6f\n", h.getZ    () );
-  fprintf( pFile , "b/a         %10.6f\n", h.getBA   () );
-  fprintf( pFile , "c/a         %10.6f\n", h.getCA   () );
-  fprintf( pFile , "phi         %10.6f\n", h.getPhi  () );
-  fprintf( pFile , "theta       %10.6f\n", h.getTheta() );
-  fprintf( pFile , "alpha       %10.6f\n", h.getAlpha() );
-  fprintf( pFile , "gamma       %10.6f\n", h.getGamma() );
+    if ( ! file.is_open() )
+        return false;
 
-  fprintf( pFile , "IntegLength %10.6f\n", u.getIntegLength() );
-  fprintf( pFile , "IntegMass   %14.8e\n", u.getImageMass() );
-  fprintf( pFile , "FOV         %10.6f\n", u.getPhysFOV() );
-  fprintf( pFile , "N_pixH      %10i\n"  , u.getNpixH  () );
-  fprintf( pFile , "N_pixV      %10i\n"  , u.getNpixV  () );
+    // Reads N_halo info
+    for ( int i = 0; i < u.getN_IBin(); ++i ){
+    for ( int m = 0; m < u.getN_MBin(); ++m ){
+    for ( int b = 0; b < u.getN_BBin(); ++b ){
+    for ( int g = 0; g < u.getN_GBin(); ++g ){
+        int k = u.getN_haloBin( i, m, b, g );
+        file >>  n_h[ k ];
+    }
+    }
+    }
+    }
 
-  fprintf( pFile , "N_src       %10i\n"  , u.getNsrc      () );
-  fprintf( pFile , "Z_src       %10.6f\n", u.getSourceZ   () );
-  fprintf( pFile , "sigma_shape %10.6f\n", u.getShapeNoise() );
+    // Reads tables
+    for ( int j = 0; j < u.getN_JBin(); ++j ){
+    for ( int i = 0; i < u.getN_IBin(); ++i ){
+    for ( int m = 0; m < u.getN_MBin(); ++m ){
+    for ( int b = 0; b < u.getN_BBin(); ++b ){
+    for ( int g = 0; g < u.getN_GBin(); ++g ){
+
+        int k = u.getSrcBin( j, i, m, b, g, 0 );
+
+        // Outputs each row as group
+        for ( int r = 0; r < u.getNbins(); ++r ){  file >>  n_s[ k + r ] ; }
+        for ( int r = 0; r < u.getNbins(); ++r ){  file >>    d[ k + r ] ; }
+        for ( int r = 0; r < u.getNbins(); ++r ){  file >> gTan[ k + r ] ; }
+        for ( int r = 0; r < u.getNbins(); ++r ){  file >> gTot[ k + r ] ; }
 
 
-avgVal += gMap.getValue( k * u.getNpixH() + j );
-avgVal2+= tMap.getValue( k * u.getNpixH() + j );
-n_srcs += 1;
+    }
+    }
+    }
+    }
+    }
 
-fprintf( pFile , "%10.6f %14.8e %14.8e\n", dArr[i], avgVal / n_srcs, avgVal2 / n_srcs );
-//*/
 
+    file.close() ;
+
+    return true;
+}
 
 void readSourceFile(   FILE      * pFile ,
                        userInfo    u     ,  // User input
