@@ -5,12 +5,12 @@
 #include <iostream>
 
 
-bool readShortFile( userInfo    u ,
-                    double * gTot ,
-                    double * gTan ,
-                    double * d    ,
-                    int    * n_s  ,
-                    int    * n_h  );
+bool readShortFile( userInfo      u ,
+                    double   * gTot ,
+                    double   * gTan ,
+                    double   * d    ,
+                    int      * n_s  ,
+                    int      * n_h  );
 
 
 void readInpFile   (  	      userInfo        &inpInfo ,  // Object we write to, contains parameters governing options
@@ -22,7 +22,8 @@ int  readSources(  userInfo    u    ,  // User input
                    double    * gTot ,  // Array of gTot
                    double    * gTan ,  // Array of gTan
                    int       * N    ,  // Array counting number in each bin
-                   int       * N_h  ); // Array containing halo count in each bin
+                   int       * N_h  ,  // Array containing halo count in each bin
+                   haloInfo  * h    );
 
 
 einTable readFoxH  (          userInfo        &     u  ,

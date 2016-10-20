@@ -99,25 +99,30 @@ int main(int arg,char **argv){
 
 
     // Arrays containing avgs, binned
-    double * gTotJackArr ;
-    double * gTanJackArr ;
-    double *    dJackArr ;
-    int    *    nJackArr ; // Source counts in a I, M, B, G, R bin
+    double *  gTotJackArr ;
+    double *  gTanJackArr ;
+    double *     dJackArr ;
+    int    *     nJackArr ; // Source counts in a I, M, B, G, R bin
+    int    *       ninArr ; // Halo   counts in a I, M, B, G    bin
 
-    int    *      ninArr ; // Halo   counts in a I, M, B, G    bin
-
-    gTotJackArr = new double[ userInput.getN_srcJackBin()                        ] () ;
-    gTanJackArr = new double[ userInput.getN_srcJackBin()                        ] () ;
-       dJackArr = new double[ userInput.getN_srcJackBin()                        ] () ;
-       nJackArr = new    int[ userInput.getN_srcJackBin()                        ] () ;
-         ninArr = new    int[ userInput.getN_srcJackBin() / userInput.getNbins() ] () ;
+    haloInfo * binnedHalo ;
 
 
+    gTotJackArr = new   double[ userInput.getN_srcJackBin()                        ] () ;
+    gTanJackArr = new   double[ userInput.getN_srcJackBin()                        ] () ;
+       dJackArr = new   double[ userInput.getN_srcJackBin()                        ] () ;
+       nJackArr = new      int[ userInput.getN_srcJackBin()                        ] () ;
+         ninArr = new      int[ userInput.getN_srcBin    () / userInput.getNbins() ] () ;
 
-    // Only reading in halo files
+    binnedHalo  = new haloInfo[ userInput.getN_srcBin    () / userInput.getNbins() ] () ;
+
+
+
+// read haloinfo into files
+// Only reading in halo files
     if ( !readShortFile(userInput, gTotJackArr, gTanJackArr, dJackArr, nJackArr, ninArr) )
     {
-        int N_files = readSources( userInput, dJackArr, gTotJackArr,gTanJackArr, nJackArr, ninArr ) ;
+        int N_files = readSources( userInput, dJackArr, gTotJackArr,gTanJackArr, nJackArr, ninArr, binnedHalo ) ;
 
         if( N_files == 0 )
         {
@@ -126,7 +131,7 @@ int main(int arg,char **argv){
         }
 
             std::cout << "Read " << N_files << " files" << std::endl;
-
+// writehaloinfo into files
         writeShort( userInput, gTotJackArr, gTanJackArr, dJackArr, nJackArr, ninArr );
 
 
