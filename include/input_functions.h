@@ -6,11 +6,12 @@
 
 
 bool readShortFile( userInfo      u ,
-                    double   * gTot ,
-                    double   * gTan ,
-                    double   * d    ,
-                    int      * n_s  ,
-                    int      * n_h  );
+                    double    * gTot ,
+                    double    * gTan ,
+                    double    * d    ,
+                    int       * n_s  ,
+                    int       * n_h  ,
+                    haloInfo  * bh   );
 
 
 void readInpFile   (  	      userInfo        &inpInfo ,  // Object we write to, contains parameters governing options

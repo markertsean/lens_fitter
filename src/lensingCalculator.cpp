@@ -120,9 +120,9 @@ int main(int arg,char **argv){
 
 // read haloinfo into files
 // Only reading in halo files
-    if ( !readShortFile(userInput, gTotJackArr, gTanJackArr, dJackArr, nJackArr, ninArr) )
+    if (           !readShortFile( userInput, gTotJackArr, gTanJackArr,    dJackArr, nJackArr, ninArr, binnedHalo ) )
     {
-        int N_files = readSources( userInput, dJackArr, gTotJackArr,gTanJackArr, nJackArr, ninArr, binnedHalo ) ;
+        int N_files = readSources( userInput,    dJackArr, gTotJackArr, gTanJackArr, nJackArr, ninArr, binnedHalo ) ;
 
         if( N_files == 0 )
         {
@@ -131,8 +131,10 @@ int main(int arg,char **argv){
         }
 
             std::cout << "Read " << N_files << " files" << std::endl;
-// writehaloinfo into files
-        writeShort( userInput, gTotJackArr, gTanJackArr, dJackArr, nJackArr, ninArr );
+
+        writeShort(                userInput, gTotJackArr, gTanJackArr,    dJackArr, nJackArr, ninArr, binnedHalo );
+
+            std::cout << "Outputted short file  " << std::endl;
 
 
     } else
@@ -160,6 +162,7 @@ Loops:
 absorb all halos data into new structure, haloinfo maybe, binned
 //*/
 
+
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
     for ( int i = 0; i <    1;++i){//userInput.getN_IBin(); ++i ){
@@ -167,59 +170,77 @@ absorb all halos data into new structure, haloinfo maybe, binned
     for ( int g = 0; g <    1;++g){//userInput.getN_GBin(); ++g ){
 
 
-        // Will store density profile fits for each jacknife bin, + full sample as 0th index
-        densProfile nfwFits_tot[ N_jackbins + 1 ];
-        densProfile nfTFits_tot[ N_jackbins + 1 ];
-        densProfile einFits_tot[ N_jackbins + 1 ];
+        // Count number of halos in collapsed bin
+        int N_inbin = 0;
+        for ( int m = 0; m < userInput.getN_MBin(); ++m )
+        {
+            int index = userInput.getN_haloBin( i, m, b, g );
+            N_inbin += ninArr[index] ;
+        }
 
-        densProfile nfwFits_tan[ N_jackbins + 1 ];
-        densProfile nfTFits_tan[ N_jackbins + 1 ];
-        densProfile einFits_tan[ N_jackbins + 1 ];
 
-
-        // Loop over jacknife bins, ommiting from the sum whichever jack knife bins
-        // if omitindex == -1, full sample
-        for ( int j = 0; j < N_jackbins + 1; ++j )
+        // Only analyze bin in halos are present
+        if ( N_inbin > 0 )
         {
 
-            int omitIndex = j - 1 ;
+            std::cout << "Collapsing M bins, i = " << i << " b = " << b << " g = " << g << std::endl;
 
-            // Here loop over sources, indicating which index to omit (start at -1)
-            // Pass to dist and shear calculators, to indicate ommited index
-            if ( omitIndex > -1 )
+
+            // Will store density profile fits for each jacknife bin, + full sample as 0th index
+            densProfile nfwFits_tot[ N_jackbins + 1 ];
+            densProfile nfTFits_tot[ N_jackbins + 1 ];
+            densProfile einFits_tot[ N_jackbins + 1 ];
+
+            densProfile nfwFits_tan[ N_jackbins + 1 ];
+            densProfile nfTFits_tan[ N_jackbins + 1 ];
+            densProfile einFits_tan[ N_jackbins + 1 ];
+
+
+            // Loop over jacknife bins, ommiting from the sum whichever jack knife bins
+            // if omitindex == -1, full sample
+            for ( int j = 0; j < N_jackbins + 1; ++j )
             {
-                            std::cout <<"  Omitting subset " << omitIndex << std::endl;
-                logMessage( std::string("  Omitting subset ") +
-                            std::to_string(    (long long)      omitIndex ) );
+
+                int omitIndex = j - 1 ;
+
+                // Here loop over sources, indicating which index to omit (start at -1)
+                // Pass to dist and shear calculators, to indicate ommited index
+                if ( omitIndex > -1 )
+                {
+                                std::cout <<"  Omitting subset " << omitIndex << std::endl;
+                    logMessage( std::string("  Omitting subset ") +
+                                std::to_string(    (long long)      omitIndex ) );
+                }
+
+
+                // Arrays to populate by calculating averages at index w/ collapsed M
+                double *gTot ;
+                double *gTan ;
+                double *dArr ;
+
+                             avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTot );
+                             avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTan );
+                int* N_arr = avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &dArr );
+
+
+                // Uncertainty array
+                double *eArr;// = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
+
+                            addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
+                            addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
+
+
+
+
+
+//                delete [] eArr  ;
+                delete [] gTot  ;
+                delete [] gTan  ;
+                delete [] dArr  ;
+                delete [] N_arr ;
+//*/
+
             }
-
-
-            // Arrays to populate by calculating averages at index w/ collapsed M
-            double *gTot ;
-            double *gTan ;
-            double *dArr ;
-
-                         avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTot );
-                         avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTan );
-            int* N_arr = avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &dArr );
-
-
-            // Uncertainty array
-            double *eArr = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
-
-                        addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
-                        addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
-
-
-
-
-
-            delete [] eArr  ;
-            delete [] gTot  ;
-            delete [] gTan  ;
-            delete [] dArr  ;
-            delete [] N_arr ;
-
         }
     }
     }

@@ -7,12 +7,13 @@
 #include "lensing_classes.h"
 
 
-bool readShortFile( userInfo    u ,
-                    double * gTot ,
-                    double * gTan ,
-                    double * d    ,
-                    int    * n_s  ,
-                    int    * n_h  )
+bool readShortFile( userInfo      u ,
+                    double   * gTot ,
+                    double   * gTan ,
+                    double   * d    ,
+                    int      * n_s  ,
+                    int      * n_h  ,
+                    haloInfo * bh   )
 {
     std::string storedData = "storedData.dat";
 
@@ -20,6 +21,34 @@ bool readShortFile( userInfo    u ,
 
     if ( ! file.is_open() )
         return false;
+
+
+
+    // Reads binned halo info, averages for the bins
+    for ( int i = 0; i < u.getN_IBin(); ++i ){
+    for ( int m = 0; m < u.getN_MBin(); ++m ){
+    for ( int b = 0; b < u.getN_BBin(); ++b ){
+    for ( int g = 0; g < u.getN_GBin(); ++g ){
+
+        int    H_bin = u.getN_haloBin( i, m, b, g    );
+        double  temp ;
+
+        file >> temp ; bh[ H_bin ].setM     ( temp );
+        file >> temp ; bh[ H_bin ].setC     ( temp );
+        file >> temp ; bh[ H_bin ].setBA    ( temp );
+        file >> temp ; bh[ H_bin ].setCA    ( temp );
+        file >> temp ; bh[ H_bin ].setRmax  ( temp );
+        file >> temp ; bh[ H_bin ].setPhi   ( temp );
+        file >> temp ; bh[ H_bin ].setTheta ( temp );
+        file >> temp ; bh[ H_bin ].setGamma ( temp );
+        file >> temp ; bh[ H_bin ].setAlpha ( temp );
+
+    }
+    }
+    }
+    }
+
+
 
     // Reads N_halo info
     for ( int i = 0; i < u.getN_IBin(); ++i ){

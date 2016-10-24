@@ -70,17 +70,40 @@ std::string getHaloFile ( int index ){
 
 
 // Writes a short, easy read in file
-void writeShort( userInfo    u ,
-                 double * gTot ,
-                 double * gTan ,
-                 double * d    ,
-                 int    * n_s  ,
-                 int    * n_h  )
+void writeShort( userInfo      u ,
+                 double   * gTot ,
+                 double   * gTan ,
+                 double   * d    ,
+                 int      * n_s  ,
+                 int      * n_h  ,
+                 haloInfo * bh   )
 {
     std::string storedData = "storedData.dat";
 
     FILE *pFile ;
     pFile = fopen( storedData.c_str(), "w" );
+
+
+    // Prints binned halo info, averages for the bins
+    for ( int i = 0; i < u.getN_IBin(); ++i ){
+    for ( int m = 0; m < u.getN_MBin(); ++m ){
+    for ( int b = 0; b < u.getN_BBin(); ++b ){
+    for ( int g = 0; g < u.getN_GBin(); ++g ){
+
+        int  H_bin = u.getN_haloBin( i, m, b, g    );
+        fprintf( pFile, "%14.6e %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f\n", bh[H_bin].getM     () ,
+                                                                                    bh[H_bin].getC     () ,
+                                                                                    bh[H_bin].getBA    () ,
+                                                                                    bh[H_bin].getCA    () ,
+                                                                                    bh[H_bin].getRmax  () ,
+                                                                                    bh[H_bin].getPhi   () ,
+                                                                                    bh[H_bin].getTheta () ,
+                                                                                    bh[H_bin].getGamma () ,
+                                                                                    bh[H_bin].getAlpha () );
+    }
+    }
+    }
+    }
 
 
     // Prints N_halo info
