@@ -230,6 +230,38 @@ absorb all halos data into new structure, haloinfo maybe, binned
                             addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
 
+                // Generates average info we will be using to compare against
+                haloInfo avgHalo = avgMHaloInfo( userInput, binnedHalo, ninArr, i, b, g ) ;
+
+
+                nfwFits[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+                nfTFits[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+                einFits[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+
+                nfwFits[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
+                nfTFits[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
+                einFits[ omitIndex + 1 ].setType( 2 ); // Sets as Einasto
+
+
+
+                // Attempts to fit the density using the radial averages of distance and RTS
+
+                            std::cout <<"  Calculating NFW fit..." << std::endl;
+                logMessage( std::string("  Calculating NFW fit...") );
+                rollingFitDensProfile( nfwFits[ omitIndex + 1], myHalo, userInput, gTanArr, distArr, gErrArr, cosmo );
+
+
+                            std::cout <<"  Calculating NFW trunc fit..." << std::endl;
+                logMessage( std::string("  Calculating NFW trunc fit...") );
+                rollingFitDensProfile( nfTFits[ omitIndex + 1], myHalo, userInput, gTanArr, distArr, gErrArr, cosmo );
+
+
+                            std::cout <<"  Calculating EIN fit..." << std::endl;
+                logMessage( std::string("  Calculating EIN fit...") );
+                rollingFitDensProfile( einFits[ omitIndex + 1], myHalo, userInput, gTanArr, distArr, gErrArr, cosmo );
+
+                std::cout << std::endl ;
+
 
 
 

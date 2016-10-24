@@ -35,6 +35,17 @@ double * gaussUncertaintyArr( double         sigma ,  // Amplitude of shape nois
 double gaussErr( double   sigma ,
                  int       Ngal ); // Number of galaxies
 
+
+// Collapses average array to match that of a collapsed M
+haloInfo  avgMHaloInfo( userInfo    u ,
+                        haloInfo  * h ,
+                        int       * n ,
+                        int         i ,
+                        int         b ,
+                        int         g );
+
+
+
 // Calculates jackknife errors for each profile set
 void jacknife( densProfile  *profile ,
                int         N_samples ,

@@ -93,6 +93,64 @@ double * gaussUncertaintyArr( double         sigma ,  // Amplitude of shape nois
 
 
 
+// Collapses average array to match that of a collapsed M
+haloInfo  avgMHaloInfo( userInfo    u ,
+                        haloInfo  * h ,
+                        int       * n ,
+                        int         i ,
+                        int         b ,
+                        int         g )
+{
+
+    haloInfo outH;
+
+    double M  = 0 ;
+    double c  = 0 ;
+    double ba = 0 ;
+    double ca = 0 ;
+    double rm = 0 ;
+    double p  = 0 ;
+    double t  = 0 ;
+    double ga = 0 ;
+    double a  = 0 ;
+
+    int    N  = 0 ;
+
+    for ( int m = 0; m < u.getN_MBin(); ++m ){
+
+        int index = u.getN_haloBin( i, m, b, g );
+
+        if ( n[ index ] > 0 )
+        {
+
+            M   = ( M  * N + h[ index ].getM     () * n[ index ] ) / ( N + n[ index ] ) ;
+            c   = ( c  * N + h[ index ].getC     () * n[ index ] ) / ( N + n[ index ] ) ;
+            ba  = ( ba * N + h[ index ].getBA    () * n[ index ] ) / ( N + n[ index ] ) ;
+            ca  = ( ca * N + h[ index ].getCA    () * n[ index ] ) / ( N + n[ index ] ) ;
+            rm  = ( rm * N + h[ index ].getRmax  () * n[ index ] ) / ( N + n[ index ] ) ;
+            p   = ( p  * N + h[ index ].getPhi   () * n[ index ] ) / ( N + n[ index ] ) ;
+            t   = ( t  * N + h[ index ].getTheta () * n[ index ] ) / ( N + n[ index ] ) ;
+            ga  = ( ga * N + h[ index ].getGamma () * n[ index ] ) / ( N + n[ index ] ) ;
+            a   = ( a  * N + h[ index ].getAlpha () * n[ index ] ) / ( N + n[ index ] ) ;
+
+            N  +=            n[ index ] ;
+        }
+    }
+
+    outH.setM       (  M );
+    outH.setC       (  c );
+    outH.setBA      ( ba );
+    outH.setCA      ( ca );
+    outH.setRmax    ( rm );
+    outH.setPhi     (  p );
+    outH.setTheta   (  t );
+    outH.setGamma   ( ga );
+    outH.setAlpha   (  a );
+
+    return outH;
+}
+
+
 
 
 // Calculates jackknife errors for each profile set
