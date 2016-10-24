@@ -234,13 +234,19 @@ absorb all halos data into new structure, haloinfo maybe, binned
                 haloInfo avgHalo = avgMHaloInfo( userInput, binnedHalo, ninArr, i, b, g ) ;
 
 
-                nfwFits[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
-                nfTFits[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
-                einFits[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+                nfwFits_tot[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+                nfTFits_tot[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+                einFits_tot[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+                nfwFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+                nfTFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+                einFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
 
-                nfwFits[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
-                nfTFits[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
-                einFits[ omitIndex + 1 ].setType( 2 ); // Sets as Einasto
+                nfwFits_tot[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
+                nfTFits_tot[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
+                einFits_tot[ omitIndex + 1 ].setType( 2 ); // Sets as Einasto
+                nfwFits_tan[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
+                nfTFits_tan[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
+                einFits_tan[ omitIndex + 1 ].setType( 2 ); // Sets as Einasto
 
 
 
@@ -248,17 +254,20 @@ absorb all halos data into new structure, haloinfo maybe, binned
 
                             std::cout <<"  Calculating NFW fit..." << std::endl;
                 logMessage( std::string("  Calculating NFW fit...") );
-                rollingFitDensProfile( nfwFits[ omitIndex + 1], myHalo, userInput, gTanArr, distArr, gErrArr, cosmo );
+                rollingFitDensProfile( nfwFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
+                rollingFitDensProfile( nfwFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
 
                             std::cout <<"  Calculating NFW trunc fit..." << std::endl;
                 logMessage( std::string("  Calculating NFW trunc fit...") );
-                rollingFitDensProfile( nfTFits[ omitIndex + 1], myHalo, userInput, gTanArr, distArr, gErrArr, cosmo );
+                rollingFitDensProfile( nfTFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
+                rollingFitDensProfile( nfTFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
 
                             std::cout <<"  Calculating EIN fit..." << std::endl;
                 logMessage( std::string("  Calculating EIN fit...") );
-                rollingFitDensProfile( einFits[ omitIndex + 1], myHalo, userInput, gTanArr, distArr, gErrArr, cosmo );
+                rollingFitDensProfile( einFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
+                rollingFitDensProfile( einFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
                 std::cout << std::endl ;
 
@@ -272,6 +281,36 @@ absorb all halos data into new structure, haloinfo maybe, binned
                 delete [] N_arr ;
 
             }
+
+
+                        std::cout << " Generating jack knife errors..." << std::endl;
+
+            // Calculate the jacknife errors from above fits
+
+            double nfwErr_tot[3]; // 0 is C, 1 is log(M), 2 is alpha
+            double nfTErr_tot[3];
+            double einErr_tot[3];
+
+            jacknife( nfwFits_tot, N_jackbins , nfwErr_tot );
+            jacknife( nfTFits_tot, N_jackbins , nfTErr_tot );
+            jacknife( einFits_tot, N_jackbins , einErr_tot );
+
+            double nfwErr_tan[3]; // 0 is C, 1 is log(M), 2 is alpha
+            double nfTErr_tan[3];
+            double einErr_tan[3];
+
+            jacknife( nfwFits_tan, N_jackbins , nfwErr_tan );
+            jacknife( nfTFits_tan, N_jackbins , nfTErr_tan );
+            jacknife( einFits_tan, N_jackbins , einErr_tan );
+
+
+                        std::cout <<"Done.              " << std::endl;
+            logMessage( std::string("Fitting complete"   ));
+
+
+
+//            writeProfileFits( userInput, myHalo, einFits[0], nfwFits[0], nfTFits[0], einErr, nfwErr, nfTErr, halo_index );
+
         }
     }
     }

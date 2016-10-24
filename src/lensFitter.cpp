@@ -232,7 +232,6 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
 //
 void rollingFitDensProfile(
                           densProfile   &  profile ,  // Density profile we are outputting
-                    const haloInfo      &     halo ,  // Info about parent halo
                     const userInfo               u ,  // Info from the user
                     const double       *      gArr ,  // RTS binned array we "observed"
                     const double       *      dArr ,  // Distance binned array
