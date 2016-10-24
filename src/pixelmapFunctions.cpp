@@ -83,10 +83,12 @@ double * gaussUncertaintyArr( double         sigma ,  // Amplitude of shape nois
                               int          * Nsrc  ,  // Array containing number of sources in each bin
                               int       N_elements )  // Number of elements in the array
 {
-    double * outArr = new double [ N_elements ] ;
+    double * outArr = new double [ N_elements ] ();
 
     for ( int i = 0; i < N_elements; ++i )
         outArr[i] = std::sqrt( sigma*sigma / Nsrc[i]);
+
+    return outArr;
 }
 
 

@@ -224,7 +224,7 @@ absorb all halos data into new structure, haloinfo maybe, binned
 
 
                 // Uncertainty array
-                double *eArr;// = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
+                double *eArr = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
                             addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
                             addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
@@ -233,12 +233,11 @@ absorb all halos data into new structure, haloinfo maybe, binned
 
 
 
-//                delete [] eArr  ;
+                delete [] eArr  ;
                 delete [] gTot  ;
                 delete [] gTan  ;
                 delete [] dArr  ;
                 delete [] N_arr ;
-//*/
 
             }
         }
