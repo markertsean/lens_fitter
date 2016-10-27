@@ -43,7 +43,7 @@ userInfo::userInfo(){
 
   outputPath = "data/";
 
-    sigmaC     =  1.0 ;
+    sigmaC     =  3.e9 ;
    shapeNoise  =  0.3 ; // Intrinsic shape noise in the sources
    N_bins      = 20   ; // Number of bins for radial averaging
    num_threads =  1   ; // Number of threads for parallel processing
@@ -59,7 +59,7 @@ userInfo::userInfo(){
   alphaMax =  0.68;
 
   maxFitAttempts = 5e2   ; // Maximum number of steps to roll ball, or times to reproduce
-   N_chromosomes = 1e3   ; // Number of chromosomes or balls
+   N_chromosomes = 1e4   ; // Number of chromosomes or balls
 
       consistent = 2e1   ; // Number of steps to converge before accepting
        tolerance = 1e-5  ; // If difference between steps less than this, converged

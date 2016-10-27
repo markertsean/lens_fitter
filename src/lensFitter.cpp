@@ -713,6 +713,29 @@ void generateNFWRTS(
   }
 }
 
+//
+// Generates the radially averaged reduced tangential shear for
+//  a NFW profile for given input
+//
+double * generateNFWRTS(
+                    const densProfile     &lens ,  // Input density profile to generate profile for
+                    const int            N_bins ,  // Actual information from the halo
+                    const double          *dist ,  // Projected distances between source and lens
+                    const double           SigC ){ // Critical surface density of sources
+
+    double *gArr = new double[N_bins] ();
+
+  // Loop over all distances, determining predicted rts for a given dist
+  for ( int i = 0; i < N_bins ; ++i ){
+
+    double    SD =    SDNFWFull( dist[i], lens.getR_s(), lens.getRho_o() ); // At radius
+    double avgSD = SDAvgNFWFull( dist[i], lens.getR_s(), lens.getRho_o() ); // Average
+
+    gArr[i] = ( avgSD - SD ) / ( SigC - SD );
+  }
+
+    return gArr;
+}
 
 
 // Surface density at input radius for NFW profile, integrated to R_max

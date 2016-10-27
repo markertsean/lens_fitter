@@ -129,6 +129,8 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
 
+    if ( phi < -10 ) return;
+
          I_bin   = I_bin + 1;
     int  M_bin   = std::min(std::max(   int( ( M     - u.getM_minBin() ) / ( u.getM_maxBin() - u.getM_minBin() ) * u.getN_MBin() )    ,0),u.getN_MBin()-1);
     int  B_bin   = std::min(std::max(   int( ( ba    - u.getB_minBin() ) / ( u.getB_maxBin() - u.getB_minBin() ) * u.getN_BBin() )    ,0),u.getN_BBin()-1);
@@ -180,15 +182,15 @@ void readSourceFile(   FILE      * pFile ,
     {
         int N = N_h[ H_bin ] ;
 
-        h[H_bin].setM     ( (  M       +   ( N - 1 )  *  h[H_bin].getM     ()  ) / N  );
-        h[H_bin].setC     ( (  c       +   ( N - 1 )  *  h[H_bin].getC     ()  ) / N  );
-        h[H_bin].setBA    ( (  ba      +   ( N - 1 )  *  h[H_bin].getBA    ()  ) / N  );
-        h[H_bin].setCA    ( (  ca      +   ( N - 1 )  *  h[H_bin].getCA    ()  ) / N  );
-        h[H_bin].setRmax  ( (  r_max   +   ( N - 1 )  *  h[H_bin].getRmax  ()  ) / N  );
-        h[H_bin].setPhi   ( (  phi     +   ( N - 1 )  *  h[H_bin].getPhi   ()  ) / N  );
-        h[H_bin].setTheta ( (  theta   +   ( N - 1 )  *  h[H_bin].getTheta ()  ) / N  );
-        h[H_bin].setGamma ( (  gamma   +   ( N - 1 )  *  h[H_bin].getGamma ()  ) / N  );
-        h[H_bin].setAlpha ( (  alpha   +   ( N - 1 )  *  h[H_bin].getAlpha ()  ) / N  );
+        h[H_bin].setM     (   M       +  h[H_bin].getM     ()  );
+        h[H_bin].setC     (   c       +  h[H_bin].getC     ()  );
+        h[H_bin].setBA    (   ba      +  h[H_bin].getBA    ()  );
+        h[H_bin].setCA    (   ca      +  h[H_bin].getCA    ()  );
+        h[H_bin].setRmax  (   r_max   +  h[H_bin].getRmax  ()  );
+        h[H_bin].setPhi   (   phi     +  h[H_bin].getPhi   ()  );
+        h[H_bin].setTheta (   theta   +  h[H_bin].getTheta ()  );
+        h[H_bin].setGamma (   gamma   +  h[H_bin].getGamma ()  );
+        h[H_bin].setAlpha (   alpha   +  h[H_bin].getAlpha ()  );
     }
 
 
@@ -213,7 +215,7 @@ int  readSources(  userInfo    u    ,  // User input
         d   [i] = 0 ;
         N   [i] = 0 ;
     }
-    for ( int i = 0; i < u.getN_srcBin()/u.getNbins()/u.getN_JBin(); ++i )
+    for ( int i = 0; i < u.getN_srcBin()/u.getNbins() ; ++i )
     {
         N_h [i] = 0 ;
     }
@@ -259,13 +261,30 @@ int  readSources(  userInfo    u    ,  // User input
     }  // Halo_id loop
 
     // Current gTot, tan, values are sums, makes them averages
-    for ( int i = 0; i < u.getN_srcBin(); ++i )
+    for ( int i = 0; i < u.getN_srcJackBin(); ++i )
     {
         if ( N[i] > 0 )
         {
             gTot[i] = gTot[i] / N[i] ;
             gTan[i] = gTan[i] / N[i] ;
             d   [i] = d   [i] / N[i] ;
+        }
+    }
+
+    for ( int i = 0; i < u.getN_srcBin() / u.getNbins() ; ++i )
+    {
+        if ( N_h[i] > 0 )
+        {
+            h[i].setM     (   h[i].getM     () / N_h[i] );
+            h[i].setC     (   h[i].getC     () / N_h[i] );
+            h[i].setBA    (   h[i].getBA    () / N_h[i] );
+            h[i].setCA    (   h[i].getCA    () / N_h[i] );
+            h[i].setRmax  (   h[i].getRmax  () / N_h[i] );
+            h[i].setPhi   (   h[i].getPhi   () / N_h[i] );
+            h[i].setTheta (   h[i].getTheta () / N_h[i] );
+            h[i].setGamma (   h[i].getGamma () / N_h[i] );
+            h[i].setAlpha (   h[i].getAlpha () / N_h[i] );
+
         }
     }
 

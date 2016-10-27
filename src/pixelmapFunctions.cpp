@@ -25,9 +25,9 @@ int *   avgMArr  (  userInfo        u ,  // User info
         if ( j != omitIndex )                        // Will omit an index from jacknifing, to avoid use -1
         {
             int k = u.getSrcBin( j, i, m, b, g, r ) ;
-
             (*outArr)[ r ] += inpArr[k] * inpN[k] ;  // Weighted sum
               outN   [ r ] +=             inpN[k] ;
+
         }
     }
     }
@@ -36,9 +36,9 @@ int *   avgMArr  (  userInfo        u ,  // User info
 
     for ( int r = 0 ; r < u.getNbins() ; ++r )       // Normalize the sum
     {
+        if ( outN[r] > 0 )
         (*outArr)[ r ] /= outN[ r ];
     }
-
     return outN;
 }
 

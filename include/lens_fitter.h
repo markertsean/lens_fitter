@@ -39,6 +39,12 @@ void generateNFWRTS(
                     const double          *dist ,  // Projected distances between source and lens
                     const double           SigC ); // Critical surface density of sources
 
+double *generateNFWRTS(
+                    const densProfile     &lens ,  // Input density profile to generate profile for
+                    const int            N_bins ,  // Actual information from the halo
+                    const double          *dist ,  // Projected distances between source and lens
+                    const double           SigC ); // Critical surface density of sources
+
 
 double    SDNFW( const      double               r ,  // Input radius to calc SD at
                  const densProfile inpProfile ); // Input NFW profile

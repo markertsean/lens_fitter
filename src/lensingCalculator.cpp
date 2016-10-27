@@ -69,24 +69,24 @@ int main(int arg,char **argv){
     userInfo userInput;
 
     std::string userFile = "lensUserParams.dat";
-    std::cout << "Reading user input" << userFile         << std::endl;
+//    std::cout << "Reading user input" << userFile         << std::endl;
 
     readInpFile( userInput, userFile );
 
 
     // Generates Fox H tables for interpolating over the Einasto profiles
 
-    std::cout << "Reading foxH tables: "                  << std::endl;
+//    std::cout << "Reading foxH tables: "                  << std::endl;
 
     einKappa    = readFoxH( userInput, 1 );
     einKappaAvg = readFoxH( userInput, 2 );
 
-    std::cout << "              Done."  << std::endl << std::endl;
+//    std::cout << "              Done."  << std::endl << std::endl;
 
     int N_jackbins = userInput.getJacknifeBins() ;
 
 
-                std::cout <<"Using " <<     N_jackbins    << " subsets to calculate errors" << std::endl;
+//                std::cout <<"Using " <<     N_jackbins    << " subsets to calculate errors" << std::endl;
     logMessage( std::string   (            "N_jackbins = ") +
                 std::to_string( (long long) N_jackbins    ) );
 
@@ -95,7 +95,7 @@ int main(int arg,char **argv){
     ///////////////////Read in the sources//////////////////////
     ////////////////////////////////////////////////////////////
 
-    std::cout << "Reading sources..." << std::endl;
+//    std::cout << "Reading sources..." << std::endl;
 
 
     // Arrays containing avgs, binned
@@ -139,9 +139,31 @@ int main(int arg,char **argv){
 
     } else
     {
-            std::cout << "Read stored file" << std::endl;
+//            std::cout << "Read stored file" << std::endl;
     }
+/*
+    for ( int j = 0; j <    userInput.getN_JBin(); ++j ){
+    for ( int i = 0; i <    userInput.getN_IBin(); ++i ){
+    for ( int m = 0; m <    userInput.getN_MBin(); ++m ){
+    for ( int b = 0; b <    userInput.getN_BBin(); ++b ){
+    for ( int g = 0; g <    userInput.getN_GBin(); ++g ){
+int h = userInput.getN_haloBin( i,m,b,g );
+if ( ninArr[h] > 0 )
+{
 
+    for ( int r = 0; r <    userInput.getNbins (); ++r ){
+int k = userInput.getSrcBin(j,i,m,b,g,r);
+printf( "%7.4f %14.6e %14.6e\n", dJackArr[k], gTanJackArr[k], gTotJackArr[k]);
+    }
+printf("\n");
+}
+    }
+    }
+    }
+    }
+    }
+exit(0);
+//*/
 
     ////////////////////////////////////////////////////////////
     ///////////////////Loops over source bins///////////////////
@@ -165,7 +187,7 @@ absorb all halos data into new structure, haloinfo maybe, binned
 
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
-    for ( int i = 0; i <    1;++i){//userInput.getN_IBin(); ++i ){
+    for ( int i = 0; i <    2;++i){//userInput.getN_IBin(); ++i ){
     for ( int b = 0; b <    1;++b){//userInput.getN_BBin(); ++b ){
     for ( int g = 0; g <    1;++g){//userInput.getN_GBin(); ++g ){
 
@@ -183,7 +205,8 @@ absorb all halos data into new structure, haloinfo maybe, binned
         if ( N_inbin > 0 )
         {
 
-            std::cout << "Collapsing M bins, i = " << i << " b = " << b << " g = " << g << std::endl;
+//            std::cout << "Collapsing M bins, i = " << i << " b = " << b << " g = " << g << std::endl;
+                double *rArr ;
 
 
             // Will store density profile fits for each jacknife bin, + full sample as 0th index
@@ -194,6 +217,9 @@ absorb all halos data into new structure, haloinfo maybe, binned
             densProfile nfwFits_tan[ N_jackbins + 1 ];
             densProfile nfTFits_tan[ N_jackbins + 1 ];
             densProfile einFits_tan[ N_jackbins + 1 ];
+
+
+            haloInfo avgHalo;
 
 
             // Loop over jacknife bins, ommiting from the sum whichever jack knife bins
@@ -207,7 +233,7 @@ absorb all halos data into new structure, haloinfo maybe, binned
                 // Pass to dist and shear calculators, to indicate ommited index
                 if ( omitIndex > -1 )
                 {
-                                std::cout <<"  Omitting subset " << omitIndex << std::endl;
+//                                std::cout <<"  Omitting subset " << omitIndex << std::endl;
                     logMessage( std::string("  Omitting subset ") +
                                 std::to_string(    (long long)      omitIndex ) );
                 }
@@ -217,21 +243,19 @@ absorb all halos data into new structure, haloinfo maybe, binned
                 double *gTot ;
                 double *gTan ;
                 double *dArr ;
-
                              avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTot );
-                             avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTan );
-                int* N_arr = avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &dArr );
-
-
+                             avgMArr( userInput, gTanJackArr, nJackArr, i, b, g, omitIndex, &gTan );
+                int* N_arr = avgMArr( userInput,    dJackArr, nJackArr, i, b, g, omitIndex, &dArr );
+avgMArr( userInput,    dJackArr, nJackArr, i, b, g, omitIndex, &rArr );
                 // Uncertainty array
                 double *eArr = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
-                            addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
-                            addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
+//                            addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
+//                            addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
 
                 // Generates average info we will be using to compare against
-                haloInfo avgHalo = avgMHaloInfo( userInput, binnedHalo, ninArr, i, b, g ) ;
+                avgHalo = avgMHaloInfo( userInput, binnedHalo, ninArr, i, b, g ) ;
 
 
                 nfwFits_tot[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
@@ -252,24 +276,24 @@ absorb all halos data into new structure, haloinfo maybe, binned
 
                 // Attempts to fit the density using the radial averages of distance and RTS
 
-                            std::cout <<"  Calculating NFW fit..." << std::endl;
+//                            std::cout <<"  Calculating NFW fit..." << std::endl;
                 logMessage( std::string("  Calculating NFW fit...") );
                 rollingFitDensProfile( nfwFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
                 rollingFitDensProfile( nfwFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
 
-                            std::cout <<"  Calculating NFW trunc fit..." << std::endl;
+//                            std::cout <<"  Calculating NFW trunc fit..." << std::endl;
                 logMessage( std::string("  Calculating NFW trunc fit...") );
                 rollingFitDensProfile( nfTFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
                 rollingFitDensProfile( nfTFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
 
-                            std::cout <<"  Calculating EIN fit..." << std::endl;
+//                            std::cout <<"  Calculating EIN fit..." << std::endl;
                 logMessage( std::string("  Calculating EIN fit...") );
                 rollingFitDensProfile( einFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
                 rollingFitDensProfile( einFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
-                std::cout << std::endl ;
+//                std::cout << std::endl ;
 
 
 
@@ -281,9 +305,7 @@ absorb all halos data into new structure, haloinfo maybe, binned
                 delete [] N_arr ;
 
             }
-
-
-                        std::cout << " Generating jack knife errors..." << std::endl;
+//                        std::cout << " Generating jack knife errors..." << std::endl;
 
             // Calculate the jacknife errors from above fits
 
@@ -304,11 +326,29 @@ absorb all halos data into new structure, haloinfo maybe, binned
             jacknife( einFits_tan, N_jackbins , einErr_tan );
 
 
-                        std::cout <<"Done.              " << std::endl;
+//                        std::cout <<"Done.              " << std::endl;
             logMessage( std::string("Fitting complete"   ));
+printf("%7.3f         %7.3f\n", log10(avgHalo.getM()), avgHalo.getC() );
 
 
 
+printf("%7.3f %7.3f %7.3f %7.3f\n", log10(nfwFits_tot[0].getM_enc()), nfwErr_tot[1], nfwFits_tot[0].getC(), nfwErr_tot[0] );
+printf("%7.3f %7.3f %7.3f %7.3f\n", log10(nfwFits_tan[0].getM_enc()), nfwErr_tan[1], nfwFits_tan[0].getC(), nfwErr_tan[0] );
+
+std::cout << userInput.getSigmaCrit() << std::endl;
+
+densProfile foo;
+foo.setR_max( avgHalo.getRmax() );
+foo.setM_enc( avgHalo.getM()    );
+foo.setC    ( avgHalo.getC()    );
+
+double *greal = generateNFWRTS(  foo          , userInput.getNbins(), rArr, userInput.getSigmaCrit() );
+
+double *gTot  = generateNFWRTS( nfwFits_tot[0], userInput.getNbins(), rArr, userInput.getSigmaCrit() );
+double *gTan  = generateNFWRTS( nfwFits_tan[0], userInput.getNbins(), rArr, userInput.getSigmaCrit() );
+
+for ( int index = 0; index < userInput.getNbins(); ++index)
+    printf("%7.3f %14.6e %14.6e %14.6e\n", rArr[index], greal[index], gTot[index], gTan[index] );
 //            writeProfileFits( userInput, myHalo, einFits[0], nfwFits[0], nfTFits[0], einErr, nfwErr, nfTErr, halo_index );
 
         }
