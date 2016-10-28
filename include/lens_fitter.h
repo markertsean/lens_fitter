@@ -24,6 +24,13 @@ void rollingFitDensProfile(
                     const double       *   gErrArr ); // Error array in RTS
 
 
+double * generateNFWTruncRTS(
+                    const densProfile     &lens ,  // Input density profile to generate profile for
+                    const double         N_bins ,  // Actual information from the halo
+                    const double          *dist ,  // Projected distances between source and lens
+                    const double           SigC ); // Critical surface density of sources
+
+
 void generateNFWTruncRTS(
                           double          *gArr ,  // RTS array to output
                     const densProfile     &lens ,  // Input density profile to generate profile for
@@ -65,9 +72,16 @@ double SDAvgNFWFull( const double     r ,  //Distance to evaluate SD of NFW prof
 void generateEinRTS(
 		          double           *gArr,  //Radially averaged RTS array function will return
 		    const densProfile      &lens,  //Input density profile
-        const userInfo             u,  //Info from user
+            const userInfo             u,  //Info from user
 		    const double     *sourceDist,  //Projected radial distance of sources to lens centers
 		    const double        sourceSc); //Critical surface density of a source
+
+double *generateEinRTS(
+		    const densProfile      &lens,  //Input density profile
+            const userInfo             u,  //Info from user
+		    const double     *sourceDist,  //Projected radial distance of sources to lens centers
+		    const double        sourceSc); //Critical surface density of a source
+
 
 double interpolateEinRTS(  double        x ,  // r/r_s
                            double        a ,  // alpha

@@ -689,6 +689,29 @@ void generateNFWTruncRTS(
   }
 }
 
+//
+// Generates the radially averaged reduced tangential shear for
+//  a NFW profile for given input
+//
+double * generateNFWTruncRTS(
+                    const densProfile     &lens ,  // Input density profile to generate profile for
+                    const double         N_bins ,  // Actual information from the halo
+                    const double          *dist ,  // Projected distances between source and lens
+                    const double           SigC ){ // Critical surface density of sources
+
+  double *gArr = new double[ (int) N_bins] ();
+
+  // Loop over all distances, determining predicted rts for a given dist
+  for ( int i = 0; i < N_bins ; ++i ){
+
+    double    SD =    SDNFW( dist[i], lens ); // At radius
+    double avgSD = SDAvgNFW( dist[i], lens ); // Average
+
+    gArr[i] = ( avgSD - SD ) / ( SigC - SD );
+  }
+
+    return gArr;
+}
 
 
 //
@@ -937,6 +960,42 @@ void generateEinRTS(
   // k = const* H    [                        ]= -----  |  ------------------------ X   ds= const[ Sum ------ ------------ X    - Sum ------- ------------- X     ]
   //              2 3[(0,2/a)(-1/2,1)(-3/2,1) ]  2pi i U   G(5/2-s) G( s )                       [ k=0 (k+1)! G(1/2-1/a  )        k=1 2(k)!   G(    -a/2 k)       ]
 }
+
+
+
+double * generateEinRTS(
+                    const densProfile     &lens ,  // Input density profile to generate profile for
+                    const userInfo            u ,  // Information from the user
+                    const double    *sourceDist ,  // Projected distances between source and lens
+                    const double     sourceSc   ){ // Critical surface density for the sources
+
+  double *gArr = new double [ u.getNbins() ] ();
+
+
+  //Constant part of kappa_c, divided by gamma(1/alpha) * sqrt pi, a constant for easier kappas
+  //Modified kappa_c, kappa_c * sqrt(pi) / Gamma(1/alpha), just need to multiply by H function
+
+  double kappa_c = lens.getRho_o() * lens.getR_s  ()   * exp( 2./lens.getAlpha() )       *
+                         pow(        lens.getAlpha()/2.,      1./lens.getAlpha() - 1.0 ) *
+                         tgamma( 1./ lens.getAlpha() ) / sourceSc;
+
+
+  double modKappa_c = kappa_c / std::sqrt( M_PI ) / tgamma( 1. / lens.getAlpha() );
+
+  for ( int i = 0; i < u.getNbins(); ++i ){
+
+    double        x = sourceDist[i]  /  lens.getR_s();
+
+    double kappa    = modKappa_c     * pow( 10, interpolateEinRTS( x, lens.getAlpha(), einKappa    ) ); // Interpolate table of Kappa    values
+    double kappaAvg = modKappa_c * x * pow( 10, interpolateEinRTS( x, lens.getAlpha(), einKappaAvg ) ); // Interpolate table of KappaAvg values
+
+    gArr[i] = ( kappaAvg - kappa ) / ( 1 - kappa );
+
+  }
+
+    return gArr;
+}
+
 
 
 double interpolateEinRTS(  double        x ,  // r/r_s

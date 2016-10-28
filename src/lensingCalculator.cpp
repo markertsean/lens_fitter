@@ -328,10 +328,8 @@ avgMArr( userInput,    dJackArr, nJackArr, i, b, g, omitIndex, &rArr );
 
 //                        std::cout <<"Done.              " << std::endl;
             logMessage( std::string("Fitting complete"   ));
-printf("%7.3f         %7.3f\n", log10(avgHalo.getM()), avgHalo.getC() );
 
-
-
+printf("%7.3f         %7.3f\n"    , log10(avgHalo.getM()), avgHalo.getC() );
 printf("%7.3f %7.3f %7.3f %7.3f\n", log10(nfwFits_tot[0].getM_enc()), nfwErr_tot[1], nfwFits_tot[0].getC(), nfwErr_tot[0] );
 printf("%7.3f %7.3f %7.3f %7.3f\n", log10(nfwFits_tan[0].getM_enc()), nfwErr_tan[1], nfwFits_tan[0].getC(), nfwErr_tan[0] );
 
