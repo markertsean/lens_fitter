@@ -141,34 +141,13 @@ int main(int arg,char **argv){
     {
 //            std::cout << "Read stored file" << std::endl;
     }
-/*
-    for ( int j = 0; j <    userInput.getN_JBin(); ++j ){
-    for ( int i = 0; i <    userInput.getN_IBin(); ++i ){
-    for ( int m = 0; m <    userInput.getN_MBin(); ++m ){
-    for ( int b = 0; b <    userInput.getN_BBin(); ++b ){
-    for ( int g = 0; g <    userInput.getN_GBin(); ++g ){
-int h = userInput.getN_haloBin( i,m,b,g );
-if ( ninArr[h] > 0 )
-{
 
-    for ( int r = 0; r <    userInput.getNbins (); ++r ){
-int k = userInput.getSrcBin(j,i,m,b,g,r);
-printf( "%7.4f %14.6e %14.6e\n", dJackArr[k], gTanJackArr[k], gTotJackArr[k]);
-    }
-printf("\n");
-}
-    }
-    }
-    }
-    }
-    }
-exit(0);
-//*/
 
     ////////////////////////////////////////////////////////////
     ///////////////////Loops over source bins///////////////////
     /////////////////////Calculate the fits/////////////////////
     ////////////////////////////////////////////////////////////
+
 /*
 Loops:
     j errs
@@ -330,25 +309,25 @@ avgMArr( userInput,    dJackArr, nJackArr, i, b, g, omitIndex, &rArr );
             logMessage( std::string("Fitting complete"   ));
 
 printf("%7.3f         %7.3f\n"    , log10(avgHalo.getM()), avgHalo.getC() );
-printf("%7.3f %7.3f %7.3f %7.3f\n", log10(nfwFits_tot[0].getM_enc()), nfwErr_tot[1], nfwFits_tot[0].getC(), nfwErr_tot[0] );
-printf("%7.3f %7.3f %7.3f %7.3f\n", log10(nfwFits_tan[0].getM_enc()), nfwErr_tan[1], nfwFits_tan[0].getC(), nfwErr_tan[0] );
+printf("%7.3f %7.1e %7.3f %7.3f\n", log10(nfwFits_tot[0].getM_enc()), nfwErr_tot[1], nfwFits_tot[0].getC(), nfwErr_tot[0] );
+printf("%7.3f %7.1e %7.3f %7.3f\n", log10(nfTFits_tot[0].getM_enc()), nfTErr_tot[1], nfTFits_tot[0].getC(), nfTErr_tot[0] );
+printf("%7.3f %7.1e %7.3f %7.3f\n", log10(einFits_tot[0].getM_enc()), einErr_tot[1], einFits_tot[0].getC(), einErr_tot[0] );
 
-std::cout << userInput.getSigmaCrit() << std::endl;
 
+/*
 densProfile foo;
 foo.setR_max( avgHalo.getRmax() );
 foo.setM_enc( avgHalo.getM()    );
 foo.setC    ( avgHalo.getC()    );
 
 double *greal = generateNFWRTS(  foo          , userInput.getNbins(), rArr, userInput.getSigmaCrit() );
-
 double *gTot  = generateNFWRTS( nfwFits_tot[0], userInput.getNbins(), rArr, userInput.getSigmaCrit() );
 double *gTan  = generateNFWRTS( nfwFits_tan[0], userInput.getNbins(), rArr, userInput.getSigmaCrit() );
 
 for ( int index = 0; index < userInput.getNbins(); ++index)
     printf("%7.3f %14.6e %14.6e %14.6e\n", rArr[index], greal[index], gTot[index], gTan[index] );
 //            writeProfileFits( userInput, myHalo, einFits[0], nfwFits[0], nfTFits[0], einErr, nfwErr, nfTErr, halo_index );
-
+//*/
         }
     }
     }

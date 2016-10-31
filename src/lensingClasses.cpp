@@ -43,7 +43,7 @@ userInfo::userInfo(){
 
   outputPath = "data/";
 
-    sigmaC     =  3.e9 ;
+    sigmaC     =  2.991203e+15 ; // Critical surface density in M_sun/Mpc^2
    shapeNoise  =  0.3 ; // Intrinsic shape noise in the sources
    N_bins      = 20   ; // Number of bins for radial averaging
    num_threads =  1   ; // Number of threads for parallel processing
@@ -62,7 +62,7 @@ userInfo::userInfo(){
    N_chromosomes = 1e4   ; // Number of chromosomes or balls
 
       consistent = 2e1   ; // Number of steps to converge before accepting
-       tolerance = 1e-5  ; // If difference between steps less than this, converged
+       tolerance = 1e-4  ; // If difference between steps less than this, converged
 
 
       N_chiTrack = 1e1   ; // Number of chromosomes to check for convergence
@@ -95,7 +95,7 @@ densProfile::densProfile( double inpA ){
 }
 
 
-
+// Msun/Mpc^3
 double densProfile::getRho_o() const {
 
   if ( M_enc > 0 && r_max > 0 && concentration > 0){ // All needed parameters def
