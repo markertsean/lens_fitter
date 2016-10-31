@@ -52,38 +52,44 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
                const  userInfo          u ){
 
 
-  double smallStep = 500;  // Number of possible steps in a direction
-  double   bigStep = 250;
 
-  double decrement = 1/10.; // Amount to decrease step size by
+  double smallStep = 250;    // Number of possible steps in a direction
+  double   bigStep = 125;
 
-  double boundDist = 1e-1; // Percent distance can be close to edge
+  double decrement = 1/10.;  // Amount to decrease step size by
+  double boundDist = 1e-1;   // Percent distance can be close to edge
+
+
 
   // Step sizes partially random
-//  double rStep = ( u.getRMaxFit () - u.getRMinFit () ) / randVal( bigStep, smallStep ) ;
+  double rStep = ( u.getRMaxFit () - u.getRMinFit () ) / randVal( bigStep, smallStep ) ;
   double cStep = ( u.getConMax  () - u.getConMin  () ) / randVal( bigStep, smallStep ) ;
   double mStep = ( u.getMassMax () - u.getMassMin () ) / randVal( bigStep, smallStep ) ;
   double aStep = ( u.getAlphaMax() - u.getAlphaMin() ) / randVal( bigStep, smallStep ) ;
 
-  // For kicking the ball back
-//  double rStep_0 = rStep;
-  double cStep_0 = cStep;
-  double mStep_0 = mStep;
-  double aStep_0 = aStep;
+
+  // For kicking the ball back, save initial step size
+  double rStep_0 = rStep ;
+  double cStep_0 = cStep ;
+  double mStep_0 = mStep ;
+  double aStep_0 = aStep ;
 
 
-  // Previous values, to test for convergence
-  double prevM = 1;
-  double prevC = 1;
-  double prevA = 1;
-//  double prevR = 1;
+  // Previous values, to test against current values for convergence
+  double prevM = 1 ;
+  double prevC = 1 ;
+  double prevA = 1 ;
+  double prevR = 1 ;
 
 
   int loopCounter = 0;  // Number of times we have rolled
   int convCounter = 0;  // Number of times we have been in tolerance
 
 
-  // Roll the ball
+  // Roll the ball, starts at random position and rolls towards lower chi^2
+  // First set 3 possible positions in parameter space for each variable,  v-step, v, v+step
+  // Test each parameter combination to find lowest chi^2
+
   do{
 
       // Used to check which direction is best
@@ -92,72 +98,83 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       if ( ball.getType() == 2 ) testProfile.setType( 2 );
 
 
-      double mVals[3], cVals[3], aVals[3];
+      double    mVals[3] ,
+                cVals[3] ,
+                rVals[3] ,
+                aVals[3] ;
 
       // Sets the parameters for moving along the hill
       for ( int j = -1; j < 2; ++j ){
         if ( ball.getType() == 2 )
         aVals[j+1] =          std::min(std::max(        ball.getAlpha()   + aStep * j, u.getAlphaMin() ), u.getAlphaMax()   );
+        rVals[j+1] =          std::min(std::max(        ball.getR_max()   + rStep * j, u.getRMinFit () ), u.getRMaxFit ()   );
         cVals[j+1] =          std::min(std::max(        ball.getC    ()   + cStep * j, u.getConMin  () ), u.getConMax  ()   );
         mVals[j+1] = pow( 10, std::min(std::max( log10( ball.getM_enc() ) + mStep * j, u.getMassMin () ), u.getMassMax () ) );
       }
 
 
       double chiChoose(999), compChi(998);
-
       double gAnalyticArray[  u.getNbins()   ];
+
 
       int maxK = 1;
       if ( ball.getType() == 2 )
         maxK = 3;
 
-      testProfile.setR_max( ball.getR_max() );
+//      testProfile.setR_max( ball.getR_max() );
 
-      for ( int ii = 0; ii <    3; ++ii ){
-                                          testProfile.setC    ( cVals[ii] );
-      for ( int jj = 0; jj <    3; ++jj ){
-                                          testProfile.setM_enc( mVals[jj] );
+      // Loop over the possible parameters
+      // Only need to loop over alpha if Einasto
+
+      for ( int rr = 0; rr <    3; ++rr ){  testProfile.setR_max( rVals[rr] );
+      for ( int ii = 0; ii <    3; ++ii ){  testProfile.setC    ( cVals[ii] );
+      for ( int jj = 0; jj <    3; ++jj ){  testProfile.setM_enc( mVals[jj] );
       for ( int kk = 0; kk < maxK; ++kk ){
 
 
-        // Generate RTS
-        if ( ball.getType() == 2 ){
-          testProfile.setAlpha( aVals[kk] );
-
-          generateEinRTS     ( gAnalyticArray, testProfile, u,            dArr, sigmaC );
-        } else
-        if ( ball.getType() == 0 ){
-          generateNFWTruncRTS( gAnalyticArray, testProfile, u.getNbins(), dArr, sigmaC );
-        } else{
-          generateNFWRTS     ( gAnalyticArray, testProfile, u.getNbins(), dArr, sigmaC );
-        }
+        // Generate RTS for profile
+        if ( ball.getType() == 2 ){  testProfile.setAlpha( aVals[kk] );  generateEinRTS      ( gAnalyticArray, testProfile, u,            dArr, sigmaC ); }
+        else
+        if ( ball.getType() == 0 ){                                      generateNFWTruncRTS ( gAnalyticArray, testProfile, u.getNbins(), dArr, sigmaC ); }
+        else{                                                            generateNFWRTS      ( gAnalyticArray, testProfile, u.getNbins(), dArr, sigmaC ); }
 
 
-        // Determine goodness of fit
+
+        // Determine goodness of fit by chi^2 analysis
         compChi = chiSquared( gAnalyticArray, gArr, gErrArr, u.getNbins() );
 
 
-        // Checks each possible direction for ball to roll
-        // Will roll in direction of best fit
+
+        // Take best fit, save it
         if (compChi < chiChoose){
           chiChoose = compChi;
+
           if ( ball.getType() == 2 )
           ball.setAlpha( aVals[kk] );
           ball.setC    ( cVals[ii] );
           ball.setM_enc( mVals[jj] );
-
+          ball.setR_max( rVals[rr] );
 
           chi2 = compChi;
         }
+      }
+      }
+      }
+      }
 
-      }
-      }
-      }
+
+      // Kick balls close to the edge of any boundary, and reset their step size
 
       if ( fabs( ball.getC    () - u.getConMax () ) / u.getConMax () < boundDist ||
            fabs( ball.getC    () - u.getConMin () ) / u.getConMin () < boundDist ){
            ball.setC(     randVal( u.getConMin ()   , u.getConMax () ) );
            cStep = cStep_0;
+      }
+
+      if ( fabs( ball.getR_max() - u.getRMaxFit() ) / u.getRMaxFit() < boundDist ||
+           fabs( ball.getR_max() - u.getRMinFit() ) / u.getRMinFit() < boundDist ){
+           ball.setR_max( randVal( u.getRMinFit()   , u.getRMaxFit() ) );
+           rStep = rStep_0;
       }
 
       if ( fabs( log10(ball.getM_enc()) - u.getMassMax() ) / u.getMassMax() < boundDist*boundDist ||
@@ -175,19 +192,25 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
         }
       }
 
+
+
       // If didn't move in one direction, decrease step size
-      if ( ball.getType () !=       2  &&
-           ball.getC    () == cVals[1] &&
-           ball.getM_enc() == mVals[1] ){
-        cStep *= decrement;
-        mStep *= decrement;
+      if (   ball.getType () !=       2  &&
+             ball.getC    () == cVals[1] &&
+             ball.getR_max() == rVals[1] &&
+             ball.getM_enc() == mVals[1] ){
+          cStep *= decrement;
+          mStep *= decrement;
+          rStep *= decrement;
       }else
       if (   ball.getType () ==       2  &&
              ball.getC    () == cVals[1] &&
+             ball.getR_max() == rVals[1] &&
              ball.getM_enc() == mVals[1] ){
         if ( ball.getAlpha() == aVals[1] ){
           cStep *= decrement;
           mStep *= decrement;
+          rStep *= decrement;
           aStep *= decrement;
         }
       }
@@ -198,7 +221,8 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       //  a count of how many times average has been
       //  consistently below tolerance. Tests for convergence
       if (  fabs( ball.getM_enc() - prevM ) / prevM  < u.getTolerance() &&
-            fabs( ball.getC    () - prevC ) / prevC  < u.getTolerance() ){
+            fabs( ball.getC    () - prevC ) / prevC  < u.getTolerance() &&
+            fabs( ball.getR_max() - prevR ) / prevR  < u.getTolerance() ){
 
         if ( ball.getType() != 2 ){
           convCounter += 1;
@@ -211,16 +235,17 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       }
 
 
+      // Save previous values to compare against
       if ( ball.getType() == 2 )
       prevA = ball.getAlpha();
       prevM = ball.getM_enc();
       prevC = ball.getC    ();
-
+      prevR = ball.getR_max();
 
       loopCounter +=1;
 
-    } while ( loopCounter < u.getMaxFitNum()   &&
-              convCounter < u.getNConsistent() );
+    } while ( loopCounter < u.getMaxFitNum()   &&  // Leave loop either when just went on too long,
+              convCounter < u.getNConsistent() );  // or when converged enough times
 
 }
 
@@ -244,7 +269,7 @@ void rollingFitDensProfile(
   for (int i = 0; i  <  u.getNchrome() ; ++i){
     if ( profile.getType() == 2 )
     ball[i].setType (                  2 );
-    ball[i].setR_max( profile.getR_max() );
+//    ball[i].setR_max( profile.getR_max() );
     chi2[i] = 1e4;
   }
 
@@ -256,6 +281,7 @@ void rollingFitDensProfile(
     // Set starting parameters, location on hill
     if ( profile.getType() == 2 )
     ball[i].setAlpha(          randVal( u.getAlphaMin() , u.getAlphaMax() )   );
+ball[i].setR_max(          randVal( u.getRMinFit() , u.getRMaxFit() )   );
     ball[i].setC    (          randVal( u.getConMin  () , u.getConMax  () )   );
     ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
 
@@ -704,8 +730,8 @@ double * generateNFWTruncRTS(
   // Loop over all distances, determining predicted rts for a given dist
   for ( int i = 0; i < N_bins ; ++i ){
 
-    double    SD =    SDNFW( dist[i], lens ); // At radius
-    double avgSD = SDAvgNFW( dist[i], lens ); // Average
+    double    SD =    SDNFW( dist[i], lens, 1 ); // At radius
+    double avgSD = SDAvgNFW( dist[i], lens, 1 ); // Average
 
     gArr[i] = ( avgSD - SD ) / ( SigC - SD );
   }
@@ -763,7 +789,8 @@ double * generateNFWRTS(
 
 // Surface density at input radius for NFW profile, integrated to R_max
 double    SDNFW( const double               r ,  //Input radius to calc SD at
-                 const densProfile inpProfile ){ //Input NFW profile
+                 const densProfile inpProfile ,   //Input NFW profile
+                       int                 db ){
 
   double      x = fabs( r / inpProfile.getR_s() );
   double      c =           inpProfile.getC  ()  ;
@@ -795,7 +822,8 @@ double    SDNFW( const double               r ,  //Input radius to calc SD at
 
 //Surface density at input radius for NFW profile, integrated to R_max
 double    SDAvgNFW( const double               r ,  //Input radius to calc SD at
-                    const densProfile inpProfile ){ //Input NFW profile
+                    const densProfile inpProfile ,  //Input NFW profile
+                          int                db  ){
 
   double      x = fabs( r / inpProfile.getR_s() );
   double      c =           inpProfile.getC  ()  ;
@@ -806,6 +834,7 @@ double    SDAvgNFW( const double               r ,  //Input radius to calc SD at
   // If very close to our max integration radius C, errors can occur.
   // Therefore, need explicit solution for C
   if ( fabs(  x - inpProfile.getC    () ) < 1e-4){
+
     return factor * ( SDAvgNFW( inpProfile.getR_s  (), inpProfile ) / ( 4 * inpProfile.getR_s  () * inpProfile.getRho_o() )
                   - 2.0 * sqrt( c*c - 1 ) / ( c + 1 )
                   + 0.5 * log( ( 1  + 1   /   c * sqrt( c*c - 1 ) )
@@ -835,6 +864,7 @@ double    SDAvgNFW( const double               r ,  //Input radius to calc SD at
 
   // Outside of r_s but less than c, integral from 0 to 1 + new component to a max of rmax/rs
   else if ( x > 1 ){
+
     return factor * (  SDAvgNFW( inpProfile.getR_s(), inpProfile  ) / ( 4 * inpProfile.getR_s() * inpProfile.getRho_o() )
                     + ( ( sqrt( c*c - x*x ) - 2 * sqrt( c*c - 1 ) ) / ( c + 1 )
 

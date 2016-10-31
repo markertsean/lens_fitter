@@ -308,24 +308,27 @@ avgMArr( userInput,    dJackArr, nJackArr, i, b, g, omitIndex, &rArr );
 //                        std::cout <<"Done.              " << std::endl;
             logMessage( std::string("Fitting complete"   ));
 
-printf("%7.3f         %7.3f\n"    , log10(avgHalo.getM()), avgHalo.getC() );
-printf("%7.3f %7.1e %7.3f %7.3f\n", log10(nfwFits_tot[0].getM_enc()), nfwErr_tot[1], nfwFits_tot[0].getC(), nfwErr_tot[0] );
-printf("%7.3f %7.1e %7.3f %7.3f\n", log10(nfTFits_tot[0].getM_enc()), nfTErr_tot[1], nfTFits_tot[0].getC(), nfTErr_tot[0] );
-printf("%7.3f %7.1e %7.3f %7.3f\n", log10(einFits_tot[0].getM_enc()), einErr_tot[1], einFits_tot[0].getC(), einErr_tot[0] );
+printf("%7.3f         %7.3f         %7.4f\n" , log10(avgHalo.getM()),                                  avgHalo.getC(),                       avgHalo.getRmax () );
+printf("%7.3f %7.1e %7.3f %7.3f %7.4f\n"     , log10(nfwFits_tot[0].getM_enc()), nfwErr_tot[1], nfwFits_tot[0].getC(), nfwErr_tot[0], nfwFits_tot[0].getR_max() );
+printf("%7.3f %7.1e %7.3f %7.3f %7.4f\n"     , log10(nfTFits_tot[0].getM_enc()), nfTErr_tot[1], nfTFits_tot[0].getC(), nfTErr_tot[0], nfwFits_tan[0].getR_max() );
+printf("%7.3f %7.1e %7.3f %7.3f %7.4f\n"     , log10(einFits_tot[0].getM_enc()), einErr_tot[1], einFits_tot[0].getC(), einErr_tot[0], einFits_tot[0].getR_max() );
 
 
-/*
+
 densProfile foo;
 foo.setR_max( avgHalo.getRmax() );
 foo.setM_enc( avgHalo.getM()    );
 foo.setC    ( avgHalo.getC()    );
 
-double *greal = generateNFWRTS(  foo          , userInput.getNbins(), rArr, userInput.getSigmaCrit() );
-double *gTot  = generateNFWRTS( nfwFits_tot[0], userInput.getNbins(), rArr, userInput.getSigmaCrit() );
-double *gTan  = generateNFWRTS( nfwFits_tan[0], userInput.getNbins(), rArr, userInput.getSigmaCrit() );
+double *greal = generateNFWRTS      (  foo          , userInput.getNbins(), rArr, userInput.getSigmaCrit() );
+double *gTot  = generateNFWRTS      ( nfwFits_tot[0], userInput.getNbins(), rArr, userInput.getSigmaCrit() );
+double *gTan  = generateNFWTruncRTS ( nfTFits_tot[0], userInput.getNbins(), rArr, userInput.getSigmaCrit() );
+double *gEin  = generateEinRTS      ( einFits_tot[0], userInput           , rArr, userInput.getSigmaCrit() );
 
 for ( int index = 0; index < userInput.getNbins(); ++index)
-    printf("%7.3f %14.6e %14.6e %14.6e\n", rArr[index], greal[index], gTot[index], gTan[index] );
+    printf("%7.3f %7.4e %7.4e %7.4e %7.4e\n", rArr[index], log10(greal[index]), log10(gTot[index]),log10( gTan[index]), log10(gEin[index]) );
+
+//    printf("%7.3f %14.6e %14.6e %14.6e %14.6e\n", rArr[index], greal[index], gTot[index], gTan[index], gEin[index] );
 //            writeProfileFits( userInput, myHalo, einFits[0], nfwFits[0], nfTFits[0], einErr, nfwErr, nfTErr, halo_index );
 //*/
         }

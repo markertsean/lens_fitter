@@ -54,11 +54,12 @@ double *generateNFWRTS(
 
 
 double    SDNFW( const      double               r ,  // Input radius to calc SD at
-                 const densProfile inpProfile ); // Input NFW profile
+                 const densProfile      inpProfile ,  // Input NFW profile
+                            int              db = 0);
 
 double    SDAvgNFW( const double               r ,  //Input radius to calc SD at
-                    const densProfile inpProfile ); //Input NFW profile
-
+                    const densProfile inpProfile ,  //Input NFW profile
+                          int             db = 0 );
 
 double    SDNFWFull( const double     r ,  //Distance to evaluate SD of NFW profile at
                      const double   r_s ,  //Scale radius of profile

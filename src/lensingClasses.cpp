@@ -58,8 +58,8 @@ userInfo::userInfo(){
   alphaMin =  9e-2;    // Range of alpha values to fit
   alphaMax =  0.68;
 
-  maxFitAttempts = 5e2   ; // Maximum number of steps to roll ball, or times to reproduce
-   N_chromosomes = 1e4   ; // Number of chromosomes or balls
+  maxFitAttempts = 2e2   ; // Maximum number of steps to roll ball, or times to reproduce
+   N_chromosomes = 1e3   ; // Number of chromosomes or balls
 
       consistent = 2e1   ; // Number of steps to converge before accepting
        tolerance = 1e-4  ; // If difference between steps less than this, converged
@@ -100,7 +100,7 @@ double densProfile::getRho_o() const {
 
   if ( M_enc > 0 && r_max > 0 && concentration > 0){ // All needed parameters def
 
-    if ( type == 1 ){ // NFW
+    if ( type != 2 ){ // NFW
                                          return  M_enc / (4. * M_PI * r_max*r_max*r_max )  *
                                                             concentration   * concentration       * concentration /
                                                  ( log( 1 + concentration ) - concentration / ( 1 + concentration) );
