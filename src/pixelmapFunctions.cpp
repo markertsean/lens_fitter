@@ -164,18 +164,22 @@ void jacknife( densProfile  *profile ,
   double M_var(0);
   double C_var(0);
   double A_var(0);
+  double R_var(0);
 
   double Mbias(0);
   double Cbias(0);
   double Abias(0);
+  double Rbias(0);
 
   double Mavg(0);
   double Cavg(0);
   double Aavg(0);
+  double Ravg(0);
 
   double Mbar_i[ N_samples ];
   double Cbar_i[ N_samples ];
   double Abar_i[ N_samples ];
+  double Rbar_i[ N_samples ];
 
 
   // Generate xbar_i
@@ -183,6 +187,7 @@ void jacknife( densProfile  *profile ,
       Abar_i[ i ]  = 0;
       Mbar_i[ i ]  = 0;
       Cbar_i[ i ]  = 0;
+      Rbar_i[ i ]  = 0;
   for ( int j = 0; j < N_samples; ++j ){
 
     if ( j != i ){
@@ -190,17 +195,20 @@ void jacknife( densProfile  *profile ,
       Abar_i[ i ] +=             profile[j+1].getAlpha()  ;
       Mbar_i[ i ] += std::log10( profile[j+1].getM_enc() );
       Cbar_i[ i ] +=             profile[j+1].getC    ()  ;
+      Rbar_i[ i ] +=             profile[j+1].getR_max()  ;
     }
 
   }
       Abar_i[ i ]  = Abar_i[ i ] / ( N_samples - 1 );
       Cbar_i[ i ]  = Cbar_i[ i ] / ( N_samples - 1 );
       Mbar_i[ i ]  = Mbar_i[ i ] / ( N_samples - 1 );
+      Rbar_i[ i ]  = Rbar_i[ i ] / ( N_samples - 1 );
 
       if ( profile[i+1].getType() == 2 )
       Aavg        +=             profile[i+1].getAlpha()   / N_samples ;
       Mavg        += std::log10( profile[i+1].getM_enc() ) / N_samples ;
       Cavg        +=             profile[i+1].getC    ()   / N_samples ;
+      Ravg        +=             profile[i+1].getR_max()   / N_samples ;
 
   }
 
@@ -212,14 +220,17 @@ void jacknife( densProfile  *profile ,
     A_var += ( Abar_i[i] - Aavg ) * ( Abar_i[i] - Aavg ) ;
     C_var += ( Cbar_i[i] - Cavg ) * ( Cbar_i[i] - Cavg ) ;
     M_var += ( Mbar_i[i] - Mavg ) * ( Mbar_i[i] - Mavg ) ;
+    R_var += ( Rbar_i[i] - Ravg ) * ( Rbar_i[i] - Ravg ) ;
   }
 
   A_var = A_var * ( N_samples - 1.0 ) / N_samples ;
   C_var = C_var * ( N_samples - 1.0 ) / N_samples ;
   M_var = M_var * ( N_samples - 1.0 ) / N_samples ;
+  R_var = R_var * ( N_samples - 1.0 ) / N_samples ;
 
-  errArr[0] = C_var;
-  errArr[1] = M_var;
-  errArr[2] = A_var;
+  errArr[0] = C_var ;
+  errArr[1] = M_var ;
+  errArr[2] = A_var ;
+  errArr[3] = R_var ;
 
 }

@@ -286,17 +286,17 @@ absorb all halos data into new structure, haloinfo maybe, binned
 
             // Calculate the jacknife errors from above fits
 // Include R
-            double nfwErr_tot[3]; // 0 is C, 1 is log(M), 2 is alpha
-            double nfTErr_tot[3];
-            double einErr_tot[3];
+            double nfwErr_tot[4]; // 0 is C, 1 is log(M), 2 is alpha, 3 is Rvir
+            double nfTErr_tot[4];
+            double einErr_tot[4];
 
             jacknife( nfwFits_tot, N_jackbins , nfwErr_tot );
             jacknife( nfTFits_tot, N_jackbins , nfTErr_tot );
             jacknife( einFits_tot, N_jackbins , einErr_tot );
 
-            double nfwErr_tan[3]; // 0 is C, 1 is log(M), 2 is alpha
-            double nfTErr_tan[3];
-            double einErr_tan[3];
+            double nfwErr_tan[4]; // 0 is C, 1 is log(M), 2 is alpha, 3 is Rvir
+            double nfTErr_tan[4];
+            double einErr_tan[4];
 
             jacknife( nfwFits_tan, N_jackbins , nfwErr_tan );
             jacknife( nfTFits_tan, N_jackbins , nfTErr_tan );
@@ -314,9 +314,6 @@ absorb all halos data into new structure, haloinfo maybe, binned
 
 
 /*
-
-
-
 
       //////////////////////////////////////////////////////////
       ////////////////////////FIT PROFILE///////////////////////
