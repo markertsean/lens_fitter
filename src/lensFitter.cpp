@@ -62,10 +62,10 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
 
 
   // Step sizes partially random
-  double rStep = ( u.getRMaxFit () - u.getRMinFit () ) / randVal( bigStep, smallStep ) ;
-  double cStep = ( u.getConMax  () - u.getConMin  () ) / randVal( bigStep, smallStep ) ;
-  double mStep = ( u.getMassMax () - u.getMassMin () ) / randVal( bigStep, smallStep ) ;
-  double aStep = ( u.getAlphaMax() - u.getAlphaMin() ) / randVal( bigStep, smallStep ) ;
+  double rStep = ( u.getRMaxFit () - u.getRMinFit () ) / randVal( bigStep*50 , smallStep*50  ) ;
+  double cStep = ( u.getConMax  () - u.getConMin  () ) / randVal( bigStep    , smallStep     ) ;
+  double mStep = ( u.getMassMax () - u.getMassMin () ) / randVal( bigStep    , smallStep     ) ;
+  double aStep = ( u.getAlphaMax() - u.getAlphaMin() ) / randVal( bigStep    , smallStep     ) ;
 
 
   // For kicking the ball back, save initial step size
@@ -95,7 +95,7 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       // Used to check which direction is best
       densProfile testProfile;
 
-      if ( ball.getType() == 2 ) testProfile.setType( 2 );
+      testProfile.setType( ball.getType() );
 
 
       double    mVals[3] ,
@@ -267,9 +267,10 @@ void rollingFitDensProfile(
   double      chi2[ u.getNchrome() ];
 
   for (int i = 0; i  <  u.getNchrome() ; ++i){
-    if ( profile.getType() == 2 )
-    ball[i].setType (                  2 );
-//    ball[i].setR_max( profile.getR_max() );
+    ball[i].setType ( profile.getType() );
+
+
+ball[i].setR_max( profile.getR_max() );
     chi2[i] = 1e4;
   }
 
@@ -281,7 +282,7 @@ void rollingFitDensProfile(
     // Set starting parameters, location on hill
     if ( profile.getType() == 2 )
     ball[i].setAlpha(          randVal( u.getAlphaMin() , u.getAlphaMax() )   );
-ball[i].setR_max(          randVal( u.getRMinFit() , u.getRMaxFit() )   );
+//ball[i].setR_max(          randVal( u.getRMinFit() , u.getRMaxFit() )   );
     ball[i].setC    (          randVal( u.getConMin  () , u.getConMax  () )   );
     ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
 
@@ -957,7 +958,7 @@ void generateEinRTS(
                          tgamma( 1./ lens.getAlpha() ) / sourceSc;
 
 
-  double modKappa_c = kappa_c / std::sqrt( M_PI ) / tgamma( 1. / lens.getAlpha() );
+  double modKappa_c = kappa_c * std::sqrt( M_PI ) / tgamma( 1. / lens.getAlpha() );
 
   for ( int i = 0; i < u.getNbins(); ++i ){
 
@@ -1000,30 +1001,35 @@ double * generateEinRTS(
                     const double     sourceSc   ){ // Critical surface density for the sources
 
   double *gArr = new double [ u.getNbins() ] ();
+//double *gArr = new double [ 20 ] ();
 
 
-  //Constant part of kappa_c, divided by gamma(1/alpha) * sqrt pi, a constant for easier kappas
-  //Modified kappa_c, kappa_c * sqrt(pi) / Gamma(1/alpha), just need to multiply by H function
+  // Constant part of kappa_c, divided by gamma(1/alpha) * sqrt pi, a constant for easier kappas
+  // Modified kappa_c, kappa_c * sqrt(pi) / Gamma(1/alpha), just need to multiply by H function
 
   double kappa_c = lens.getRho_o() * lens.getR_s  ()   * exp( 2./lens.getAlpha() )       *
                          pow(        lens.getAlpha()/2.,      1./lens.getAlpha() - 1.0 ) *
                          tgamma( 1./ lens.getAlpha() ) / sourceSc;
 
 
-  double modKappa_c = kappa_c / std::sqrt( M_PI ) / tgamma( 1. / lens.getAlpha() );
+  double modKappa_c = kappa_c * std::sqrt( M_PI ) / tgamma( 1. / lens.getAlpha() );
 
   for ( int i = 0; i < u.getNbins(); ++i ){
+//for ( int i = 0; i < 20; ++i ){
 
     double        x = sourceDist[i]  /  lens.getR_s();
+    double    mod_x = sourceDist[i]  /  lens.getR_s() * pow( 2. / lens.getAlpha(), 1. / lens.getAlpha() ) ;
 
     double kappa    = modKappa_c     * pow( 10, interpolateEinRTS( x, lens.getAlpha(), einKappa    ) ); // Interpolate table of Kappa    values
     double kappaAvg = modKappa_c * x * pow( 10, interpolateEinRTS( x, lens.getAlpha(), einKappaAvg ) ); // Interpolate table of KappaAvg values
 
     gArr[i] = ( kappaAvg - kappa ) / ( 1 - kappa );
 
+//printf( "%5.2f %5.2f %14.6e %14.6e %14.6e\n", sourceDist[i], x, kappa, kappaAvg, gArr[i] );
+
   }
 
-    return gArr;
+  return gArr;
 }
 
 

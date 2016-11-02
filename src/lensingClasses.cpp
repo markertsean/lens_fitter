@@ -44,9 +44,9 @@ userInfo::userInfo(){
   outputPath = "data/";
 
     sigmaC     =  2.991203e+15 ; // Critical surface density in M_sun/Mpc^2
-   shapeNoise  =  0.3 ; // Intrinsic shape noise in the sources
-   N_bins      = 20   ; // Number of bins for radial averaging
-   num_threads =  1   ; // Number of threads for parallel processing
+   shapeNoise  =  0.3          ; // Intrinsic shape noise in the sources
+   N_bins      = 20            ; // Number of bins for radial averaging
+   num_threads =  1            ; // Number of threads for parallel processing
 
 
       cMin =  2.5;     // Range of concentration values to fit
@@ -57,6 +57,7 @@ userInfo::userInfo(){
       mMax = 16.5;
   alphaMin =  9e-2;    // Range of alpha values to fit
   alphaMax =  0.68;
+
 
   maxFitAttempts = 2e2   ; // Maximum number of steps to roll ball, or times to reproduce
    N_chromosomes = 1e3   ; // Number of chromosomes or balls

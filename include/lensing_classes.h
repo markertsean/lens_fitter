@@ -355,17 +355,17 @@ class densProfile{
     void setR_max( double inpR ){         r_max = inpR; }
     void setC    ( double inpC ){ concentration = inpC; }
     void setM_enc( double inpM ){         M_enc = inpM; }
-    void setType ( double inpT ){          type = inpT; }
+    void setType ( int    inpT ){          type = inpT; }
 
 
     // If when getting an undefined variable, need to spit out a warning
     double getR_s  () const {  if ( concentration==-1.0 ) unDefVar("\"concentration\"");
-                               if (         r_max==-1.0 ) unDefVar("\"R_max  \""      );   return r_max / concentration;  }
-    double getC    () const {  if ( concentration==-1.0 ) unDefVar("\"concentration\"");   return         concentration;  }
-    double getR_max() const {  if (         r_max==-1.0 ) unDefVar("\"R_max\""        );   return                 r_max;  }
-    double getM_enc() const {  if (         M_enc==-1.0 ) unDefVar("\"M_enc\""        );   return                 M_enc;  }
-    double getAlpha() const {  if (         alpha==-1.0 ) unDefVar("\"alpha\""        );   return                 alpha;  }
-    double getType () const {                                                              return                  type;  }
+                               if (         r_max==-1.0 ) unDefVar("\"R_max  \""      );   return r_max / concentration ;  }
+    double getC    () const {  if ( concentration==-1.0 ) unDefVar("\"concentration\"");   return         concentration ;  }
+    double getR_max() const {  if (         r_max==-1.0 ) unDefVar("\"R_max\""        );   return                 r_max ;  }
+    double getM_enc() const {  if (         M_enc==-1.0 ) unDefVar("\"M_enc\""        );   return                 M_enc ;  }
+    double getAlpha() const {  if (         alpha==-1.0 ) unDefVar("\"alpha\""        );   return                 alpha ;  }
+    int    getType () const {                                                              return                  type ;  }
 
     double getRho_o() const ;
 
