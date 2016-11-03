@@ -149,77 +149,48 @@ void writeShort( userInfo      u ,
 }
 
 
-/*
-void writeProfileFits( userInfo        u ,   // User input
-                       haloInfo        h ,   // Info on our halo
-                       densProfile   ein ,   // Einasto   density profile
-                       densProfile   nfw ,   // NFW Full  density profile
-                       densProfile   nfT ,   // NFW trunc density profile
-                       double    *einErr ,   // Einasto   errors
-                       double    *nfwErr ,   // NFW Full  errors
-                       double    *nfTErr ,   // NFW trunc errors
-                       int       haloNum ){  // How many times we've written, first time we need to write halo info
+
+void writeProfileFits( char       fileName[100] ,   // Filename of output file
+                       userInfo               u ,   // User input
+                       haloInfo               h ,   // Info on our halo
+                       densProfile          ein ,   // Einasto   density profile
+                       densProfile          nfw ,   // NFW Full  density profile
+                       densProfile          nfT ,   // NFW trunc density profile
+                       double           *einErr ,   // Einasto   errors
+                       double           *nfwErr ,   // NFW Full  errors
+                       double           *nfTErr ,   // NFW trunc errors
+                       int                  N_h ){  // Number of halos written to file
 
 
   checkDir( u.getOutputPath() );
 
-  double integ = u.getIntegLength(); // Need for file name
-
-  if ( integ == -1 ){                // If sphere, just mark as 0 integ length
-    integ = 0.0;
-  }
-
-  char     fileName[100];
-  sprintf( fileName, "%sHalo_%010li_densFits.dat", u.getOutputPath().c_str(), h.getID() );
-
-
-
-  if ( haloNum == 1 ){ // First time through, write the general halo info
-    FILE *pFile;
-
-    pFile = fopen( fileName, "w" );
-
-    fprintf( pFile , "ID          %10li\n" , h.getID   () );
-    fprintf( pFile , "M           %14.6e\n", h.getM    () );
-    fprintf( pFile , "C           %10.6f\n", h.getC    () );
-    fprintf( pFile , "R_max       %10.6f\n", h.getRmax () );
-    fprintf( pFile , "Z           %10.6f\n", h.getZ    () );
-    fprintf( pFile , "b/a         %10.6f\n", h.getBA   () );
-    fprintf( pFile , "c/a         %10.6f\n", h.getCA   () );
-    fprintf( pFile , "phi         %10.6f\n", h.getPhi  () );
-    fprintf( pFile , "theta       %10.6f\n", h.getTheta() );
-    fprintf( pFile , "alpha       %10.6f\n", h.getAlpha() );
-    fprintf( pFile , "gamma       %10.6f\n", h.getGamma() );
-
-    fprintf( pFile , "FOV         %10.6f\n", u.getPhysFOV() );
-    fprintf( pFile , "N_pixH      %10i\n"  , u.getNpixH  () );
-    fprintf( pFile , "N_pixV      %10i\n"  , u.getNpixV  () );
-
-    fprintf( pFile , "N_src       %10i\n"  , u.getNsrc      () );
-    fprintf( pFile , "Z_src       %10.6f\n", u.getSourceZ   () );
-    fprintf( pFile , "sigma_shape %10.6f\n", u.getShapeNoise() );
-
-    fclose(  pFile );
-  }
 
   FILE *pFile;
 
   pFile = fopen( fileName, "a+" );
 
 
+  fprintf( pFile , "M           %14.6e\n", h.getM    () );
+  fprintf( pFile , "C           %10.6f\n", h.getC    () );
+  fprintf( pFile , "R_max       %10.6f\n", h.getRmax () );
+  fprintf( pFile , "b/a         %10.6f\n", h.getBA   () );
+  fprintf( pFile , "gamma       %10.6f\n", h.getGamma() );
+  fprintf( pFile , "N_lens      %10i\n"  , N_h          );
 
-  fprintf( pFile , "IntegLength %10.6f\n"        , u.getIntegLength() );
-  fprintf( pFile , "ImageMass   %14.6e\n"        , u.getImageMass  () );
-  fprintf( pFile , "NFW_Full %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f\n" , log10( nfw.getM_enc() ), nfw.getC(),           -1.0, nfwErr[1], nfwErr[0],      -1.0);
-  fprintf( pFile , "NFW_Trnc %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f\n" , log10( nfT.getM_enc() ), nfT.getC(),           -1.0, nfTErr[1], nfTErr[0],      -1.0);
-  fprintf( pFile , "Ein      %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f\n" , log10( ein.getM_enc() ), ein.getC(), ein.getAlpha(), einErr[1], einErr[0], einErr[2]);
+
+  fprintf( pFile , "NFW_Full %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f\n" ,
+                                                                log10( nfw.getM_enc() ), nfw.getC(), nfw.getR_max(),           -1.0, nfwErr[1], nfwErr[0], nfwErr[3],      -1.0);
+  fprintf( pFile , "NFW_Trnc %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f\n" ,
+                                                                log10( nfT.getM_enc() ), nfT.getC(), nfT.getR_max(),           -1.0, nfTErr[1], nfTErr[0], nfTErr[3],      -1.0);
+  fprintf( pFile , "Ein      %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f %10.6f\n" ,
+                                                                log10( ein.getM_enc() ), ein.getC(), ein.getR_max(), ein.getAlpha(), einErr[1], einErr[0], einErr[3], einErr[2]);
 
 
   fclose( pFile );
 
-  std::cout << "Appended file: " << fileName << std::endl << std::endl;
+  std::cout << "Appended file: " << fileName << std::endl ;
 
 }
-//*/
+
 
 

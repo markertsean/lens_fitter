@@ -221,6 +221,7 @@ absorb all halos data into new structure, haloinfo maybe, binned
                 double *gTot ;
                 double *gTan ;
                 double *dArr ;
+
                              avgMArr( userInput, gTotJackArr, nJackArr, i, b, g, omitIndex, &gTot );
                              avgMArr( userInput, gTanJackArr, nJackArr, i, b, g, omitIndex, &gTan );
                 int* N_arr = avgMArr( userInput,    dJackArr, nJackArr, i, b, g, omitIndex, &dArr );
@@ -228,8 +229,8 @@ absorb all halos data into new structure, haloinfo maybe, binned
                 // Uncertainty array
                 double *eArr = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
-//                            addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
-//                            addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
+                            addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
+                            addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
 
                 // Generates average info we will be using to compare against
@@ -285,7 +286,6 @@ absorb all halos data into new structure, haloinfo maybe, binned
                         std::cout << " Generating jack knife errors..." << std::endl;
 
             // Calculate the jacknife errors from above fits
-// Include R
             double nfwErr_tot[4]; // 0 is C, 1 is log(M), 2 is alpha, 3 is Rvir
             double nfTErr_tot[4];
             double einErr_tot[4];
@@ -304,9 +304,47 @@ absorb all halos data into new structure, haloinfo maybe, binned
 
 
                         std::cout <<"Done.              " << std::endl;
-            logMessage( std::string("Fitting complete"   ));
+            logMessage( std::string("Fitting complete"   ) ) ;
 
-//            writeProfileFits( userInput, myHalo, einFits[0], nfwFits[0], nfTFits[0], einErr, nfwErr, nfTErr, halo_index );
+            char     fileName[100] ;
+
+            double        iBin = -6;
+            if ( i != 0 ) iBin = userInput.getI_bin( i-1 );
+
+            sprintf( fileName, "%sDensFitTot_M_B%05.3f_G%05.3f_I%06.1f.dat" ,  userInput.getOutputPath().c_str(),
+                                                                               userInput.getB_bin  ( b ),
+                                                                               userInput.getG_bin  ( g ),
+                                                                               pow( 10,      iBin  )   );
+
+            writeProfileFits(       fileName   ,
+                                    userInput  ,
+                                    avgHalo    ,
+                                einFits_tot[0] ,
+                                nfwFits_tot[0] ,
+                                nfTFits_tot[0] ,
+                                 einErr_tot    ,
+                                 nfwErr_tot    ,
+                                 nfTErr_tot    ,
+                                N_inbin        );
+
+            sprintf( fileName, "%sDensFitTan_M_B%05.3f_G%05.3f_I%06.1f.dat" ,  userInput.getOutputPath().c_str(),
+                                                                               userInput.getB_bin  ( b ),
+                                                                               userInput.getG_bin  ( g ),
+                                                                               pow( 10,      iBin  )   );
+
+            writeProfileFits(       fileName   ,
+                                    userInput  ,
+                                    avgHalo    ,
+                                einFits_tan[0] ,
+                                nfwFits_tan[0] ,
+                                nfTFits_tan[0] ,
+                                 einErr_tan    ,
+                                 nfwErr_tan    ,
+                                 nfTErr_tan    ,
+                                N_inbin        );
+
+            std::cout << std::endl;
+
         }
     }
     }
