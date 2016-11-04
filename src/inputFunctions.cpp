@@ -128,13 +128,13 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-
     if ( phi < -10 ) return;
 
+
          I_bin   = I_bin + 1;
-    int  M_bin   = std::min(std::max(   int( ( M     - u.getM_minBin() ) / ( u.getM_maxBin() - u.getM_minBin() ) * u.getN_MBin() )    ,0),u.getN_MBin()-1);
-    int  B_bin   = std::min(std::max(   int( ( ba    - u.getB_minBin() ) / ( u.getB_maxBin() - u.getB_minBin() ) * u.getN_BBin() )    ,0),u.getN_BBin()-1);
-    int  G_bin   = std::min(std::max(   int( ( gamma - u.getG_minBin() ) / ( u.getG_maxBin() - u.getG_minBin() ) * u.getN_GBin() )    ,0),u.getN_GBin()-1);
+    int  M_bin   = std::min(std::max(   int( ( log10( M )    - u.getM_minBin() ) / ( u.getM_maxBin() - u.getM_minBin() ) * u.getN_MBin() )    ,0),u.getN_MBin()-1);
+    int  B_bin   = std::min(std::max(   int( (        ba     - u.getB_minBin() ) / ( u.getB_maxBin() - u.getB_minBin() ) * u.getN_BBin() )    ,0),u.getN_BBin()-1);
+    int  G_bin   = std::min(std::max(   int( (        gamma  - u.getG_minBin() ) / ( u.getG_maxBin() - u.getG_minBin() ) * u.getN_GBin() )    ,0),u.getN_GBin()-1);
     int jCounter = 0 ; // Count for jacknife binning
 
     // For source read in
@@ -241,7 +241,7 @@ int  readSources(  userInfo    u    ,  // User input
                 readSourceFile( pFile, u, d, gTot, gTan, N, N_h, h, -1 ); // -1 indicates no integration
 
                 fclose( pFile );
-/*
+
             for ( int i = 0; i < u.getN_IBin()-1; ++ i )
             {
                 sprintf(       inputFile,  "%sHalo_%010li_%06.1f_Sources.dat", u.getInputPath().c_str(), halo_id, pow( 10, u.getI_bin( i ) ) );
@@ -253,7 +253,7 @@ int  readSources(  userInfo    u    ,  // User input
                 fclose( pFile );
                 }
             }
-//*/
+
             ++halo_c;
         } // File exists
 

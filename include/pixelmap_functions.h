@@ -7,6 +7,29 @@
 #include "my_utilities.h"
 
 
+
+// Will take and fill outArr with weighted average of a collapsed mass,
+//   setting as our 1D arrays to pass to fitter
+int *  avgBGArr  (  userInfo        u ,  // User info
+                    double   * inpArr ,  // JIMBGR array to collapse into R
+                    int      * inpN   ,  // Array containing number of sources to weight by
+                    int             i ,  // Integration index
+                    int             m ,  // Mass        index
+                    int     omitIndex ,  // Index to omit for jack knifing
+                    double  ** outArr ); // Array to allocate and populate with average
+
+
+// Will take and fill outArr with weighted average of a collapsed mass,
+//   setting as our 1D arrays to pass to fitter
+int *  avgMBArr  (  userInfo        u ,  // User info
+                    double   * inpArr ,  // JIMBGR array to collapse into R
+                    int      * inpN   ,  // Array containing number of sources to weight by
+                    int             i ,  // Integration index
+                    int             g ,  // gamma       index
+                    int     omitIndex ,  // Index to omit for jack knifing
+                    double  ** outArr ); // Array to allocate and populate with average
+
+
 // Will take and fill outArr with weighted average of a collapsed mass,
 //   setting as our 1D arrays to pass to fitter
 int *   avgMArr  (  userInfo        u ,  // User info
@@ -17,6 +40,7 @@ int *   avgMArr  (  userInfo        u ,  // User info
                     int             g ,  // gamma       index
                     int     omitIndex ,  // Index to omit for jack knifing
                     double  ** outArr ); // Array to allocate and populate with average
+
 
 // Add gaussian error to arrays to fit
 void  addgaussUncertaintyArr( double       *inpArr ,
@@ -43,6 +67,21 @@ haloInfo  avgMHaloInfo( userInfo    u ,
                         int         i ,
                         int         b ,
                         int         g );
+
+// Collapses average array to match that of a collapsed M
+haloInfo avgMBHaloInfo( userInfo    u ,
+                        haloInfo  * h ,
+                        int       * n ,
+                        int         i ,
+                        int         g );
+
+
+// Collapses average array to match that of a collapsed M
+haloInfo avgBGHaloInfo( userInfo    u ,
+                        haloInfo  * h ,
+                        int       * n ,
+                        int         i ,
+                        int         m );
 
 
 
