@@ -267,10 +267,13 @@ void rollingFitDensProfile(
   double      chi2[ u.getNchrome() ];
 
   for (int i = 0; i  <  u.getNchrome() ; ++i){
+
+ball[i].setR_max(                      profile.getR_max()   * randVal( -0.01, 0.01 ) );
+ball[i].setC    (                      profile.getC()       * randVal( -0.01, 0.01 ) );
+ball[i].setM_enc( pow( 10, std::log10( profile.getM_enc() ) * randVal( -0.01, 0.01 ) ) );
+
+
     ball[i].setType ( profile.getType() );
-
-
-ball[i].setR_max( profile.getR_max() );
     chi2[i] = 1e4;
   }
 
@@ -283,8 +286,8 @@ ball[i].setR_max( profile.getR_max() );
     if ( profile.getType() == 2 )
     ball[i].setAlpha(          randVal( u.getAlphaMin() , u.getAlphaMax() )   );
 //ball[i].setR_max(          randVal( u.getRMinFit() , u.getRMaxFit() )   );
-    ball[i].setC    (          randVal( u.getConMin  () , u.getConMax  () )   );
-    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
+//    ball[i].setC    (          randVal( u.getConMin  () , u.getConMax  () )   );
+//    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
 
 
     rollBall( ball[i], chi2[i], gArr, dArr, gErrArr, u.getSigmaCrit(), u );

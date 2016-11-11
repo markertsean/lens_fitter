@@ -27,6 +27,7 @@ int *  avgBGArr  (  userInfo        u ,  // User info
         if ( j != omitIndex )                        // Will omit an index from jacknifing, to avoid use -1
         {
             int k = u.getSrcBin( j, i, m, b, g, r ) ;
+
             (*outArr)[ r ] += inpArr[k] * inpN[k] ;  // Weighted sum
               outN   [ r ] +=             inpN[k] ;
 

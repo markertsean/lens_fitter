@@ -61,7 +61,6 @@ int main(int arg,char **argv){
 
     srand(seed); // Sets random seed
 
-
     //////////////////////////////////
     ///////READ IN USERINFO///////////
     //////////////////////////////////
@@ -132,7 +131,7 @@ int main(int arg,char **argv){
 
         writeShort(                userInput, gTotJackArr, gTanJackArr,    dJackArr, nJackArr, ninArr, binnedHalo );
 
-           std::cout << "Outputted short file  " << std::endl;
+            std::cout << "Outputted short file  " << std::endl;
 
 
     } else
@@ -147,11 +146,11 @@ int main(int arg,char **argv){
 
 
     //////////////////Collapse M, examine b&g//////////////////////
-
+/*
 
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
-    for ( int i = 0; i < userInput.getN_IBin(); ++i ){
+    for ( int i = 0; i < 2;++i){//userInput.getN_IBin(); ++i ){
     for ( int b = 0; b < userInput.getN_BBin(); ++b ){
     for ( int g = 0; g < userInput.getN_GBin(); ++g ){
 
@@ -350,7 +349,7 @@ int main(int arg,char **argv){
 
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
-    for ( int i = 0; i < userInput.getN_IBin(); ++i ){
+    for ( int i = 0; i < 2;++i){//userInput.getN_IBin(); ++i ){
     for ( int g = 0; g < userInput.getN_GBin(); ++g ){
 
 
@@ -533,7 +532,7 @@ int main(int arg,char **argv){
 
 
 
-
+//*/
 
 
 
@@ -546,7 +545,8 @@ int main(int arg,char **argv){
     for ( int m = 0; m < userInput.getN_MBin(); ++m ){
 
 
-
+if ( i > 3 )
+    exit(0);
         // Count number of halos in collapsed bin
         int N_inbin = 0;
 
@@ -560,8 +560,8 @@ int main(int arg,char **argv){
         // Only analyze bin in halos are present
         if ( N_inbin > 0 )
         {
-
-            std::cout << std::endl << "Collapsing B&G bins, i = " << i << " m = " << m << std::endl;
+double *r ;
+//            std::cout << std::endl << "Collapsing B&G bins, i = " << i << " m = " << m << std::endl;
 
 
             // Will store density profile fits for each jacknife bin, + full sample as 0th index
@@ -588,9 +588,9 @@ int main(int arg,char **argv){
                 // Pass to dist and shear calculators, to indicate ommited index
                 if ( omitIndex > -1 )
                 {
-                                std::cout <<"  Omitting subset " << omitIndex << std::endl;
-                    logMessage( std::string("  Omitting subset ") +
-                                std::to_string(    (long long)      omitIndex ) );
+//                                std::cout <<"  Omitting subset " << omitIndex << std::endl;
+//                    logMessage( std::string("  Omitting subset ") +
+//                                std::to_string(    (long long)      omitIndex ) );
                 }
 
 
@@ -602,12 +602,13 @@ int main(int arg,char **argv){
                              avgBGArr( userInput, gTotJackArr, nJackArr, i, m, omitIndex, &gTot );
                              avgBGArr( userInput, gTanJackArr, nJackArr, i, m, omitIndex, &gTan );
                 int* N_arr = avgBGArr( userInput,    dJackArr, nJackArr, i, m, omitIndex, &dArr );
+avgBGArr( userInput,    dJackArr, nJackArr, i, m, omitIndex, &r );
 
                 // Uncertainty array
                 double *eArr = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
-                            addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
-                            addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
+//                            addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
+//                            addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
 
 
                 // Generates average info we will be using to compare against
@@ -620,6 +621,22 @@ int main(int arg,char **argv){
                 nfTFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
                 einFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
 
+                nfwFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfTFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                einFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfwFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfTFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                einFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+
+                nfwFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfTFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                einFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfwFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfTFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                einFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+
+
+
                 nfwFits_tot[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
                 nfTFits_tot[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
                 einFits_tot[ omitIndex + 1 ].setType( 2 ); // Sets as Einasto
@@ -628,30 +645,34 @@ int main(int arg,char **argv){
                 einFits_tan[ omitIndex + 1 ].setType( 2 ); // Sets as Einasto
 
 
-
                 // Attempts to fit the density using the radial averages of distance and RTS
 
-                            std::cout <<"  Calculating NFW fit..." << std::endl;
-                logMessage( std::string("  Calculating NFW fit...") );
+//                            std::cout <<"  Calculating NFW fit..." << std::endl;
+//                logMessage( std::string("  Calculating NFW fit...") );
                 rollingFitDensProfile( nfwFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
                 rollingFitDensProfile( nfwFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
 
-                            std::cout <<"  Calculating NFW trunc fit..." << std::endl;
-                logMessage( std::string("  Calculating NFW trunc fit...") );
+//                            std::cout <<"  Calculating NFW trunc fit..." << std::endl;
+//                logMessage( std::string("  Calculating NFW trunc fit...") );
                 rollingFitDensProfile( nfTFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
                 rollingFitDensProfile( nfTFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
 
-                            std::cout <<"  Calculating EIN fit..." << std::endl;
-                logMessage( std::string("  Calculating EIN fit...") );
+//                            std::cout <<"  Calculating EIN fit..." << std::endl;
+//                logMessage( std::string("  Calculating EIN fit...") );
                 rollingFitDensProfile( einFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
                 rollingFitDensProfile( einFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
-                std::cout << std::endl ;
+//                std::cout << std::endl ;
 
 
+if ( omitIndex == -1 )
+{
+for ( int iii = 0; iii < userInput.getNbins(); ++iii )
+    printf("%5.2f    %14.6e\n", gTot[iii]  );
 
+}
 
                 delete [] eArr  ;
                 delete [] gTot  ;
@@ -659,8 +680,9 @@ int main(int arg,char **argv){
                 delete [] dArr  ;
                 delete [] N_arr ;
 
+
             }
-                        std::cout << " Generating jack knife errors..." << std::endl;
+//                        std::cout << " Generating jack knife errors..." << std::endl;
 
             // Calculate the jacknife errors from above fits
             double nfwErr_tot[4]; // 0 is C, 1 is log(M), 2 is alpha, 3 is Rvir
@@ -680,9 +702,44 @@ int main(int arg,char **argv){
             jacknife( einFits_tan, N_jackbins , einErr_tan );
 
 
-                        std::cout <<"Done.              " << std::endl;
-            logMessage( std::string("Fitting complete"   ) ) ;
+//                        std::cout <<"Done.              " << std::endl;
+//            logMessage( std::string("Fitting complete"   ) ) ;
 
+// 0 trunc, 1 nfw, 2 ein
+
+densProfile trueHalo;
+
+trueHalo.setR_max( avgHalo.getRmax() );
+trueHalo.setC    ( avgHalo.getC()    );
+trueHalo.setM_enc( avgHalo.getM()    );
+trueHalo.setAlpha( einFits_tot[0].getAlpha() );
+
+trueHalo.setType( 0 );
+double * nfTT = generateNFWTruncRTS( trueHalo      , userInput.getNbins(), r, userInput.getSigmaCrit() );
+
+trueHalo.setType( 1 );
+double * nfwT = generateNFWRTS     ( trueHalo      , userInput.getNbins(), r, userInput.getSigmaCrit() );
+
+trueHalo.setType( 2 );
+double * einT = generateEinRTS     ( trueHalo      , userInput           , r, userInput.getSigmaCrit() );
+
+
+double * einF = generateEinRTS     ( einFits_tot[0], userInput           , r, userInput.getSigmaCrit() );
+double * nfwF = generateNFWRTS     ( nfwFits_tot[0], userInput.getNbins(), r, userInput.getSigmaCrit() );
+double * nfTF = generateNFWTruncRTS( nfTFits_tot[0], userInput.getNbins(), r, userInput.getSigmaCrit() );
+
+printf("True   M = %5.2f  C = %5.2f  R = %5.3f\n", std::log10( trueHalo      .getM_enc() ), trueHalo      .getC(), trueHalo      .getR_max() );
+printf("Ein    M = %5.2f  C = %5.2f  R = %5.3f\n", std::log10( einFits_tot[0].getM_enc() ), einFits_tot[0].getC(), einFits_tot[0].getR_max() );
+printf("NFW    M = %5.2f  C = %5.2f  R = %5.3f\n", std::log10( nfwFits_tot[0].getM_enc() ), nfwFits_tot[0].getC(), nfwFits_tot[0].getR_max() );
+printf("NFW_t  M = %5.2f  C = %5.2f  R = %5.3f\n", std::log10( nfTFits_tot[0].getM_enc() ), nfTFits_tot[0].getC(), nfTFits_tot[0].getR_max() );
+
+printf("    R,         nfw_true,         nfw_fit ,         nfT_true,         nfT_fit ,         ein_true,         ein_fit \n");
+for ( int iii = 0; iii < userInput.getNbins(); ++iii )
+    printf("%5.2f    %14.6e    %14.6e    %14.6e    %14.6e    %14.6e    %14.6e\n",
+    r[iii], nfTT[iii], nfTF[iii], nfwT[iii], nfwF[iii], einT[iii], einF[iii] );
+
+
+/*
             char     fileName[100] ;
 
             double        iBin = -6;
@@ -719,7 +776,7 @@ int main(int arg,char **argv){
                                 N_inbin        );
 
             std::cout << std::endl;
-
+//*/
         }
     }
     }

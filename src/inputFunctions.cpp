@@ -121,7 +121,7 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; gamma = atof( inpC2 );
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Integ
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // IntegM
-    fscanf(pFile,"%s%s",inpC1,inpC2) ; dMax   = atof( inpC2 ) / 2.0;
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; dMax   = atof( inpC2 ) / 2.0 * std::sqrt(2.); // Go through long axis of image
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // NpH
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // NpV
     fscanf(pFile,"%s%s",inpC1,inpC2) ; N_src = atoi( inpC2 );
