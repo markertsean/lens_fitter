@@ -110,6 +110,7 @@ class userInfo{
 
     void setNbins           ( int    inpI ) {   N_bins       = inpI ; }
     void setNthreads        ( int    inpI ) {   num_threads  = inpI ; }
+    void setUseNoise        ( int    inpI ) {     useNoise   = inpI ; }
     void setSigmaCrit       ( double inpF ) {      sigmaC    = inpF ; }
 
     void setI_BinMin        ( double inpF ) {     I_minBin   = inpF ; }
@@ -151,6 +152,9 @@ class userInfo{
     int    getN_GBin          () const { return G_Nbins        ; }
     int    getN_srcBin        () const { return N_bins * ( I_Nbins+1 ) * M_Nbins * B_Nbins * G_Nbins ; }
     int    getN_srcJackBin    () const { return N_bins * ( I_Nbins+1 ) * M_Nbins * B_Nbins * G_Nbins * jacknifeBins ; }
+
+
+    int    getUseNoise        () const { return  useNoise      ; }
 
     double getShapeNoise      () const { return  shapeNoise    ; }
     double getSigmaCrit       () const { return  sigmaC        ; }
@@ -257,7 +261,7 @@ class userInfo{
     double alphaMin ;
     double alphaMax ;
 
-
+    int  useNoise      ; // Flag to add noise to simulation
     int jacknifeBins   ; // Number of bins used for jackknife errors
     int maxFitAttempts ; // Max attempts at fitting before abort
     int  N_chromosomes ; // Number of chromosomes in population

@@ -72,6 +72,7 @@ userInfo::userInfo(){
 
   jacknifeBins = 10;
 
+    useNoise   =  1;
 }
 
 

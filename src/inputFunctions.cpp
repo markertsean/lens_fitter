@@ -326,6 +326,7 @@ void readInpFile(          userInfo  &inpInfo  ,   // Info needed for the rest o
       else if ( inpS=="N_consistent"){        inpInfo.setNConsistent     (        atoi(inpC2) ); }  // Number of times to converge before exiting fit
       else if ( inpS=="fitTolerance"){        inpInfo.setTolerance       (        atof(inpC2) ); }  // How small step size should be before being consistent
 
+      else if ( inpS=="useNoise"    ){        inpInfo.setUseNoise        (        atoi(inpC2) ); }  // Sets whether or not to add artificial noise
       else if ( inpS=="sigmaCrit"   ){        inpInfo.setSigmaCrit       (        atof(inpC2) ); }  // Sigma crit, need to set a default
       else if ( inpS=="shapeNoise"  ){        inpInfo.setShapeNoise      (        atof(inpC2) ); }  // Shape noise to use for source errors, default 0.3
 
@@ -365,6 +366,7 @@ void readInpFile(          userInfo  &inpInfo  ,   // Info needed for the rest o
               std::string("\nN_consist = ") + std::to_string((long long  ) inpInfo.getNConsistent     () ) +
               std::string("\nfitTolera = ") + std::to_string((long double) inpInfo.getTolerance       () ) +
               std::string("\nshapeNois = ") + std::to_string((long double) inpInfo.getShapeNoise      () ) +
+              std::string("\nuseNoise  = ") + std::to_string((long long  ) inpInfo.getUseNoise        () ) +
               std::string("\nFoxH2012F = ") + std::string   (              inpInfo.getFoxH2012F       () ) +
               std::string("\nFoxH2123F = ") + std::string   (              inpInfo.getFoxH2123F       () ) +
               std::string("\noutputPat = ") + std::string   (              inpInfo.getOutputPath      () ) );
