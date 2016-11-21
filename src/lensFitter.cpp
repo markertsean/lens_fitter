@@ -268,10 +268,9 @@ void rollingFitDensProfile(
 
   for (int i = 0; i  <  u.getNchrome() ; ++i){
 
-ball[i].setR_max(                      profile.getR_max()   * randVal( -0.01, 0.01 ) );
-ball[i].setC    (                      profile.getC()       * randVal( -0.01, 0.01 ) );
-ball[i].setM_enc( pow( 10, std::log10( profile.getM_enc() ) * randVal( -0.01, 0.01 ) ) );
-
+    ball[i].setR_max(                      profile.getR_max()   * randVal( -0.01, 0.01 ) );
+    ball[i].setC    (                      profile.getC()       * randVal( -0.01, 0.01 ) );
+    ball[i].setM_enc( pow( 10, std::log10( profile.getM_enc() ) * randVal( -0.01, 0.01 ) ) );
 
     ball[i].setType ( profile.getType() );
     chi2[i] = 1e4;
@@ -285,27 +284,41 @@ ball[i].setM_enc( pow( 10, std::log10( profile.getM_enc() ) * randVal( -0.01, 0.
     // Set starting parameters, location on hill
     if ( profile.getType() == 2 )
     ball[i].setAlpha(          randVal( u.getAlphaMin() , u.getAlphaMax() )   );
-//ball[i].setR_max(          randVal( u.getRMinFit() , u.getRMaxFit() )   );
-//    ball[i].setC    (          randVal( u.getConMin  () , u.getConMax  () )   );
-//    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
 
+    // If the rolled ball produced bad result, throw it again
+    bool goodBall = false;
+    while ( !goodBall )
+    {
+        rollBall( ball[i], chi2[i], gArr, dArr, gErrArr, u.getSigmaCrit(), u );
 
-    rollBall( ball[i], chi2[i], gArr, dArr, gErrArr, u.getSigmaCrit(), u );
+        // Make sure rolled ball is in good statistics
+        if ( std::log10( ball[i].getM_enc() ) > 12 )
+        {
+            goodBall = true;
+        }else
+        {
+            if ( profile.getType() == 2 )
+            ball[i].setAlpha(          randVal( u.getAlphaMin() , u.getAlphaMax() )   );
+            ball[i].setR_max(          randVal( u.getRMinFit() , u.getRMaxFit() )   );
+            ball[i].setC    (          randVal( u.getConMin  () , u.getConMax  () )   );
+            ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
+
+        }
+    }
   }
-
-  // Now take weighted average of the balls, weighted by their chi2
-
 
   int    minIndex =              0; //index of lowest chi2
   double minChi   = chi2[minIndex];
 
   //Find lowest chi2 index
   for ( int i = 0; i < u.getNchrome(); ++i ){
-    if ( minChi > chi2[i] ){
+    if ( minChi  >   chi2[i] &&
+
+         std::log10( ball[i].getM_enc() ) > 13 ){
+
       minIndex = i;
       minChi   = chi2[i];
     }
-
   }
 
   if ( profile.getType() == 2 )
@@ -313,8 +326,6 @@ ball[i].setM_enc( pow( 10, std::log10( profile.getM_enc() ) * randVal( -0.01, 0.
   profile.setC    (  ball[minIndex].getC    ()  );
   profile.setM_enc(  ball[minIndex].getM_enc()  );
   profile.setR_max(  ball[minIndex].getR_max()  );
-
-
 }
 
 

@@ -159,7 +159,7 @@ int main(int arg,char **argv){
 
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
-    for ( int i = 0; i < 2;++i){//userInput.getN_IBin(); ++i ){
+    for ( int i = 0; i <                     2; ++i ){//userInput.getN_IBin(); ++i ){
     for ( int b = 0; b < userInput.getN_BBin(); ++b ){
     for ( int g = 0; g < userInput.getN_GBin(); ++g ){
 
@@ -237,6 +237,20 @@ int main(int arg,char **argv){
                 nfwFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
                 nfTFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
                 einFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+
+                nfwFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfTFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                einFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfwFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfTFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                einFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+
+                nfwFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfTFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                einFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfwFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfTFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                einFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
 
                 nfwFits_tot[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
                 nfTFits_tot[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
@@ -349,18 +363,12 @@ int main(int arg,char **argv){
 
 
 
-
-
-
-
-
-
     //////////////////Collapse M&B, examine g//////////////////////
 
 
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
-    for ( int i = 0; i < 2;++i){//userInput.getN_IBin(); ++i ){
+    for ( int i = 0; i <                     2; ++i ){//userInput.getN_IBin(); ++i ){
     for ( int g = 0; g < userInput.getN_GBin(); ++g ){
 
 
@@ -439,6 +447,20 @@ int main(int arg,char **argv){
                 nfwFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
                 nfTFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
                 einFits_tan[ omitIndex + 1 ].setR_max( avgHalo.getRmax() );
+
+                nfwFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfTFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                einFits_tot[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfwFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                nfTFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+                einFits_tan[ omitIndex + 1 ].setM_enc( avgHalo.getM   () );
+
+                nfwFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfTFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                einFits_tot[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfwFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                nfTFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
+                einFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
 
                 nfwFits_tot[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
                 nfTFits_tot[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
@@ -546,7 +568,6 @@ int main(int arg,char **argv){
 
 
 
-//*/
 
 
 
@@ -649,8 +670,6 @@ int main(int arg,char **argv){
                 nfwFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
                 nfTFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
                 einFits_tan[ omitIndex + 1 ].setC    ( avgHalo.getC   () );
-
-
 
                 nfwFits_tot[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
                 nfTFits_tot[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
@@ -791,7 +810,6 @@ for ( int iii = 0; iii < userInput.getNbins(); ++iii )
                                 N_inbin        );
 
             std::cout << std::endl;
-//*/
         }
     }
     }

@@ -188,7 +188,7 @@ void writeProfileFits( char       fileName[100] ,   // Filename of output file
 
   fclose( pFile );
 
-  std::cout << "Appended file: " << fileName << std::endl ;
+//  std::cout << "Appended file: " << fileName << std::endl ;
 
 }
 
