@@ -62,14 +62,12 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
 
 
   // Step sizes partially random
-  double rStep = ( u.getRMaxFit () - u.getRMinFit () ) / randVal( bigStep*50 , smallStep*50  ) ;
   double cStep = ( u.getConMax  () - u.getConMin  () ) / randVal( bigStep    , smallStep     ) ;
   double mStep = ( u.getMassMax () - u.getMassMin () ) / randVal( bigStep    , smallStep     ) ;
   double aStep = ( u.getAlphaMax() - u.getAlphaMin() ) / randVal( bigStep    , smallStep     ) ;
 
 
   // For kicking the ball back, save initial step size
-  double rStep_0 = rStep ;
   double cStep_0 = cStep ;
   double mStep_0 = mStep ;
   double aStep_0 = aStep ;
@@ -79,7 +77,6 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
   double prevM = 1 ;
   double prevC = 1 ;
   double prevA = 1 ;
-  double prevR = 1 ;
 
 
   int loopCounter = 0;  // Number of times we have rolled
@@ -100,14 +97,12 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
 
       double    mVals[3] ,
                 cVals[3] ,
-                rVals[3] ,
                 aVals[3] ;
 
       // Sets the parameters for moving along the hill
       for ( int j = -1; j < 2; ++j ){
         if ( ball.getType() == 2 )
         aVals[j+1] =          std::min(std::max(        ball.getAlpha()   + aStep * j, u.getAlphaMin() ), u.getAlphaMax()   );
-        rVals[j+1] =          std::min(std::max(        ball.getR_max()   + rStep * j, u.getRMinFit () ), u.getRMaxFit ()   );
         cVals[j+1] =          std::min(std::max(        ball.getC    ()   + cStep * j, u.getConMin  () ), u.getConMax  ()   );
         mVals[j+1] = pow( 10, std::min(std::max( log10( ball.getM_enc() ) + mStep * j, u.getMassMin () ), u.getMassMax () ) );
       }
@@ -126,9 +121,9 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       // Loop over the possible parameters
       // Only need to loop over alpha if Einasto
 
-      for ( int rr = 0; rr <    3; ++rr ){  testProfile.setR_max( rVals[rr] );
       for ( int ii = 0; ii <    3; ++ii ){  testProfile.setC    ( cVals[ii] );
       for ( int jj = 0; jj <    3; ++jj ){  testProfile.setM_enc( mVals[jj] );
+                                            testProfile.setR_max( cosmoRvir( mVals[jj] , 0.5 ) );
       for ( int kk = 0; kk < maxK; ++kk ){
 
 
@@ -153,11 +148,9 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
           ball.setAlpha( aVals[kk] );
           ball.setC    ( cVals[ii] );
           ball.setM_enc( mVals[jj] );
-          ball.setR_max( rVals[rr] );
 
           chi2 = compChi;
         }
-      }
       }
       }
       }
@@ -171,11 +164,6 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
            cStep = cStep_0;
       }
 
-      if ( fabs( ball.getR_max() - u.getRMaxFit() ) / u.getRMaxFit() < boundDist ||
-           fabs( ball.getR_max() - u.getRMinFit() ) / u.getRMinFit() < boundDist ){
-           ball.setR_max( randVal( u.getRMinFit()   , u.getRMaxFit() ) );
-           rStep = rStep_0;
-      }
 
       if ( fabs( log10(ball.getM_enc()) - u.getMassMax() ) / u.getMassMax() < boundDist*boundDist ||
            fabs( log10(ball.getM_enc()) - u.getMassMin() ) / u.getMassMin() < boundDist*boundDist ){
@@ -197,20 +185,16 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       // If didn't move in one direction, decrease step size
       if (   ball.getType () !=       2  &&
              ball.getC    () == cVals[1] &&
-             ball.getR_max() == rVals[1] &&
              ball.getM_enc() == mVals[1] ){
           cStep *= decrement;
           mStep *= decrement;
-          rStep *= decrement;
       }else
       if (   ball.getType () ==       2  &&
              ball.getC    () == cVals[1] &&
-             ball.getR_max() == rVals[1] &&
              ball.getM_enc() == mVals[1] ){
         if ( ball.getAlpha() == aVals[1] ){
           cStep *= decrement;
           mStep *= decrement;
-          rStep *= decrement;
           aStep *= decrement;
         }
       }
@@ -221,8 +205,7 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       //  a count of how many times average has been
       //  consistently below tolerance. Tests for convergence
       if (  fabs( ball.getM_enc() - prevM ) / prevM  < u.getTolerance() &&
-            fabs( ball.getC    () - prevC ) / prevC  < u.getTolerance() &&
-            fabs( ball.getR_max() - prevR ) / prevR  < u.getTolerance() ){
+            fabs( ball.getC    () - prevC ) / prevC  < u.getTolerance() ){
 
         if ( ball.getType() != 2 ){
           convCounter += 1;
@@ -240,7 +223,6 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       prevA = ball.getAlpha();
       prevM = ball.getM_enc();
       prevC = ball.getC    ();
-      prevR = ball.getR_max();
 
       loopCounter +=1;
 
@@ -248,6 +230,179 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
               convCounter < u.getNConsistent() );  // or when converged enough times
 
 }
+
+
+
+void rollBall1D(      densProfile   &ball ,  // Ball to roll
+                      double        &chi2 ,  // Chi2 value
+               const  double        *gArr ,  // g values we are fitting
+               const  double        *dArr ,  // distance array corresponding to g values
+               const  double     *gErrArr ,  // Errors associated with g
+               const  double       sigmaC ,  // Critical surface density to use, of sources
+               const  userInfo          u ){
+
+
+
+  double smallStep = 250;    // Number of possible steps in a direction
+  double   bigStep = 125;
+
+  double decrement = 1/10.;  // Amount to decrease step size by
+  double boundDist = 1e-1;   // Percent distance can be close to edge
+
+
+
+  // Step sizes partially random
+  double mStep = ( u.getMassMax () - u.getMassMin () ) / randVal( bigStep    , smallStep     ) ;
+  double aStep = ( u.getAlphaMax() - u.getAlphaMin() ) / randVal( bigStep    , smallStep     ) ;
+
+
+  // For kicking the ball back, save initial step size
+  double mStep_0 = mStep ;
+  double aStep_0 = aStep ;
+
+
+  // Previous values, to test against current values for convergence
+  double prevM = 1 ;
+  double prevA = 1 ;
+
+
+  int loopCounter = 0;  // Number of times we have rolled
+  int convCounter = 0;  // Number of times we have been in tolerance
+
+
+  // Roll the ball, starts at random position and rolls towards lower chi^2
+  // First set 3 possible positions in parameter space for each variable,  v-step, v, v+step
+  // Test each parameter combination to find lowest chi^2
+
+  do{
+
+      // Used to check which direction is best
+      densProfile testProfile;
+
+      testProfile.setType( ball.getType() );
+
+
+      double    mVals[3] ,
+                aVals[3] ;
+
+      // Sets the parameters for moving along the hill
+      for ( int j = -1; j < 2; ++j ){
+        if ( ball.getType() == 2 )
+        aVals[j+1] =          std::min(std::max(        ball.getAlpha()   + aStep * j, u.getAlphaMin() ), u.getAlphaMax()   );
+        mVals[j+1] = pow( 10, std::min(std::max( log10( ball.getM_enc() ) + mStep * j, u.getMassMin () ), u.getMassMax () ) );
+      }
+
+
+      double chiChoose(999), compChi(998);
+      double gAnalyticArray[  u.getNbins()   ];
+
+
+      int maxK = 1;
+      if ( ball.getType() == 2 )
+        maxK = 3;
+
+
+      // Loop over the possible parameters
+      // Only need to loop over alpha if Einasto
+
+      for ( int jj = 0; jj <    3; ++jj ){  testProfile.setM_enc(            mVals[jj]         );
+                                            testProfile.setC    ( klypinC  ( mVals[jj]       ) );
+                                            testProfile.setR_max( cosmoRvir( mVals[jj] , 0.5 ) );
+      for ( int kk = 0; kk < maxK; ++kk ){
+
+
+        // Generate RTS for profile
+        if ( ball.getType() == 2 ){  testProfile.setAlpha( aVals[kk] );  generateEinRTS      ( gAnalyticArray, testProfile, u,            dArr, sigmaC ); }
+        else
+        if ( ball.getType() == 0 ){                                      generateNFWTruncRTS ( gAnalyticArray, testProfile, u.getNbins(), dArr, sigmaC ); }
+        else{                                                            generateNFWRTS      ( gAnalyticArray, testProfile, u.getNbins(), dArr, sigmaC ); }
+
+
+
+        // Determine goodness of fit by chi^2 analysis
+        compChi = chiSquared( gAnalyticArray, gArr, gErrArr, u.getNbins() );
+
+
+
+        // Take best fit, save it
+        if (compChi < chiChoose){
+          chiChoose = compChi;
+
+          if ( ball.getType() == 2 )
+          ball.setAlpha( aVals[kk] );
+          ball.setM_enc( mVals[jj] );
+
+          chi2 = compChi;
+        }
+      }
+      }
+
+
+      // Kick balls close to the edge of any boundary, and reset their step size
+
+      if ( fabs( log10(ball.getM_enc()) - u.getMassMax() ) / u.getMassMax() < boundDist*boundDist ||
+           fabs( log10(ball.getM_enc()) - u.getMassMin() ) / u.getMassMin() < boundDist*boundDist ){
+           ball.setM_enc( pow( 10, randVal( u.getMassMin (), u.getMassMax () ) ) );
+           mStep = mStep_0;
+      }
+
+      if ( ball.getType() == 2 ) {
+        if(
+           fabs( ball.getAlpha() - u.getAlphaMax () ) / u.getAlphaMax () < boundDist ||
+           fabs( ball.getAlpha() - u.getAlphaMin () ) / u.getAlphaMin () < boundDist ){
+           ball.setAlpha( randVal( u.getAlphaMin ()   , u.getAlphaMax () ) );
+           aStep = aStep_0;
+        }
+      }
+
+
+
+      // If didn't move in one direction, decrease step size
+      if (   ball.getType () !=       2  &&
+             ball.getM_enc() == mVals[1] ){
+          mStep *= decrement;
+      }else
+      if (   ball.getType () ==       2  &&
+             ball.getM_enc() == mVals[1] ){
+        if ( ball.getAlpha() == aVals[1] ){
+          mStep *= decrement;
+          aStep *= decrement;
+        }
+      }
+
+
+
+      // Need counter to be greater than u.consistent,
+      //  a count of how many times average has been
+      //  consistently below tolerance. Tests for convergence
+      if (  fabs( ball.getM_enc() - prevM ) / prevM  < u.getTolerance() ){
+
+        if ( ball.getType() != 2 ){
+          convCounter += 1;
+        } else
+        if ( fabs( ball.getAlpha() - prevA ) / prevA  < u.getTolerance() ){  // Either alpha converged, or not einasto
+          convCounter += 1;
+        }
+      } else {
+        convCounter  = 0;
+      }
+
+
+      // Save previous values to compare against
+      if ( ball.getType() == 2 )
+      prevA = ball.getAlpha();
+      prevM = ball.getM_enc();
+
+      loopCounter +=1;
+
+    } while ( loopCounter < u.getMaxFitNum()   &&  // Leave loop either when just went on too long,
+              convCounter < u.getNConsistent() );  // or when converged enough times
+
+}
+
+
+
+
 
 
 //
@@ -268,9 +423,19 @@ void rollingFitDensProfile(
 
   for (int i = 0; i  <  u.getNchrome() ; ++i){
 
-    ball[i].setR_max(                      profile.getR_max()   * randVal( -0.01, 0.01 ) );
-    ball[i].setC    (                      profile.getC()       * randVal( -0.01, 0.01 ) );
-    ball[i].setM_enc( pow( 10, std::log10( profile.getM_enc() ) * randVal( -0.01, 0.01 ) ) );
+    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
+    ball[i].setR_max(          cosmoRvir( ball[i].getM_enc(), 0.5         )   ); // Rmax wholly dependant on mass
+
+
+    if ( u.getFitType() == 1 )
+    {
+        ball[i].setC( klypinC( ball[i].getM_enc() ) );                  // If only fitting mass, C is estimated from mass
+    } else // 2 free params
+    {
+        ball[i].setC( randVal( u.getConMin  () , u.getConMax  () )   ); // Otherwise, probe range
+    }
+
+
 
     ball[i].setType ( profile.getType() );
     chi2[i] = 1e4;
@@ -289,7 +454,16 @@ void rollingFitDensProfile(
     bool goodBall = false;
     while ( !goodBall )
     {
-        rollBall( ball[i], chi2[i], gArr, dArr, gErrArr, u.getSigmaCrit(), u );
+
+        if ( u.getFitType() == 1 )
+        {
+            rollBall1D( ball[i], chi2[i], gArr, dArr, gErrArr, u.getSigmaCrit(), u ); // Only fit M, other parameters fall out
+        }
+        else
+        {
+            rollBall  ( ball[i], chi2[i], gArr, dArr, gErrArr, u.getSigmaCrit(), u ); // Treat M and C as free
+        }
+
 
         // Make sure rolled ball is in good statistics
         if ( std::log10( ball[i].getM_enc() ) > 12 )
@@ -299,7 +473,7 @@ void rollingFitDensProfile(
         {
             if ( profile.getType() == 2 )
             ball[i].setAlpha(          randVal( u.getAlphaMin() , u.getAlphaMax() )   );
-            ball[i].setR_max(          randVal( u.getRMinFit() , u.getRMaxFit() )   );
+            ball[i].setR_max(          randVal( u.getRMinFit () , u.getRMaxFit () )   );
             ball[i].setC    (          randVal( u.getConMin  () , u.getConMax  () )   );
             ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
 
@@ -1078,6 +1252,49 @@ double interpolateEinRTS(  double        x ,  // r/r_s
                ( ( x  - x1 ) * ( a  - a1 )   * table.getVal( a2_bin, x2_bin ) ) );
 }
 
+
+
+/*
+    Klypin 2014 results for z=0.5
+    Mo = 2e16
+    Co = 5.65
+    gamma = 0.115
+
+    C(M) = Co ( M/10^12) ^ -gamma ( 1+ (M/Mo)^0.4 )
+*/
+double klypinC( double M )
+{
+    double M_0   = 2e16  ;
+    double C_0   = 5.65  ;
+    double gamma = 0.115 ;
+
+    return C_0 * pow( M / (1.0e12) , -gamma ) * ( 1.0 + pow( M / M_0, 0.4 ) );
+}
+
+// Assuming Planck cosmology
+double cosmoRvir( double M, double z )
+{
+    double a = 1. / ( 1 + z ) ;
+
+    double H_0 = 67.74 ; // km s^-1 Mpc^-1
+    double O_M = 0.309 ;
+    double O_K = 0.000 ;
+    double O_L = 0.691 ;
+
+    double H2  = H_0 * H_0 * ( O_M / (a*a*a) + O_K / (a*a) + O_L ) ;
+
+    double rho_c = ( 3 * H2 ) / ( 8 * M_PI * G_COSMO ) ;
+
+    // G    = Mpc Msol^-1 (km/s)^2
+    // H_0  = km s^-1 Mpc^-1
+    // H2/G = Msol Mpc^-3
+
+    // M200 = 4pi/3 200 rho_c R200^3
+
+    // R200 = ( 3 M / 800 pi rho_c )^1/3 Mpc
+
+    return pow( ( 3 * M / ( 800. * M_PI * rho_c ) ) , 1/3. ) ;
+}
 
 /*
 

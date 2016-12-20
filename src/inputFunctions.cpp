@@ -128,7 +128,7 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-    if ( phi < -10 ) return;
+//    if ( phi < -10 ) return;
 
 
          I_bin   = I_bin + 1;
@@ -337,6 +337,7 @@ void readInpFile(          userInfo  &inpInfo  ,   // Info needed for the rest o
 
       else if ( inpS=="firstFile"   ){        inpInfo.setFirstFile       (        atoi(inpC2) ); }  // First file halo ID to use
       else if ( inpS== "lastFile"   ){        inpInfo.setLastFile        (        atoi(inpC2) ); }  // Last  file halo ID to use
+      else if ( inpS==  "fitType"   ){        inpInfo.setFitType         (        atoi(inpC2) ); }  // Number of free parameters to fit
 
       else{
 
@@ -367,6 +368,7 @@ void readInpFile(          userInfo  &inpInfo  ,   // Info needed for the rest o
               std::string("\nfitTolera = ") + std::to_string((long double) inpInfo.getTolerance       () ) +
               std::string("\nshapeNois = ") + std::to_string((long double) inpInfo.getShapeNoise      () ) +
               std::string("\nuseNoise  = ") + std::to_string((long long  ) inpInfo.getUseNoise        () ) +
+              std::string("\nfitType   = ") + std::to_string((long long  ) inpInfo.getFitType         () ) +
               std::string("\nFoxH2012F = ") + std::string   (              inpInfo.getFoxH2012F       () ) +
               std::string("\nFoxH2123F = ") + std::string   (              inpInfo.getFoxH2123F       () ) +
               std::string("\noutputPat = ") + std::string   (              inpInfo.getOutputPath      () ) );

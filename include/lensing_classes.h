@@ -135,7 +135,9 @@ class userInfo{
     void setFirstFile       ( int    inpI ) {     firstFile  = inpI ; }
     void setLastFile        ( int    inpI ) {      lastFile  = inpI ; }
 
+    void setFitType         ( int    inpI ) {        fitType = inpI ; }
 
+    int    getFitType         () const { return fitType        ; }
     int    getFirstFile       () const { return firstFile      ; }
     int    getLastFile        () const { return lastFile       ; }
     int    getJacknifeBins    () const { return jacknifeBins   ; }
@@ -270,6 +272,7 @@ class userInfo{
     double   tolerance ; // Average residual must be below tolerance
     double   mutChance ; // Likelihood of mutation
     double  avgTestVal ; // chiAvg*this is random range
+    int  fitType       ; // 1 for 1 free param (in NFW), 3 for 3 free parameters
 
     int      firstFile ; // First file haloID to read in
     int       lastFile ;
@@ -356,7 +359,7 @@ class densProfile{
 
     // Modifiers, as parameters are modified need to adjust dependant values
     void setAlpha( double inpA ){         alpha = inpA; }
-    void setR_max( double inpR ){         r_max = inpR; }
+    void setR_max( double inpR ){         r_max = inpR; } // Mpc
     void setC    ( double inpC ){ concentration = inpC; }
     void setM_enc( double inpM ){         M_enc = inpM; }
     void setType ( int    inpT ){          type = inpT; }

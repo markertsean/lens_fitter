@@ -49,7 +49,16 @@ einTable einKappaAvg ;
 
 int main(int arg,char **argv){
 
+for ( double i = 12 ; i < 16 ; i += 0.5 )
+{
 
+double myM = pow( 10, i );
+
+printf("M = %3.1f, c = %3.1f, R_vir = %10.6f\n", i, klypinC( myM ), cosmoRvir( myM, 0.5 ) );
+
+}
+
+exit(0);
     // Initializes the log file, generates logfiles directory
     //  and a file name based on current time
     initLogFile();
@@ -139,6 +148,7 @@ int main(int arg,char **argv){
             std::cout << "Read stored file" << std::endl;
     }
 
+
     ////////////////////////////////////////////////////////////
     ///////////////////Loops over source bins///////////////////
     /////////////////////Calculate the fits/////////////////////
@@ -153,7 +163,7 @@ int main(int arg,char **argv){
             std::cout << "Ignoring noise..." << std::endl;
     }
 
-
+    /*
     //////////////////Collapse M, examine b&g//////////////////////
 
 
@@ -566,7 +576,7 @@ int main(int arg,char **argv){
     }
     }
 
-
+    //*/
 
 
 

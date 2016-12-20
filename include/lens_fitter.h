@@ -16,6 +16,15 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
                const  userInfo          u );
 
 
+void rollBall1D(      densProfile   &ball ,  // Ball to roll
+                      double        &chi2 ,  // Chi2 value
+               const  double        *gArr ,  // g values we are fitting
+               const  double        *dArr ,  // distance array corresponding to g values
+               const  double     *gErrArr ,  // Errors associated with g
+               const  double       sigmaC ,  // Critical surface density to use, of sources
+               const  userInfo          u );
+
+
 void rollingFitDensProfile(
                           densProfile   &  profile ,  // Density profile we are outputting
                     const userInfo               u ,  // Info from the user
@@ -97,5 +106,9 @@ void fitDensProfile(
                     const double       *   gErrArr );
 
 
+// Concentration estimates from Klypin 2014
+double klypinC( double M ) ;
+
+double cosmoRvir( double M, double z ) ; // In Mpch
 
 #endif
