@@ -49,16 +49,7 @@ einTable einKappaAvg ;
 
 int main(int arg,char **argv){
 
-for ( double i = 12 ; i < 16 ; i += 0.5 )
-{
 
-double myM = pow( 10, i );
-
-printf("M = %3.1f, c = %3.1f, R_vir = %10.6f\n", i, klypinC( myM ), cosmoRvir( myM, 0.5 ) );
-
-}
-
-exit(0);
     // Initializes the log file, generates logfiles directory
     //  and a file name based on current time
     initLogFile();
@@ -163,7 +154,7 @@ exit(0);
             std::cout << "Ignoring noise..." << std::endl;
     }
 
-    /*
+
     //////////////////Collapse M, examine b&g//////////////////////
 
 
@@ -576,7 +567,6 @@ exit(0);
     }
     }
 
-    //*/
 
 
 
@@ -603,7 +593,7 @@ exit(0);
         // Only analyze bin in halos are present
         if ( N_inbin > 0 )
         {
-//double *r ;
+
             std::cout << std::endl << "Collapsing B&G bins, i = " << i << " m = " << m << std::endl;
 
 
@@ -645,7 +635,6 @@ exit(0);
                              avgBGArr( userInput, gTotJackArr, nJackArr, i, m, omitIndex, &gTot );
                              avgBGArr( userInput, gTanJackArr, nJackArr, i, m, omitIndex, &gTan );
                 int* N_arr = avgBGArr( userInput,    dJackArr, nJackArr, i, m, omitIndex, &dArr );
-//avgBGArr( userInput,    dJackArr, nJackArr, i, m, omitIndex, &r );
 
                 // Uncertainty array
                 double *eArr = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
@@ -710,14 +699,6 @@ exit(0);
 
                 std::cout << std::endl ;
 
-/*
-if ( omitIndex == -1 )
-{
-for ( int iii = 0; iii < userInput.getNbins(); ++iii )
-    printf("%5.2f    %14.6e\n", gTot[iii]  );
-
-}
-//*/
                 delete [] eArr  ;
                 delete [] gTot  ;
                 delete [] gTan  ;
@@ -748,40 +729,6 @@ for ( int iii = 0; iii < userInput.getNbins(); ++iii )
 
                         std::cout <<"Done.              " << std::endl;
             logMessage( std::string("Fitting complete"   ) ) ;
-
-// 0 trunc, 1 nfw, 2 ein
-/*
-densProfile trueHalo;
-
-trueHalo.setR_max( avgHalo.getRmax() );
-trueHalo.setC    ( avgHalo.getC()    );
-trueHalo.setM_enc( avgHalo.getM()    );
-trueHalo.setAlpha( einFits_tot[0].getAlpha() );
-
-trueHalo.setType( 0 );
-double * nfTT = generateNFWTruncRTS( trueHalo      , userInput.getNbins(), r, userInput.getSigmaCrit() );
-
-trueHalo.setType( 1 );
-double * nfwT = generateNFWRTS     ( trueHalo      , userInput.getNbins(), r, userInput.getSigmaCrit() );
-
-trueHalo.setType( 2 );
-double * einT = generateEinRTS     ( trueHalo      , userInput           , r, userInput.getSigmaCrit() );
-
-
-double * einF = generateEinRTS     ( einFits_tot[0], userInput           , r, userInput.getSigmaCrit() );
-double * nfwF = generateNFWRTS     ( nfwFits_tot[0], userInput.getNbins(), r, userInput.getSigmaCrit() );
-double * nfTF = generateNFWTruncRTS( nfTFits_tot[0], userInput.getNbins(), r, userInput.getSigmaCrit() );
-
-printf("True   M = %5.2f  C = %5.2f  R = %5.3f\n", std::log10( trueHalo      .getM_enc() ), trueHalo      .getC(), trueHalo      .getR_max() );
-printf("Ein    M = %5.2f  C = %5.2f  R = %5.3f\n", std::log10( einFits_tot[0].getM_enc() ), einFits_tot[0].getC(), einFits_tot[0].getR_max() );
-printf("NFW    M = %5.2f  C = %5.2f  R = %5.3f\n", std::log10( nfwFits_tot[0].getM_enc() ), nfwFits_tot[0].getC(), nfwFits_tot[0].getR_max() );
-printf("NFW_t  M = %5.2f  C = %5.2f  R = %5.3f\n", std::log10( nfTFits_tot[0].getM_enc() ), nfTFits_tot[0].getC(), nfTFits_tot[0].getR_max() );
-
-printf("    R,         nfw_true,         nfw_fit ,         nfT_true,         nfT_fit ,         ein_true,         ein_fit \n");
-for ( int iii = 0; iii < userInput.getNbins(); ++iii )
-    printf("%5.2f    %14.6e    %14.6e    %14.6e    %14.6e    %14.6e    %14.6e\n",
-    r[iii], nfTT[iii], nfTF[iii], nfwT[iii], nfwF[iii], einT[iii], einF[iii] );
-//*/
 
 
             char     fileName[100] ;

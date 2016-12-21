@@ -128,7 +128,7 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-//    if ( phi < -10 ) return;
+    if ( phi < -10 ) return;
 
 
          I_bin   = I_bin + 1;
