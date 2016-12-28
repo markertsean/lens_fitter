@@ -128,7 +128,7 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-    if ( phi < -10 ) return;
+//    if ( phi < -10 ) return;
 
 
          I_bin   = I_bin + 1;
@@ -222,43 +222,42 @@ int  readSources(  userInfo    u    ,  // User input
 
 
 
-    int     halo_id = u.getFirstFile() ;  // Halo ids of files we are looking for
-    int     halo_c  = 0                ;  // Count number of halos read
-
-    char inputFile[100];
-    FILE *pFile;
+    int     halo_c  = 0  ;  // Count number of halos read
+    FILE    *inpFileList ;  // Contains all the input files
 
 
-    while ( halo_id < u.getLastFile() ) // Check the id numbers for at least base halo file
+    inpFileList = fopen( u.getInputFileF().c_str(), "r" ) ;
+
+    char inpFileName[500] ;
+
+    while ( fscanf( inpFileList,"%s",inpFileName) != EOF )
     {
 
-        sprintf(       inputFile, "%sHalo_%010li_%06.1f_Sources.dat", u.getInputPath().c_str(), halo_id, 0.0 );
-        pFile = fopen( inputFile, "r");
+        char *isSrc ;
+        isSrc = strstr( inpFileName, "_Sources.dat" );
 
-        if (pFile!=NULL)               // If file exists, read it, attempt to read others
+        if ( isSrc != NULL )
         {
 
-                readSourceFile( pFile, u, d, gTot, gTan, N, N_h, h, -1 ); // -1 indicates no integration
+            FILE *pFile ;
+            pFile = fopen( inpFileName, "r");
 
-                fclose( pFile );
-
-            for ( int i = 0; i < u.getN_IBin()-1; ++ i )
+            if (pFile!=NULL)               // If file exists, read it, attempt to read others
             {
-                sprintf(       inputFile,  "%sHalo_%010li_%06.1f_Sources.dat", u.getInputPath().c_str(), halo_id, pow( 10, u.getI_bin( i ) ) );
-                pFile = fopen( inputFile,  "r");
-
-
-                if ( pFile != NULL ){
-                readSourceFile( pFile, u, d, gTot, gTan, N, N_h, h, i );
+                readSourceFile( pFile, u, d, gTot, gTan, N, N_h, h, -1 ); // -1 indicates no integration
                 fclose( pFile );
-                }
-            }
 
-            ++halo_c;
-        } // File exists
+            } // File exists
+        }     // File is source file
 
-        ++halo_id;
+        ++halo_c;
+
+        if ( halo_c % 10000 == 0 )
+            std::cout << "  Read " << halo_c << " files..." << std::endl ;
+
     }  // Halo_id loop
+
+    fclose( inpFileList );
 
     // Current gTot, tan, values are sums, makes them averages
     for ( int i = 0; i < u.getN_srcJackBin(); ++i )

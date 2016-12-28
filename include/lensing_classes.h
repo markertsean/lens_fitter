@@ -132,6 +132,8 @@ class userInfo{
     void setOutputPath      ( std::string inpS ) {outputPath = inpS ; }
     void setInputPath       ( std::string inpS ) { inputPath = inpS ; }
 
+    void setInputFileF      ( std::string inpS ) { inputFileFile = inpS ; }
+
     void setFirstFile       ( int    inpI ) {     firstFile  = inpI ; }
     void setLastFile        ( int    inpI ) {      lastFile  = inpI ; }
 
@@ -178,6 +180,7 @@ class userInfo{
 
     std::string getInputPath  () const { return  inputPath     ; }
     std::string getOutputPath () const { return  outputPath    ; }
+    std::string getInputFileF () const { return  inputFileFile ; }
     std::string getFoxH2012F  () const { return  fox2012F      ; }
     std::string getFoxH2123F  () const { return  fox2123F      ; }
 
@@ -234,6 +237,7 @@ class userInfo{
     std::string fox2123F;
     std::string  inputPath;
     std::string outputPath;
+    std::string inputFileFile;
 
     double sigmaC   ; // For all sources, same critical surface density
 

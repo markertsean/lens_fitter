@@ -121,6 +121,7 @@ int main(int arg,char **argv){
     {
         int N_files = readSources( userInput,    dJackArr, gTotJackArr, gTanJackArr, nJackArr, ninArr, binnedHalo ) ;
 
+
         if( N_files == 0 )
         {
             std::cout << "Did not read any files" << std::endl;
@@ -154,7 +155,7 @@ int main(int arg,char **argv){
             std::cout << "Ignoring noise..." << std::endl;
     }
 
-
+/*
     //////////////////Collapse M, examine b&g//////////////////////
 
 
@@ -567,8 +568,7 @@ int main(int arg,char **argv){
     }
     }
 
-
-
+//*/
 
 
     //////////////////Collapse BG, examine m//////////////////////
@@ -771,7 +771,8 @@ int main(int arg,char **argv){
     }
     }
 
-
+//*/
   exit(0);
   return 0;
+
 }

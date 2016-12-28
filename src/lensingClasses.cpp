@@ -35,11 +35,12 @@ userInfo::userInfo(){
   B_Nbins  =  5 ;
   G_Nbins  =  4 ;
 
-  firstFile = 0   ;
-  lastFile  = 1e6 ;
+  firstFile = 0    ;
+  lastFile  = 1000000000 ;
 
   fox2012F = "src/foxH2012.dat"; // FoxH files to read
   fox2123F = "src/foxH2123.dat";
+  inputFileFile = "allfiles.dat";
 
   outputPath = "data/";
 
