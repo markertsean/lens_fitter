@@ -76,6 +76,9 @@ userInfo::userInfo(){
     useNoise   =  1;
 
     fitType    =  1;
+    doM        =  1;
+    doG        =  1;
+    doBG       =  1;
 }
 
 

@@ -138,7 +138,15 @@ class userInfo{
     void setLastFile        ( int    inpI ) {      lastFile  = inpI ; }
 
     void setFitType         ( int    inpI ) {        fitType = inpI ; }
+    void setDoBG            ( int    inpI ) {        doBG    = inpI ; }
+    void setDoG             ( int    inpI ) {        doG     = inpI ; }
+    void setDoM             ( int    inpI ) {        doM     = inpI ; }
 
+
+
+    int    getDoBG            () const { return doBG           ; }
+    int    getDoG             () const { return doG            ; }
+    int    getDoM             () const { return doM            ; }
     int    getFitType         () const { return fitType        ; }
     int    getFirstFile       () const { return firstFile      ; }
     int    getLastFile        () const { return lastFile       ; }
@@ -277,6 +285,10 @@ class userInfo{
     double   mutChance ; // Likelihood of mutation
     double  avgTestVal ; // chiAvg*this is random range
     int  fitType       ; // 1 for 1 free param (in NFW), 3 for 3 free parameters
+
+    int  doBG          ; // Collapse bins to examine these parameters
+    int  doG           ;
+    int  doM           ;
 
     int      firstFile ; // First file haloID to read in
     int       lastFile ;

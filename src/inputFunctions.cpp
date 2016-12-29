@@ -128,7 +128,7 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-//    if ( phi < -10 ) return;
+    if ( phi < -10 ) return;
 
 
          I_bin   = I_bin + 1;
@@ -337,6 +337,11 @@ void readInpFile(          userInfo  &inpInfo  ,   // Info needed for the rest o
       else if ( inpS=="firstFile"   ){        inpInfo.setFirstFile       (        atoi(inpC2) ); }  // First file halo ID to use
       else if ( inpS== "lastFile"   ){        inpInfo.setLastFile        (        atoi(inpC2) ); }  // Last  file halo ID to use
       else if ( inpS==  "fitType"   ){        inpInfo.setFitType         (        atoi(inpC2) ); }  // Number of free parameters to fit
+
+      else if ( inpS=="doM"         ){        inpInfo.setDoM             (        atoi(inpC2) ); }  // Collapse B&G bins to study M
+      else if ( inpS=="doG"         ){        inpInfo.setDoG             (        atoi(inpC2) ); }  // Collapse B and M bins to study G
+      else if ( inpS=="doBG"        ){        inpInfo.setDoBG            (        atoi(inpC2) ); }  // Collapse M bins to study B&G
+
 
       else{
 

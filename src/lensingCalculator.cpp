@@ -155,9 +155,11 @@ int main(int arg,char **argv){
             std::cout << "Ignoring noise..." << std::endl;
     }
 
-/*
+
     //////////////////Collapse M, examine b&g//////////////////////
 
+    if ( userInput.getDoBG() == 1 )
+    {
 
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
@@ -360,13 +362,16 @@ int main(int arg,char **argv){
     }
     }
     }
-
+    }
 
 
 
 
     //////////////////Collapse M&B, examine g//////////////////////
 
+
+    if ( userInput.getDoG() == 1 )
+    {
 
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
@@ -567,12 +572,14 @@ int main(int arg,char **argv){
         }
     }
     }
+    }
 
-//*/
 
 
     //////////////////Collapse BG, examine m//////////////////////
 
+    if ( userInput.getDoM() == 1 )
+    {
 
     // Loop over each bin, doing jacknife analysis
     // Will generate fits for gTot, gTan, 3 profiles
@@ -770,8 +777,8 @@ int main(int arg,char **argv){
         }
     }
     }
+    }
 
-//*/
   exit(0);
   return 0;
 
