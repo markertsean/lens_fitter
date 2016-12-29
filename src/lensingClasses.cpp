@@ -23,6 +23,7 @@ userInfo::userInfo(){
 
   I_step   =  0.20026     ; // Step in I to make in log
   I_minBin =  1.0        ; // Bin min and max values for input sources
+  I_maxBin = 2.6020599913279625  ;
   M_minBin = 13.0        ;
   M_maxBin = 16.0        ;
   B_minBin =  0.5        ;

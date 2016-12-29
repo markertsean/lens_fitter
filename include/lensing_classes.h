@@ -192,6 +192,9 @@ class userInfo{
     std::string getFoxH2012F  () const { return  fox2012F      ; }
     std::string getFoxH2123F  () const { return  fox2123F      ; }
 
+    double getI_step   () const { return I_step  ; }
+    double getI_minBin () const { return I_minBin; }
+    double getI_maxBin () const { return I_maxBin; }
     double getM_minBin () const { return M_minBin; }
     double getM_maxBin () const { return M_maxBin; }
     double getB_minBin () const { return B_minBin; }
@@ -256,6 +259,7 @@ class userInfo{
     double G_minBin ;
     double G_maxBin ;
     double I_minBin ;
+    double I_maxBin ;
     double I_step   ; // No max value for I, just a step
 
 

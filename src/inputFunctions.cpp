@@ -1,5 +1,6 @@
 #include <cstring>
 #include <cmath>
+#include <math.h>
 #include <vector>
 #include <CCfits/CCfits>
 #include <slsimlib.h>
@@ -98,14 +99,14 @@ void readSourceFile(   FILE      * pFile ,
                        int       * N     ,  // Array counting number in each bin
                        int       * N_h   ,  // Array counting number of halos in bins
                        haloInfo  * h     ,  // Array containing halo info for bins
-                       int         I_bin )
+                       int         I_bin_k )
 {
 
     char   inpC1[35],inpC2[35], inpC3[35];
     double dMax ;
     int    N_src;
 
-    double M, ba, gamma, c, r_max, ca, phi, theta, alpha;
+    double M, ba, gamma, c, r_max, ca, phi, theta, alpha, integ;
 
 
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // ID
@@ -119,7 +120,7 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; theta = atof( inpC2 );
     fscanf(pFile,"%s%s",inpC1,inpC2) ; alpha = atof( inpC2 );
     fscanf(pFile,"%s%s",inpC1,inpC2) ; gamma = atof( inpC2 );
-    fscanf(pFile,"%s%s",inpC1,inpC2) ; // Integ
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; integ = atof( inpC2 );
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // IntegM
     fscanf(pFile,"%s%s",inpC1,inpC2) ; dMax   = atof( inpC2 ) / 2.0 * std::sqrt(2.); // Go through long axis of image
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // NpH
@@ -128,10 +129,22 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-    if ( phi < -10 ) return;
+//    if ( phi < -10 ) return;
+
+    int  I_bin = 0 ;
+
+    if      ( integ ==  0  )  {   I_bin =  0 ;   }
+    else if ( integ > 399. )  {   I_bin =  9 ;   }
+    else if ( integ > 252. )  {   I_bin =  8 ;   }
+    else if ( integ > 159. )  {   I_bin =  7 ;   }
+    else if ( integ > 100. )  {   I_bin =  6 ;   }
+    else if ( integ >  63. )  {   I_bin =  5 ;   }
+    else if ( integ >  39. )  {   I_bin =  4 ;   }
+    else if ( integ >  25. )  {   I_bin =  3 ;   }
+    else if ( integ >  15. )  {   I_bin =  2 ;   }
+    else                      {   I_bin =  1 ;   }
 
 
-         I_bin   = I_bin + 1;
     int  M_bin   = std::min(std::max(   int( ( log10( M )    - u.getM_minBin() ) / ( u.getM_maxBin() - u.getM_minBin() ) * u.getN_MBin() )    ,0),u.getN_MBin()-1);
     int  B_bin   = std::min(std::max(   int( (        ba     - u.getB_minBin() ) / ( u.getB_maxBin() - u.getB_minBin() ) * u.getN_BBin() )    ,0),u.getN_BBin()-1);
     int  G_bin   = std::min(std::max(   int( (        gamma  - u.getG_minBin() ) / ( u.getG_maxBin() - u.getG_minBin() ) * u.getN_GBin() )    ,0),u.getN_GBin()-1);
@@ -244,15 +257,18 @@ int  readSources(  userInfo    u    ,  // User input
 
             if (pFile!=NULL)               // If file exists, read it, attempt to read others
             {
+
                 readSourceFile( pFile, u, d, gTot, gTan, N, N_h, h, -1 ); // -1 indicates no integration
+
                 fclose( pFile );
+
+                ++halo_c;
 
             } // File exists
         }     // File is source file
 
-        ++halo_c;
 
-        if ( halo_c % 10000 == 0 )
+        if ( halo_c % 10000 == 0 && halo_c > 0 )
             std::cout << "  Read " << halo_c << " files..." << std::endl ;
 
     }  // Halo_id loop
