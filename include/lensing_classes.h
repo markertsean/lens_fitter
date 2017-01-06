@@ -127,6 +127,7 @@ class userInfo{
     void setN_BBin          ( int    inpI ) {     M_Nbins    = inpI ; }
     void setN_GBin          ( int    inpI ) {     M_Nbins    = inpI ; }
 
+    void setStoredData      ( std::string inpS ) {storedFile = inpS ; }
     void setFoxH2012F       ( std::string inpS ) {  fox2012F = inpS ; }
     void setFoxH2123F       ( std::string inpS ) {  fox2123F = inpS ; }
     void setOutputPath      ( std::string inpS ) {outputPath = inpS ; }
@@ -186,6 +187,8 @@ class userInfo{
     double getTolerance       () const { return      tolerance ; }
     double getMutChance       () const { return      mutChance ; }
 
+
+    std::string getStoredData () const { return  storedFile    ; }
     std::string getInputPath  () const { return  inputPath     ; }
     std::string getOutputPath () const { return  outputPath    ; }
     std::string getInputFileF () const { return  inputFileFile ; }
@@ -249,6 +252,7 @@ class userInfo{
     std::string  inputPath;
     std::string outputPath;
     std::string inputFileFile;
+    std::string storedFile;
 
     double sigmaC   ; // For all sources, same critical surface density
 

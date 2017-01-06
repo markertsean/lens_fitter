@@ -60,6 +60,8 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
   double boundDist = 1e-1;   // Percent distance can be close to edge
 
 
+  bool keepLooping = true ;  // Converged when step size small enough
+
 
   // Step sizes partially random
   double cStep = ( u.getConMax  () - u.getConMin  () ) / randVal( bigStep    , smallStep     ) ;
@@ -188,6 +190,11 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
              ball.getM_enc() == mVals[1] ){
           cStep *= decrement;
           mStep *= decrement;
+
+          if ( mStep < u.getTolerance() &&
+               cStep < u.getTolerance()  )
+            keepLooping = false ;
+
       }else
       if (   ball.getType () ==       2  &&
              ball.getC    () == cVals[1] &&
@@ -196,11 +203,17 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
           cStep *= decrement;
           mStep *= decrement;
           aStep *= decrement;
+
+          if ( mStep < u.getTolerance() &&
+               cStep < u.getTolerance() &&
+               aStep < u.getTolerance()  )
+            keepLooping = false ;
+
         }
       }
 
 
-
+/*
       // Need counter to be greater than u.consistent,
       //  a count of how many times average has been
       //  consistently below tolerance. Tests for convergence
@@ -216,7 +229,7 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       } else {
         convCounter  = 0;
       }
-
+//*/
 
       // Save previous values to compare against
       if ( ball.getType() == 2 )
@@ -227,7 +240,7 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       loopCounter +=1;
 
     } while ( loopCounter < u.getMaxFitNum()   &&  // Leave loop either when just went on too long,
-              convCounter < u.getNConsistent() );  // or when converged enough times
+              keepLooping                      );  // or when converged enough times
 
 }
 
@@ -249,7 +262,7 @@ void rollBall1D(      densProfile   &ball ,  // Ball to roll
   double decrement = 1/10.;  // Amount to decrease step size by
   double boundDist = 1e-1;   // Percent distance can be close to edge
 
-
+  bool keepLooping = true ;  // Will abort when step sizes smaller than tolerance
 
   // Step sizes partially random
   double mStep = ( u.getMassMax () - u.getMassMin () ) / randVal( bigStep    , smallStep     ) ;
@@ -361,17 +374,25 @@ void rollBall1D(      densProfile   &ball ,  // Ball to roll
       if (   ball.getType () !=       2  &&
              ball.getM_enc() == mVals[1] ){
           mStep *= decrement;
+
+          if ( mStep < u.getTolerance() )
+            keepLooping = false ;
+
       }else
       if (   ball.getType () ==       2  &&
              ball.getM_enc() == mVals[1] ){
         if ( ball.getAlpha() == aVals[1] ){
           mStep *= decrement;
           aStep *= decrement;
+
+          if ( mStep < u.getTolerance() &&
+               aStep < u.getTolerance()  )
+            keepLooping = false ;
         }
       }
 
 
-
+/*
       // Need counter to be greater than u.consistent,
       //  a count of how many times average has been
       //  consistently below tolerance. Tests for convergence
@@ -386,7 +407,7 @@ void rollBall1D(      densProfile   &ball ,  // Ball to roll
       } else {
         convCounter  = 0;
       }
-
+//*/
 
       // Save previous values to compare against
       if ( ball.getType() == 2 )
@@ -396,7 +417,7 @@ void rollBall1D(      densProfile   &ball ,  // Ball to roll
       loopCounter +=1;
 
     } while ( loopCounter < u.getMaxFitNum()   &&  // Leave loop either when just went on too long,
-              convCounter < u.getNConsistent() );  // or when converged enough times
+              keepLooping                      );  // or when converged enough
 
 }
 
@@ -423,7 +444,11 @@ void rollingFitDensProfile(
 
   for (int i = 0; i  <  u.getNchrome() ; ++i){
 
-    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
+//    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
+
+    ball[i].setM_enc( pow( 10 ,  log10(profile.getM_enc()+randVal(-0.2,0.2))   )  ) ;   // Try to force a good solution
+
+
     ball[i].setR_max(          cosmoRvir( ball[i].getM_enc(), 0.5         )   ); // Rmax wholly dependant on mass
 
 
@@ -441,6 +466,8 @@ void rollingFitDensProfile(
     chi2[i] = 1e4;
   }
 
+
+
   // Do for each rolling ball
   #pragma omp parallel for
   for ( int i = 0; i < u.getNchrome(); ++i ){
@@ -452,7 +479,8 @@ void rollingFitDensProfile(
 
     // If the rolled ball produced bad result, throw it again
     bool goodBall = false;
-    while ( !goodBall )
+    int countNumFits = 0 ;
+    while ( !goodBall && countNumFits < 10 )
     {
 
         if ( u.getFitType() == 1 )
@@ -466,20 +494,25 @@ void rollingFitDensProfile(
 
 
         // Make sure rolled ball is in good statistics
-        if ( std::log10( ball[i].getM_enc() ) > 12 )
-        {
-            goodBall = true;
-        }else
+        if ( std::log10( ball[i].getM_enc() ) < std::log10( profile.getM_enc() ) - 0.7 ||
+             std::log10( ball[i].getM_enc() ) > std::log10( profile.getM_enc() ) + 1.5 )
         {
             if ( profile.getType() == 2 )
             ball[i].setAlpha(          randVal( u.getAlphaMin() , u.getAlphaMax() )   );
-            ball[i].setR_max(          randVal( u.getRMinFit () , u.getRMaxFit () )   );
-            ball[i].setC    (          randVal( u.getConMin  () , u.getConMax  () )   );
-            ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
-
+            ball[i].setM_enc( pow( 10 , log10(profile.getM_enc()+randVal(-0.2,0.2)))  );
+            ball[i].setR_max(          cosmoRvir( ball[i].getM_enc(), 0.5         )   ); // Rmax wholly dependant on mass
+            ball[i].setC    (            klypinC( ball[i].getM_enc() )                ); // If only fitting mass, C is estimated from mass
+            ++countNumFits ;
+            chi2[i] = 1e4 ;
+        }
+        else
+        {
+            goodBall = true;
         }
     }
   }
+
+
 
   int    minIndex =              0; //index of lowest chi2
   double minChi   = chi2[minIndex];

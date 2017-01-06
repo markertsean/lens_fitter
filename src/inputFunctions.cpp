@@ -16,7 +16,7 @@ bool readShortFile( userInfo      u ,
                     int      * n_h  ,
                     haloInfo * bh   )
 {
-    std::string storedData = "storedData.dat";
+    std::string storedData = u.getStoredData();
 
     std::ifstream file( storedData.c_str() );
 
@@ -129,7 +129,7 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-//    if ( phi < -10 ) return;
+    //    if ( phi < -10 ) return;
 
     int  I_bin = 0 ;
 
@@ -264,14 +264,12 @@ int  readSources(  userInfo    u    ,  // User input
 
                 ++halo_c;
 
+                if ( halo_c % 10000 == 0 && halo_c > 0 )
+                    std::cout << "  Read " << halo_c << " files..." << std::endl ;
+
             } // File exists
         }     // File is source file
-
-
-        if ( halo_c % 10000 == 0 && halo_c > 0 )
-            std::cout << "  Read " << halo_c << " files..." << std::endl ;
-
-    }  // Halo_id loop
+    }         // Halo_id loop
 
     fclose( inpFileList );
 
@@ -345,6 +343,7 @@ void readInpFile(          userInfo  &inpInfo  ,   // Info needed for the rest o
       else if ( inpS=="sigmaCrit"   ){        inpInfo.setSigmaCrit       (        atof(inpC2) ); }  // Sigma crit, need to set a default
       else if ( inpS=="shapeNoise"  ){        inpInfo.setShapeNoise      (        atof(inpC2) ); }  // Shape noise to use for source errors, default 0.3
 
+      else if ( inpS=="storedData"  ){        inpInfo.setStoredData      ( std::string(inpC2) ); }  // Location of saved data file, containing bulk data of halos
       else if ( inpS=="fox2012F"    ){        inpInfo.setFoxH2012F       ( std::string(inpC2) ); }  // Location of foxH files we will interpolate over
       else if ( inpS=="fox2123F"    ){        inpInfo.setFoxH2123F       ( std::string(inpC2) ); }  // Location of foxH files we will interpolate over
       else if ( inpS=="outputPath"  ){        inpInfo.setOutputPath      ( std::string(inpC2) ); }  // Directory to place output files in

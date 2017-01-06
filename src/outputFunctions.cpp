@@ -78,7 +78,7 @@ void writeShort( userInfo      u ,
                  int      * n_h  ,
                  haloInfo * bh   )
 {
-    std::string storedData = "storedData.dat";
+    std::string storedData = u.getStoredData();
 
     FILE *pFile ;
     pFile = fopen( storedData.c_str(), "w" );

@@ -44,6 +44,7 @@ userInfo::userInfo(){
   inputFileFile = "allfiles.dat";
 
   outputPath = "data/";
+  storedFile = "storedData.dat";
 
     sigmaC     =  2.991203e+15 ; // Critical surface density in M_sun/Mpc^2
    shapeNoise  =  0.3          ; // Intrinsic shape noise in the sources
@@ -58,7 +59,7 @@ userInfo::userInfo(){
       mMin = 12.5;     // Range of mass values to fit
       mMax = 16.5;
   alphaMin =  9e-2;    // Range of alpha values to fit
-  alphaMax =  0.68;
+  alphaMax =  0.3;
 
 
   maxFitAttempts = 2e2   ; // Maximum number of steps to roll ball, or times to reproduce
