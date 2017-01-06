@@ -43,7 +43,9 @@ class haloInfo{
     void setAlpha ( double inpF ){ alpha = inpF; }
     void setGamma ( double inpF ){ gamma = inpF; }
     void setID    ( long   inpI ){ id    = inpI; }
+    void setInteg ( double inpF ){ integ = inpF; }
 
+    double      getInteg () const { return integ ; }
     double      getZ     () const { return z     ; }
     double      getM     () const { return m     ; }
     double      getC     () const { return c     ; }
@@ -69,6 +71,8 @@ class haloInfo{
 
     double   alpha;             // Orientation on xy plane, +y 0
     double   gamma;             // Orientation along z, +z 0
+
+    double   integ;             // Integration length
 
     long        id;             // id number of halo
 
@@ -163,8 +167,7 @@ class userInfo{
     int    getN_MBin          () const { return M_Nbins        ; }
     int    getN_BBin          () const { return B_Nbins        ; }
     int    getN_GBin          () const { return G_Nbins        ; }
-    int    getN_srcBin        () const { return N_bins * ( I_Nbins+1 ) * M_Nbins * B_Nbins * G_Nbins ; }
-    int    getN_srcJackBin    () const { return N_bins * ( I_Nbins+1 ) * M_Nbins * B_Nbins * G_Nbins * jacknifeBins ; }
+    int    getN_srcJackBin    () const { return N_bins * jacknifeBins ; }
 
 
     int    getUseNoise        () const { return  useNoise      ; }
@@ -211,30 +214,10 @@ class userInfo{
     double getG_bin    ( int i ) const { return G_minBin + i * ( G_maxBin - G_minBin ) / G_Nbins ; } // Returns the bin value at the index
 
 
-    double getN_haloBin ( int i, int m, int b, int g ) { return   i * G_Nbins * B_Nbins * M_Nbins
-                                                                + m * G_Nbins * B_Nbins
-                                                                + b * G_Nbins
-                                                                + g ;                                      }
 
-    double getSrcBin   (  int j, int i, int m, int b, int g, int bin ) { return   j * N_bins * G_Nbins * B_Nbins * M_Nbins * ( I_Nbins + 1 )
-                                                                                + i * N_bins * G_Nbins * B_Nbins * M_Nbins
-                                                                                + m * N_bins * G_Nbins * B_Nbins
-                                                                                + b * N_bins * G_Nbins
-                                                                                + g * N_bins
-                                                                                + bin;                                      }
+    double getSrcBin   (  int j, int bin ) { return   j * N_bins + bin; }
 
 
-    double getSrcBin   ( int i, int m, int b, int g, int bin ) { return   i * N_bins * G_Nbins * B_Nbins * M_Nbins
-                                                                        + m * N_bins * G_Nbins * B_Nbins
-                                                                        + b * N_bins * G_Nbins
-                                                                        + g * N_bins
-                                                                        + bin;                                      }
-
-    int    getSrcMBin  (  int j, int i, int b, int g, int bin ) { return   j * N_bins * G_Nbins * B_Nbins * ( I_Nbins + 1 )
-                                                                         + i * N_bins * G_Nbins * B_Nbins
-                                                                         + b * N_bins * G_Nbins
-                                                                         + g * N_bins
-                                                                         + bin;                                      }
 
 
 

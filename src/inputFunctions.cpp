@@ -8,108 +8,24 @@
 #include "lensing_classes.h"
 
 
-bool readShortFile( userInfo      u ,
-                    double   * gTot ,
-                    double   * gTan ,
-                    double   * d    ,
-                    int      * n_s  ,
-                    int      * n_h  ,
-                    haloInfo * bh   )
-{
-    std::string storedData = u.getStoredData();
 
-    std::ifstream file( storedData.c_str() );
-
-    if ( ! file.is_open() )
-        return false;
-
-
-
-    // Reads binned halo info, averages for the bins
-    for ( int i = 0; i < u.getN_IBin(); ++i ){
-    for ( int m = 0; m < u.getN_MBin(); ++m ){
-    for ( int b = 0; b < u.getN_BBin(); ++b ){
-    for ( int g = 0; g < u.getN_GBin(); ++g ){
-
-        int    H_bin = u.getN_haloBin( i, m, b, g    );
-        double  temp ;
-
-        file >> temp ; bh[ H_bin ].setM     ( temp );
-        file >> temp ; bh[ H_bin ].setC     ( temp );
-        file >> temp ; bh[ H_bin ].setBA    ( temp );
-        file >> temp ; bh[ H_bin ].setCA    ( temp );
-        file >> temp ; bh[ H_bin ].setRmax  ( temp );
-        file >> temp ; bh[ H_bin ].setPhi   ( temp );
-        file >> temp ; bh[ H_bin ].setTheta ( temp );
-        file >> temp ; bh[ H_bin ].setGamma ( temp );
-        file >> temp ; bh[ H_bin ].setAlpha ( temp );
-
-    }
-    }
-    }
-    }
-
-
-
-    // Reads N_halo info
-    for ( int i = 0; i < u.getN_IBin(); ++i ){
-    for ( int m = 0; m < u.getN_MBin(); ++m ){
-    for ( int b = 0; b < u.getN_BBin(); ++b ){
-    for ( int g = 0; g < u.getN_GBin(); ++g ){
-        int k = u.getN_haloBin( i, m, b, g );
-        file >>  n_h[ k ];
-    }
-    }
-    }
-    }
-
-    // Reads tables
-    for ( int j = 0; j < u.getN_JBin(); ++j ){
-    for ( int i = 0; i < u.getN_IBin(); ++i ){
-    for ( int m = 0; m < u.getN_MBin(); ++m ){
-    for ( int b = 0; b < u.getN_BBin(); ++b ){
-    for ( int g = 0; g < u.getN_GBin(); ++g ){
-
-        int k = u.getSrcBin( j, i, m, b, g, 0 );
-
-        // Outputs each row as group
-        for ( int r = 0; r < u.getNbins(); ++r ){  file >>  n_s[ k + r ] ; }
-        for ( int r = 0; r < u.getNbins(); ++r ){  file >>    d[ k + r ] ; }
-        for ( int r = 0; r < u.getNbins(); ++r ){  file >> gTan[ k + r ] ; }
-        for ( int r = 0; r < u.getNbins(); ++r ){  file >> gTot[ k + r ] ; }
-
-
-    }
-    }
-    }
-    }
-    }
-
-
-    file.close() ;
-
-    return true;
-}
-
-void readSourceFile(   FILE      * pFile ,
+bool readSourceFile(   FILE      * pFile ,
                        userInfo    u     ,  // User input
                        double    * dist  ,  // Array of distances
                        double    * gTot  ,  // Array of gTot
                        double    * gTan  ,  // Array of gTan
                        int       * N     ,  // Array counting number in each bin
-                       int       * N_h   ,  // Array counting number of halos in bins
-                       haloInfo  * h     ,  // Array containing halo info for bins
-                       int         I_bin_k )
+                       haloInfo  * h     )  // Array containing halo info for bins
 {
 
     char   inpC1[35],inpC2[35], inpC3[35];
     double dMax ;
-    int    N_src;
 
     double M, ba, gamma, c, r_max, ca, phi, theta, alpha, integ;
 
+    int N_src, ID ;
 
-    fscanf(pFile,"%s%s",inpC1,inpC2) ; // ID
+    fscanf(pFile,"%s%s",inpC1,inpC2) ; ID    = atoi( inpC2 );
     fscanf(pFile,"%s%s",inpC1,inpC2) ; M     = atof( inpC2 );
     fscanf(pFile,"%s%s",inpC1,inpC2) ; c     = atof( inpC2 );
     fscanf(pFile,"%s%s",inpC1,inpC2) ; r_max = atof( inpC2 );
@@ -129,8 +45,8 @@ void readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-    //    if ( phi < -10 ) return;
-
+    if ( std::log10(M) < 14.0 )
+        return false;
     int  I_bin = 0 ;
 
     if      ( integ ==  0  )  {   I_bin =  0 ;   }
@@ -145,13 +61,9 @@ void readSourceFile(   FILE      * pFile ,
     else                      {   I_bin =  1 ;   }
 
 
-    int  M_bin   = std::min(std::max(   int( ( log10( M )    - u.getM_minBin() ) / ( u.getM_maxBin() - u.getM_minBin() ) * u.getN_MBin() )    ,0),u.getN_MBin()-1);
-    int  B_bin   = std::min(std::max(   int( (        ba     - u.getB_minBin() ) / ( u.getB_maxBin() - u.getB_minBin() ) * u.getN_BBin() )    ,0),u.getN_BBin()-1);
-    int  G_bin   = std::min(std::max(   int( (        gamma  - u.getG_minBin() ) / ( u.getG_maxBin() - u.getG_minBin() ) * u.getN_GBin() )    ,0),u.getN_GBin()-1);
     int jCounter = 0 ; // Count for jacknife binning
 
     // For source read in
-
     while( fscanf( pFile, "%s%s%s", inpC1, inpC2, inpC3 ) != EOF )
     {
 
@@ -165,7 +77,7 @@ void readSourceFile(   FILE      * pFile ,
 
                         ++jCounter ;
 
-        int myBin = u.getSrcBin( j_bin, I_bin, M_bin, B_bin, G_bin, d_bin );
+        int myBin = u.getSrcBin( j_bin, d_bin );
 
         dist[ myBin ] += d ;
         gTot[ myBin ] += o ;
@@ -173,40 +85,22 @@ void readSourceFile(   FILE      * pFile ,
         N   [ myBin ] += 1 ;
     }
 
-    // Counts the number of halos in this bin
-    int  H_bin   = u.getN_haloBin( I_bin, M_bin, B_bin, G_bin ) ;
-    N_h[ H_bin ] = N_h[ H_bin ] + 1 ;
 
-    // Generates running average of bin parameters
-    // First time through, just save
-    // Otherwise, weight previous average to generate running
-    if ( N_h[H_bin] == 1 )
-    {
-        h[H_bin].setM     ( M     );
-        h[H_bin].setC     ( c     );
-        h[H_bin].setBA    ( ba    );
-        h[H_bin].setCA    ( ca    );
-        h[H_bin].setRmax  ( r_max );
-        h[H_bin].setPhi   ( phi   );
-        h[H_bin].setTheta ( theta );
-        h[H_bin].setGamma ( gamma );
-        h[H_bin].setAlpha ( alpha );
-    } else
-    {
-        int N = N_h[ H_bin ] ;
-
-        h[H_bin].setM     (   M       +  h[H_bin].getM     ()  );
-        h[H_bin].setC     (   c       +  h[H_bin].getC     ()  );
-        h[H_bin].setBA    (   ba      +  h[H_bin].getBA    ()  );
-        h[H_bin].setCA    (   ca      +  h[H_bin].getCA    ()  );
-        h[H_bin].setRmax  (   r_max   +  h[H_bin].getRmax  ()  );
-        h[H_bin].setPhi   (   phi     +  h[H_bin].getPhi   ()  );
-        h[H_bin].setTheta (   theta   +  h[H_bin].getTheta ()  );
-        h[H_bin].setGamma (   gamma   +  h[H_bin].getGamma ()  );
-        h[H_bin].setAlpha (   alpha   +  h[H_bin].getAlpha ()  );
-    }
+    // Track halo statistics
+    (*h).setID    ( ID    );
+    (*h).setM     ( M     );
+    (*h).setC     ( c     );
+    (*h).setBA    ( ba    );
+    (*h).setCA    ( ca    );
+    (*h).setRmax  ( r_max );
+    (*h).setInteg ( integ );
+    (*h).setPhi   ( phi   );
+    (*h).setTheta ( theta );
+    (*h).setGamma ( gamma );
+    (*h).setAlpha ( alpha );
 
 
+    return true;
 }
 
 
@@ -216,60 +110,64 @@ int  readSources(  userInfo    u    ,  // User input
                    double    * gTot ,  // Array of gTot
                    double    * gTan ,  // Array of gTan
                    int       * N    ,  // Array counting number in each bin
-                   int       * N_h  ,  // Array containing halo count in each bin
-                   haloInfo  * h    )  // Array containing averaged halo info
-
+                   haloInfo  * h    ,  // Array containing averaged halo info
+                   int    startLine )  // Line we last read in, need to read back to this line
 {
     // Make sure all output arrays 0
-    for ( int i = 0; i < u.getN_srcBin(); ++i )
+    for ( int i = 0; i < u.getN_srcJackBin(); ++i )
     {
         gTot[i] = 0 ;
         gTan[i] = 0 ;
         d   [i] = 0 ;
         N   [i] = 0 ;
     }
-    for ( int i = 0; i < u.getN_srcBin()/u.getNbins() ; ++i )
-    {
-        N_h [i] = 0 ;
-    }
 
 
 
-    int     halo_c  = 0  ;  // Count number of halos read
-    FILE    *inpFileList ;  // Contains all the input files
+    int      halo_c      = 0     ;  // Count number of halos read
+    FILE    *inpFileList         ;  // Contains all the input files
+    bool     endOfFile   = true  ;  // Track if we reached the end of the file
 
 
     inpFileList = fopen( u.getInputFileF().c_str(), "r" ) ;
 
     char inpFileName[500] ;
 
-    while ( fscanf( inpFileList,"%s",inpFileName) != EOF )
+
+    while ( fscanf( inpFileList,"%s",inpFileName) != EOF ) // Go through file
     {
+        ++halo_c ;                                         // Count number of lines read
 
-        char *isSrc ;
-        isSrc = strstr( inpFileName, "_Sources.dat" );
-
-        if ( isSrc != NULL )
+        if ( halo_c > startLine )                          // If num read greater than start num, search for file
         {
 
-            FILE *pFile ;
-            pFile = fopen( inpFileName, "r");
+            char *isSrc ;
+            isSrc = strstr( inpFileName, "_Sources.dat" ); // Check file is src file
 
-            if (pFile!=NULL)               // If file exists, read it, attempt to read others
+            if ( isSrc != NULL )                           // If source file
             {
 
-                readSourceFile( pFile, u, d, gTot, gTan, N, N_h, h, -1 ); // -1 indicates no integration
+                FILE *pFile ;
+                pFile = fopen( inpFileName, "r");
 
-                fclose( pFile );
+                if (pFile!=NULL)                           // If file exists, read it, attempt to read others
+                {
 
-                ++halo_c;
+                    bool validHalo = readSourceFile( pFile, u, d, gTot, gTan, N, h );
 
-                if ( halo_c % 10000 == 0 && halo_c > 0 )
-                    std::cout << "  Read " << halo_c << " files..." << std::endl ;
+                    fclose( pFile );
 
-            } // File exists
-        }     // File is source file
-    }         // Halo_id loop
+                    if (validHalo)                         // If halo above our mass cutoff
+                    {
+
+                        endOfFile = false ;                // Indicate we did not reach the end of the file
+                        break;
+                    }
+
+                } // File exists
+            }     // File is source file
+        }         // Jump forward startLine lines
+    }             // Halo_id loop
 
     fclose( inpFileList );
 
@@ -284,22 +182,8 @@ int  readSources(  userInfo    u    ,  // User input
         }
     }
 
-    for ( int i = 0; i < u.getN_srcBin() / u.getNbins() ; ++i )
-    {
-        if ( N_h[i] > 0 )
-        {
-            h[i].setM     (   h[i].getM     () / N_h[i] );
-            h[i].setC     (   h[i].getC     () / N_h[i] );
-            h[i].setBA    (   h[i].getBA    () / N_h[i] );
-            h[i].setCA    (   h[i].getCA    () / N_h[i] );
-            h[i].setRmax  (   h[i].getRmax  () / N_h[i] );
-            h[i].setPhi   (   h[i].getPhi   () / N_h[i] );
-            h[i].setTheta (   h[i].getTheta () / N_h[i] );
-            h[i].setGamma (   h[i].getGamma () / N_h[i] );
-            h[i].setAlpha (   h[i].getAlpha () / N_h[i] );
-
-        }
-    }
+    if ( endOfFile )
+        return -1;
 
 
     return halo_c;

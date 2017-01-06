@@ -5,13 +5,6 @@
 #include <iostream>
 
 
-bool readShortFile( userInfo      u ,
-                    double    * gTot ,
-                    double    * gTan ,
-                    double    * d    ,
-                    int       * n_s  ,
-                    int       * n_h  ,
-                    haloInfo  * bh   );
 
 
 void readInpFile   (  	      userInfo        &inpInfo ,  // Object we write to, contains parameters governing options
@@ -23,8 +16,8 @@ int  readSources(  userInfo    u    ,  // User input
                    double    * gTot ,  // Array of gTot
                    double    * gTan ,  // Array of gTan
                    int       * N    ,  // Array counting number in each bin
-                   int       * N_h  ,  // Array containing halo count in each bin
-                   haloInfo  * h    );
+                   haloInfo  * h    ,  // Array containing averaged halo info
+                   int    startLine ); // Line we last read in, need to read back to this line
 
 
 einTable readFoxH  (          userInfo        &     u  ,

@@ -444,9 +444,9 @@ void rollingFitDensProfile(
 
   for (int i = 0; i  <  u.getNchrome() ; ++i){
 
-//    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
+    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
 
-    ball[i].setM_enc( pow( 10 ,  log10(profile.getM_enc()+randVal(-0.2,0.2))   )  ) ;   // Try to force a good solution
+//    ball[i].setM_enc( pow( 10 ,  log10(profile.getM_enc()+randVal(-0.2,0.2))   )  ) ;   // Try to force a good solution
 
 
     ball[i].setR_max(          cosmoRvir( ball[i].getM_enc(), 0.5         )   ); // Rmax wholly dependant on mass

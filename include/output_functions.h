@@ -28,18 +28,7 @@ void writeProfileFits( char       fileName[100] ,   // Filename of output file
                        densProfile          nfT ,   // NFW trunc density profile
                        double           *einErr ,   // Einasto   errors
                        double           *nfwErr ,   // NFW Full  errors
-                       double           *nfTErr ,   // NFW trunc errors
-                       int                  N_h );  // Number of halos written to file
-
-
-// Writes a short, easy read in file
-void writeShort( userInfo      u ,
-                 double   * gTot ,
-                 double   * gTan ,
-                 double   * d    ,
-                 int      * n_s  ,
-                 int      * n_h  ,
-                 haloInfo * bh   );
+                       double           *nfTErr );  // NFW trunc errors
 
 
 
