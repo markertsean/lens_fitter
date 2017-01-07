@@ -20,7 +20,7 @@ void generateParamfile( std::string haloName );
 std::string getHaloFile( int index );
 
 
-void writeProfileFits( char       fileName[100] ,   // Filename of output file
+void writeProfileFits( char       fileName[500] ,   // Filename of output file
                        userInfo               u ,   // User input
                        haloInfo               h ,   // Info on our halo
                        densProfile          ein ,   // Einasto   density profile

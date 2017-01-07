@@ -11,7 +11,7 @@
 void checkDir( std::string dirName ){
     struct stat sb;
     if ( stat( dirName.c_str(), &sb ) !=0 ){
-      char str[100];
+      char str[500];
       sprintf( str, "mkdir %s", dirName.c_str());
       system( str );
       logMessage( std::string("Wrote directory: ") + dirName );
@@ -31,7 +31,7 @@ bool checkFile( char dirName[] ){
 bool checkOutputExists( userInfo       u , // If output files exist before first run, abort
                         haloInfo       h ){
 
-  char     fileName[100];
+  char     fileName[500];
   sprintf( fileName, "%sHalo_%010li_densFits.dat", u.getOutputPath().c_str(), h.getID() );
 
   return checkFile( fileName );
@@ -71,7 +71,7 @@ std::string getHaloFile ( int index ){
 
 
 
-void writeProfileFits( char       fileName[100] ,   // Filename of output file
+void writeProfileFits( char       fileName[500] ,   // Filename of output file
                        userInfo               u ,   // User input
                        haloInfo               h ,   // Info on our halo
                        densProfile          ein ,   // Einasto   density profile

@@ -167,7 +167,7 @@ class userInfo{
     int    getN_MBin          () const { return M_Nbins        ; }
     int    getN_BBin          () const { return B_Nbins        ; }
     int    getN_GBin          () const { return G_Nbins        ; }
-    int    getN_srcJackBin    () const { return N_bins * jacknifeBins ; }
+    int    getN_srcJackBin    () const { return N_bins * (jacknifeBins+1) ; }
 
 
     int    getUseNoise        () const { return  useNoise      ; }

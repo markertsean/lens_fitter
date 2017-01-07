@@ -64,9 +64,9 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
 
 
   // Step sizes partially random
-  double cStep = ( u.getConMax  () - u.getConMin  () ) / randVal( bigStep    , smallStep     ) ;
-  double mStep = ( u.getMassMax () - u.getMassMin () ) / randVal( bigStep    , smallStep     ) ;
-  double aStep = ( u.getAlphaMax() - u.getAlphaMin() ) / randVal( bigStep    , smallStep     ) ;
+  double cStep = ( u.getConMax  () - u.getConMin  () ) / randVal( bigStep    , smallStep     )    ;
+  double mStep = ( u.getMassMax () - u.getMassMin () ) / randVal( bigStep    , smallStep     )    ;
+  double aStep = ( u.getAlphaMax() - u.getAlphaMin() ) / randVal( bigStep    , smallStep     )*5  ;
 
 
   // For kicking the ball back, save initial step size
@@ -118,7 +118,6 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       if ( ball.getType() == 2 )
         maxK = 3;
 
-//      testProfile.setR_max( ball.getR_max() );
 
       // Loop over the possible parameters
       // Only need to loop over alpha if Einasto
@@ -196,6 +195,7 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
             keepLooping = false ;
 
       }else
+
       if (   ball.getType () ==       2  &&
              ball.getC    () == cVals[1] &&
              ball.getM_enc() == mVals[1] ){
@@ -213,24 +213,6 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
       }
 
 
-/*
-      // Need counter to be greater than u.consistent,
-      //  a count of how many times average has been
-      //  consistently below tolerance. Tests for convergence
-      if (  fabs( ball.getM_enc() - prevM ) / prevM  < u.getTolerance() &&
-            fabs( ball.getC    () - prevC ) / prevC  < u.getTolerance() ){
-
-        if ( ball.getType() != 2 ){
-          convCounter += 1;
-        } else
-        if ( fabs( ball.getAlpha() - prevA ) / prevA  < u.getTolerance() ){  // Either alpha converged, or not einasto
-          convCounter += 1;
-        }
-      } else {
-        convCounter  = 0;
-      }
-//*/
-
       // Save previous values to compare against
       if ( ball.getType() == 2 )
       prevA = ball.getAlpha();
@@ -241,6 +223,7 @@ void rollBall(        densProfile   &ball ,  // Ball to roll
 
     } while ( loopCounter < u.getMaxFitNum()   &&  // Leave loop either when just went on too long,
               keepLooping                      );  // or when converged enough times
+
 
 }
 
@@ -331,7 +314,6 @@ void rollBall1D(      densProfile   &ball ,  // Ball to roll
         else{                                                            generateNFWRTS      ( gAnalyticArray, testProfile, u.getNbins(), dArr, sigmaC ); }
 
 
-
         // Determine goodness of fit by chi^2 analysis
         compChi = chiSquared( gAnalyticArray, gArr, gErrArr, u.getNbins() );
 
@@ -347,6 +329,7 @@ void rollBall1D(      densProfile   &ball ,  // Ball to roll
 
           chi2 = compChi;
         }
+
       }
       }
 
@@ -391,30 +374,13 @@ void rollBall1D(      densProfile   &ball ,  // Ball to roll
         }
       }
 
-
-/*
-      // Need counter to be greater than u.consistent,
-      //  a count of how many times average has been
-      //  consistently below tolerance. Tests for convergence
-      if (  fabs( ball.getM_enc() - prevM ) / prevM  < u.getTolerance() ){
-
-        if ( ball.getType() != 2 ){
-          convCounter += 1;
-        } else
-        if ( fabs( ball.getAlpha() - prevA ) / prevA  < u.getTolerance() ){  // Either alpha converged, or not einasto
-          convCounter += 1;
-        }
-      } else {
-        convCounter  = 0;
-      }
-//*/
-
       // Save previous values to compare against
       if ( ball.getType() == 2 )
       prevA = ball.getAlpha();
       prevM = ball.getM_enc();
 
       loopCounter +=1;
+
 
     } while ( loopCounter < u.getMaxFitNum()   &&  // Leave loop either when just went on too long,
               keepLooping                      );  // or when converged enough
@@ -466,8 +432,6 @@ void rollingFitDensProfile(
     chi2[i] = 1e4;
   }
 
-
-
   // Do for each rolling ball
   #pragma omp parallel for
   for ( int i = 0; i < u.getNchrome(); ++i ){
@@ -506,6 +470,7 @@ void rollingFitDensProfile(
             chi2[i] = 1e4 ;
         }
         else
+
         {
             goodBall = true;
         }

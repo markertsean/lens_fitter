@@ -117,7 +117,7 @@ int main(int arg,char **argv){
 
             myHalo  = new haloInfo ;
 
-        N_lines_read = readSources( userInput, gTotJackArr, gTanJackArr, dJackArr, nJackArr, myHalo, N_lines_read );
+        N_lines_read = readSources( userInput, dJackArr, gTotJackArr, gTanJackArr, nJackArr, myHalo, N_lines_read );
 
         std::cout << "Halo:" << (*myHalo).getID() << std::endl;
 
@@ -145,7 +145,6 @@ int main(int arg,char **argv){
             densProfile nfwFits_tan[ N_jackbins + 1 ];
             densProfile nfTFits_tan[ N_jackbins + 1 ];
             densProfile einFits_tan[ N_jackbins + 1 ];
-
 
             // Loop over jacknife bins, ommiting from the sum whichever jack knife bins
             // if omitindex == -1, full sample
@@ -231,7 +230,6 @@ int main(int arg,char **argv){
                 rollingFitDensProfile( nfTFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
                 rollingFitDensProfile( nfTFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
 
-
                             std::cout <<"  Calculating EIN fit..." << std::endl;
                 logMessage( std::string("  Calculating EIN fit...") );
                 rollingFitDensProfile( einFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
@@ -271,7 +269,7 @@ int main(int arg,char **argv){
             logMessage( std::string("Fitting complete"   ) ) ;
 
 
-            char     fileName[100] ;
+            char     fileName[500] ;
 
             sprintf( fileName, "%sDensFitTot_ID%010i_I%06.1f.dat" ,  userInput.getOutputPath().c_str(),
                                                                      (*myHalo).getID()    ,
@@ -302,6 +300,11 @@ int main(int arg,char **argv){
                                  nfTErr_tan    );
 
             std::cout << std::endl;
+
+        delete[] gTotJackArr ;
+        delete[] gTanJackArr ;
+        delete[]    dJackArr ;
+        delete[]    nJackArr ;
     }
 
   exit(0);

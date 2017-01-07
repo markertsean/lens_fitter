@@ -77,12 +77,30 @@ bool readSourceFile(   FILE      * pFile ,
 
                         ++jCounter ;
 
-        int myBin = u.getSrcBin( j_bin, d_bin );
+        // Go in all bin spot
+        dist[ d_bin ] += d ;
+        gTot[ d_bin ] += o ;
+        gTan[ d_bin ] += a ;
+        N   [ d_bin ] += 1 ;
 
-        dist[ myBin ] += d ;
-        gTot[ myBin ] += o ;
-        gTan[ myBin ] += a ;
-        N   [ myBin ] += 1 ;
+
+        // Jack knife
+        for ( int i = 0; i<u.getJacknifeBins(); ++i )
+        {
+
+            if ( i != j_bin )
+            {
+
+                int myBin = u.getSrcBin( j_bin+1, d_bin );
+
+                dist[ myBin ] += d ;
+                gTot[ myBin ] += o ;
+                gTan[ myBin ] += a ;
+                N   [ myBin ] += 1 ;
+
+            }
+        }
+
     }
 
 
@@ -181,6 +199,7 @@ int  readSources(  userInfo    u    ,  // User input
             d   [i] = d   [i] / N[i] ;
         }
     }
+
 
     if ( endOfFile )
         return -1;
