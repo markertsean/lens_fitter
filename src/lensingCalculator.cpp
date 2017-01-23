@@ -14,21 +14,21 @@ output fits to output files
 
 
 #include <ctime>
-#include <slsimlib.h>
+//#include <slsimlib.h>
 #include <iostream>
 #include <cstring>
-#include <simpleTree.h>
+//#include <simpleTree.h>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <omp.h>
 #include <thread>
 #include <mutex>
-#include <cosmo.h>
-#include "grid_maintenance.h"
-#include "gridmap.h"
+//#include <cosmo.h>
+//#include "grid_maintenance.h"
+//#include "gridmap.h"
 
-#include <CCfits/CCfits>
+//#include <CCfits/CCfits>
 
 //My files
 #include "astro_constants.h"
@@ -118,6 +118,9 @@ int main(int arg,char **argv){
             myHalo  = new haloInfo ;
 
         N_lines_read = readSources( userInput, dJackArr, gTotJackArr, gTanJackArr, nJackArr, myHalo, N_lines_read );
+
+        if ( N_lines_read == -1 )
+            break;
 
         std::cout << "Halo:" << (*myHalo).getID() << std::endl;
 

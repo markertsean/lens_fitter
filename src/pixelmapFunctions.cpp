@@ -1,7 +1,7 @@
 #include "astro_constants.h"
 #include "lensing_classes.h"
 #include "pixelmap_functions.h"
-
+#include <cmath>
 
 
 // Bon-Muller transformation to provide gaussian distribution

@@ -2,8 +2,8 @@
 #include <cmath>
 #include <math.h>
 #include <vector>
-#include <CCfits/CCfits>
-#include <slsimlib.h>
+//#include <CCfits/CCfits>
+//#include <slsimlib.h>
 #include <stdio.h>
 #include "lensing_classes.h"
 
@@ -45,8 +45,8 @@ bool readSourceFile(   FILE      * pFile ,
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // Z_src
     fscanf(pFile,"%s%s",inpC1,inpC2) ; // sigma_shape
 
-    if ( std::log10(M) < 14.0 )
-        return false;
+//    if ( std::log10(M) < 14.0 )
+//        return false;
     int  I_bin = 0 ;
 
     if      ( integ ==  0  )  {   I_bin =  0 ;   }
@@ -60,6 +60,11 @@ bool readSourceFile(   FILE      * pFile ,
     else if ( integ >  15. )  {   I_bin =  2 ;   }
     else                      {   I_bin =  1 ;   }
 
+
+    if ( std::log10(M) < 14.0 &&
+         I_bin < 9 &&
+         I_bin > 2 )
+        return false ;
 
     int jCounter = 0 ; // Count for jacknife binning
 
@@ -155,7 +160,6 @@ int  readSources(  userInfo    u    ,  // User input
     while ( fscanf( inpFileList,"%s",inpFileName) != EOF ) // Go through file
     {
         ++halo_c ;                                         // Count number of lines read
-
         if ( halo_c > startLine )                          // If num read greater than start num, search for file
         {
 

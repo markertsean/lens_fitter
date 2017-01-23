@@ -1,8 +1,8 @@
 #ifndef PIXELMAP_FUNCTIONS
 #define PIXELMAP_FUNCTIONS
 
-#include <gridmap.h>
-#include <image_processing.h>
+//#include <gridmap.h>
+//#include <image_processing.h>
 #include "lensing_classes.h"
 #include "my_utilities.h"
 

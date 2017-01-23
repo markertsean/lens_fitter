@@ -5,7 +5,7 @@
 #include <fstream>
 #include <cstring>
 #include <ctime>
-#include <cosmo.h>
+//#include <cosmo.h>
 #include <math.h>
 #include <sys/stat.h>
 #include <astro_constants.h>

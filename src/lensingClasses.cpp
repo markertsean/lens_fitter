@@ -41,7 +41,7 @@ userInfo::userInfo(){
 
   fox2012F = "src/foxH2012.dat"; // FoxH files to read
   fox2123F = "src/foxH2123.dat";
-  inputFileFile = "allfiles.dat";
+  inputFileFile = "recoveredFiles.txt";
 
   outputPath = "data/";
   storedFile = "storedData.dat";
@@ -58,8 +58,8 @@ userInfo::userInfo(){
       rMax =  2.0;
       mMin = 12.5;     // Range of mass values to fit
       mMax = 16.5;
-  alphaMin =  9e-2;    // Range of alpha values to fit
-  alphaMax =  0.3;
+  alphaMin =  0.15;    // Range of alpha values to fit
+  alphaMax =  0.23;
 
 
   maxFitAttempts = 2e2   ; // Maximum number of steps to roll ball, or times to reproduce

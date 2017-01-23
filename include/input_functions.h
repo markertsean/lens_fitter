@@ -1,7 +1,7 @@
 #ifndef INPUT_FUNCTIONS
 #define INPUT_FUNCTIONS
 
-#include <cosmo.h>
+//#include <cosmo.h>
 #include <iostream>
 
 

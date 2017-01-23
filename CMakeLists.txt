@@ -7,8 +7,8 @@ cmake_minimum_required(VERSION 2.8)
 set(sample_VERSION_MAJOR 1)
 set(sample_VERSION_MINOR 0)
 
-set (CMAKE_CXX_COMPILER "/home/users/markert/bin/g++")
-set (CMAKE_C_COMPILER "/home/users/markert/bin/gcc")
+#set (CMAKE_CXX_COMPILER "/home/users/markert/bin/g++")
+#set (CMAKE_C_COMPILER "/home/users/markert/bin/gcc")
 
 
 project(lensingCalculator)
@@ -26,8 +26,10 @@ file(GLOB SOURCES "src/lensingCalculator.cpp" "src/inputFunctions.cpp" "src/pixe
 # dependencies
 ####
 
-find_package(GLAMER NO_MODULE REQUIRED)
-include_directories(${GLAMER_INCLUDE_DIRS})
+#find_package(GLAMER NO_MODULE REQUIRED)
+#include_directories(${GLAMER_INCLUDE_DIRS})
+
+set (CMAKE_CXX_FLAGS "--std=gnu++11 ${CMAKE_CXX_FLAGS}")
 
 ####
 # omp
@@ -41,8 +43,8 @@ endif()
 ####
 # build
 ####
-message(${GLAMER_LIBRARIES})
-message(${GLAMER_INCLUDE_DIRS})
+#message(${GLAMER_LIBRARIES})
+#message(${GLAMER_INCLUDE_DIRS})
 add_executable(lens_fitter ${SOURCES})
 
-target_link_libraries(lens_fitter ${GLAMER_LIBRARIES} "-lcfitsio" "-lCCfits")
+#target_link_libraries(lens_fitter)
