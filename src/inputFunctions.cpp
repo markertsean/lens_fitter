@@ -61,9 +61,9 @@ bool readSourceFile(   FILE      * pFile ,
     else                      {   I_bin =  1 ;   }
 
 
-    if ( std::log10(M) < 14.0 &&
-         I_bin < 9 &&
-         I_bin > 2 )
+    if ( std::log10(M) < 14.0 && (
+         I_bin >= 9 ||
+         I_bin < 2 ) )
         return false ;
 
     int jCounter = 0 ; // Count for jacknife binning

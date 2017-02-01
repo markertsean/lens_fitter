@@ -433,7 +433,7 @@ void rollingFitDensProfile(
   }
 
   // Do for each rolling ball
-  #pragma omp parallel for
+#pragma omp parallel for num_threads( u.getNthreads() )
   for ( int i = 0; i < u.getNchrome(); ++i ){
 
 

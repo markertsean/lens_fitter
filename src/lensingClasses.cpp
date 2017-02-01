@@ -41,7 +41,7 @@ userInfo::userInfo(){
 
   fox2012F = "src/foxH2012.dat"; // FoxH files to read
   fox2123F = "src/foxH2123.dat";
-  inputFileFile = "recoveredFiles.txt";
+  inputFileFile = "allFiles_M13.5.txt";
 
   outputPath = "data/";
   storedFile = "storedData.dat";
