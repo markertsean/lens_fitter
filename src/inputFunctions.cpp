@@ -127,22 +127,59 @@ bool readSourceFile(   FILE      * pFile ,
 }
 
 
+
+
+
+bool readMapFile(   FILE      * pFile ,
+                    userInfo    u     ,  // User input
+                    double    * dist  ,  // Array of distances
+                    double    * gTot  ,  // Array of gTot
+                    double    * gTan  ,  // Array of gTan
+                    double    * totS  ,  // Array of gTot
+                    double    * tanS  ,  // Array of gTan
+                    haloInfo  * h     )  // Array containing halo info for bins
+{
+
+    char   inpC1[35], inpC2[35], inpC3[35], inpC4[35], inpC5[35];
+
+    int i = 0 ;
+    // For source read in
+    while( fscanf( pFile, "%s%s%s%s%s", inpC1, inpC2, inpC3, inpC4, inpC5 ) != EOF )
+    {
+      
+        // Go in all bin spot
+        dist[i] = atof( inpC1 ) ;
+        gTot[i] = atof( inpC2 ) ;
+        gTan[i] = atof( inpC3 ) ;
+        totS[i] = atof( inpC4 ) ;
+        tanS[i] = atof( inpC5 ) ;
+
+        ++i;
+    }
+
+    return true;
+}
+
+
+
 // Wrapper function for reading source files, will locate files and invoke reader function
 int  readSources(  userInfo    u    ,  // User input
                    double    * d    ,  // Array of distances
                    double    * gTot ,  // Array of gTot
                    double    * gTan ,  // Array of gTan
-                   int       * N    ,  // Array counting number in each bin
+                   double    * totS ,  // Array counting number in each bin
+                   double    * tanS ,  // Array counting number in each bin
                    haloInfo  * h    ,  // Array containing averaged halo info
                    int    startLine )  // Line we last read in, need to read back to this line
 {
     // Make sure all output arrays 0
-    for ( int i = 0; i < u.getN_srcJackBin(); ++i )
+    for ( int i = 0; i < u.getNbins(); ++i )
     {
         gTot[i] = 0 ;
         gTan[i] = 0 ;
+        totS[i] = 0 ;
+        tanS[i] = 0 ;
         d   [i] = 0 ;
-        N   [i] = 0 ;
     }
 
 
@@ -163,46 +200,42 @@ int  readSources(  userInfo    u    ,  // User input
         if ( halo_c > startLine )                          // If num read greater than start num, search for file
         {
 
-            char *isSrc ;
-            isSrc = strstr( inpFileName, "_Sources.dat" ); // Check file is src file
+          
+          FILE *pFile ;
+          pFile = fopen( inpFileName, "r");
 
-            if ( isSrc != NULL )                           // If source file
+          if (pFile!=NULL)                           // If file exists, read it, attempt to read others
             {
+              
 
-                FILE *pFile ;
-                pFile = fopen( inpFileName, "r");
+              // Gets info from file name
+              std::string myFileName( inpFileName );
+              int index = myFileName.find("I"); (*h).setInteg (          std::stod( myFileName.substr( index+1, 5 ) )   );
+                  index = myFileName.find("M"); (*h).setM     ( pow( 10, std::stod( myFileName.substr( index+1, 5 ) ) ) );
+                  index = myFileName.find("B"); (*h).setBA    (          std::stod( myFileName.substr( index+1, 5 ) )   );
+                  index = myFileName.find("G"); 
+              if (index != std::string::npos )
+                {
+                                                (*h).setGamma (          std::stod( myFileName.substr( index+1, 5 ) )   );
+                }
 
-                if (pFile!=NULL)                           // If file exists, read it, attempt to read others
+
+              bool validHalo = readMapFile( pFile, u, d, gTot, gTan, totS, tanS, h );
+
+              fclose( pFile );
+              
+              if (validHalo)                         // If halo above our mass cutoff
                 {
 
-                    bool validHalo = readSourceFile( pFile, u, d, gTot, gTan, N, h );
+                  endOfFile = false ;                // Indicate we did not reach the end of the file
+                  break;
+                }
 
-                    fclose( pFile );
-
-                    if (validHalo)                         // If halo above our mass cutoff
-                    {
-
-                        endOfFile = false ;                // Indicate we did not reach the end of the file
-                        break;
-                    }
-
-                } // File exists
-            }     // File is source file
-        }         // Jump forward startLine lines
-    }             // Halo_id loop
+            } // File exists
+        }     // Jump forward startLine lines
+    }         // Halo_id loop
 
     fclose( inpFileList );
-
-    // Current gTot, tan, values are sums, makes them averages
-    for ( int i = 0; i < u.getN_srcJackBin(); ++i )
-    {
-        if ( N[i] > 0 )
-        {
-            gTot[i] = gTot[i] / N[i] ;
-            gTan[i] = gTan[i] / N[i] ;
-            d   [i] = d   [i] / N[i] ;
-        }
-    }
 
 
     if ( endOfFile )

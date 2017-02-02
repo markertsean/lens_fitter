@@ -102,37 +102,38 @@ int main(int arg,char **argv){
     {
 
         // Arrays containing avgs, binned
-        double *  gTotJackArr ;
-        double *  gTanJackArr ;
-        double *     dJackArr ;
-        int    *     nJackArr ; // Source counts in a J, R bin
+        double *  gTotArr ;
+        double *  gTanArr ;
+        double *  gTotStd ;
+        double *  gTanStd ;
+        double *     dArr ;
+
 
         haloInfo *     myHalo ;
 
 
-        gTotJackArr = new   double[ userInput.getN_srcJackBin() ] () ;
-        gTanJackArr = new   double[ userInput.getN_srcJackBin() ] () ;
-           dJackArr = new   double[ userInput.getN_srcJackBin() ] () ;
-           nJackArr = new      int[ userInput.getN_srcJackBin() ] () ;
+        gTotArr = new   double[ userInput.getNbins() ] () ;
+        gTanArr = new   double[ userInput.getNbins() ] () ;
+        gTotStd = new   double[ userInput.getNbins() ] () ;
+        gTanStd = new   double[ userInput.getNbins() ] () ;
 
-            myHalo  = new haloInfo ;
+           dArr = new   double[ userInput.getNbins() ] () ;
 
-        N_lines_read = readSources( userInput, dJackArr, gTotJackArr, gTanJackArr, nJackArr, myHalo, N_lines_read );
+         myHalo = new haloInfo ;
+
+         N_lines_read = readSources( userInput, dArr, gTotArr, gTanArr, gTotStd, gTanStd, myHalo, N_lines_read );
 
         if ( N_lines_read == -1 )
             break;
-
-        std::cout << "Halo:" << (*myHalo).getID() << std::endl;
-
-        if ( userInput.getUseNoise() == 1 )
-        {
-                std::cout << "Will add artificial shape noise, sigma = " << userInput.getSigmaCrit() << std::endl;
-        } else
-        {
-                std::cout << "Ignoring noise..." << std::endl;
-        }
-
-
+        /*
+        delete gTotArr;
+delete gTanArr;
+delete gTotStd;
+delete gTanStd;
+delete dArr;
+        //*/
+    }
+        /*
 
             ///////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////
@@ -309,7 +310,7 @@ int main(int arg,char **argv){
         delete[]    dJackArr ;
         delete[]    nJackArr ;
     }
-
+        //*/
   exit(0);
   return 0;
 

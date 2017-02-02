@@ -15,7 +15,8 @@ int  readSources(  userInfo    u    ,  // User input
                    double    * d    ,  // Array of distances
                    double    * gTot ,  // Array of gTot
                    double    * gTan ,  // Array of gTan
-                   int       * N    ,  // Array counting number in each bin
+                   double    * N    ,  // Error array
+                   double    * N2   ,  
                    haloInfo  * h    ,  // Array containing averaged halo info
                    int    startLine ); // Line we last read in, need to read back to this line
 
