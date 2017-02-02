@@ -23,12 +23,23 @@ std::string getHaloFile( int index );
 void writeProfileFits( char       fileName[500] ,   // Filename of output file
                        userInfo               u ,   // User input
                        haloInfo               h ,   // Info on our halo
-                       densProfile          ein ,   // Einasto   density profile
-                       densProfile          nfw ,   // NFW Full  density profile
-                       densProfile          nfT ,   // NFW trunc density profile
-                       double           *einErr ,   // Einasto   errors
-                       double           *nfwErr ,   // NFW Full  errors
-                       double           *nfTErr );  // NFW trunc errors
+                       densProfile      tot_ein ,   // Einasto   density profile
+                       densProfile      tot_nfw ,   // NFW Full  density profile
+                       densProfile      tot_nfT ,   // NFW trunc density profile
+                       double      * tot_einErr ,   // Einasto   errors
+                       double      * tot_nfwErr ,   // NFW Full  errors
+                       double      * tot_nfTErr ,   // NFW trunc errors
+                       densProfile      tan_ein ,   // Einasto   density profile
+                       densProfile      tan_nfw ,   // NFW Full  density profile
+                       densProfile      tan_nfT ,   // NFW trunc density profile
+                       double      * tan_einErr ,   // Einasto   errors
+                       double      * tan_nfwErr ,   // NFW Full  errors
+                       double      * tan_nfTErr ,   // NFW trunc errors
+                       double      *      dList ,
+                       double      *    totList ,
+                       double      * totStdList ,
+                       double      *    tanList ,
+                       double      * tanStdList );
 
 
 

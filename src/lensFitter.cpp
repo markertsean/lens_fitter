@@ -408,13 +408,10 @@ void rollingFitDensProfile(
   densProfile ball[ u.getNchrome() ];
   double      chi2[ u.getNchrome() ];
 
+  // Sets the IC of balls
   for (int i = 0; i  <  u.getNchrome() ; ++i){
 
-//    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
-
-    ball[i].setM_enc( pow( 10 ,  log10(profile.getM_enc()+randVal(-0.2,0.3))   )  ) ;   // Try to force a good solution
-
-
+    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
     ball[i].setR_max(          cosmoRvir( ball[i].getM_enc(), 0.5         )   ); // Rmax wholly dependant on mass
 
 
@@ -456,7 +453,7 @@ void rollingFitDensProfile(
             rollBall  ( ball[i], chi2[i], gArr, dArr, gErrArr, u.getSigmaCrit(), u ); // Treat M and C as free
         }
 
-
+/*
         // Make sure rolled ball is in good statistics
         if ( std::log10( ball[i].getM_enc() ) < std::log10( profile.getM_enc() ) - 1.0 ||
              std::log10( ball[i].getM_enc() ) > std::log10( profile.getM_enc() ) + 2.0 )
@@ -474,7 +471,9 @@ void rollingFitDensProfile(
         {
             goodBall = true;
         }
-    }
+//*/
+     ++countNumFits;
+   }
   }
 
 
@@ -484,9 +483,11 @@ void rollingFitDensProfile(
 
   //Find lowest chi2 index
   for ( int i = 0; i < u.getNchrome(); ++i ){
-    if ( minChi  >   chi2[i] &&
-         std::log10( ball[i].getM_enc() ) > std::log10( profile.getM_enc() ) - 0.5 &&
-         std::log10( ball[i].getM_enc() ) < std::log10( profile.getM_enc() ) + 1.8 ){
+    if ( minChi  >   chi2[i]
+//        &&
+//         std::log10( ball[i].getM_enc() ) > std::log10( profile.getM_enc() ) - 0.5 &&
+//         std::log10( ball[i].getM_enc() ) < std::log10( profile.getM_enc() ) + 1.8 ){
+){
 
       minIndex = i;
       minChi   = chi2[i];

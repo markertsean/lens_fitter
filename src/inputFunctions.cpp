@@ -146,12 +146,12 @@ bool readMapFile(   FILE      * pFile ,
     // For source read in
     while( fscanf( pFile, "%s%s%s%s%s", inpC1, inpC2, inpC3, inpC4, inpC5 ) != EOF )
     {
-      
+
         // Go in all bin spot
         dist[i] = atof( inpC1 ) ;
         gTot[i] = atof( inpC2 ) ;
-        gTan[i] = atof( inpC3 ) ;
-        totS[i] = atof( inpC4 ) ;
+        totS[i] = atof( inpC3 ) ;
+        gTan[i] = atof( inpC4 ) ;
         tanS[i] = atof( inpC5 ) ;
 
         ++i;
@@ -200,20 +200,20 @@ int  readSources(  userInfo    u    ,  // User input
         if ( halo_c > startLine )                          // If num read greater than start num, search for file
         {
 
-          
+
           FILE *pFile ;
           pFile = fopen( inpFileName, "r");
 
           if (pFile!=NULL)                           // If file exists, read it, attempt to read others
             {
-              
+
 
               // Gets info from file name
               std::string myFileName( inpFileName );
               int index = myFileName.find("I"); (*h).setInteg (          std::stod( myFileName.substr( index+1, 5 ) )   );
                   index = myFileName.find("M"); (*h).setM     ( pow( 10, std::stod( myFileName.substr( index+1, 5 ) ) ) );
                   index = myFileName.find("B"); (*h).setBA    (          std::stod( myFileName.substr( index+1, 5 ) )   );
-                  index = myFileName.find("G"); 
+                  index = myFileName.find("G");
               if (index != std::string::npos )
                 {
                                                 (*h).setGamma (          std::stod( myFileName.substr( index+1, 5 ) )   );
@@ -223,7 +223,7 @@ int  readSources(  userInfo    u    ,  // User input
               bool validHalo = readMapFile( pFile, u, d, gTot, gTan, totS, tanS, h );
 
               fclose( pFile );
-              
+
               if (validHalo)                         // If halo above our mass cutoff
                 {
 

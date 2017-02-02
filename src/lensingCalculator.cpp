@@ -24,6 +24,7 @@ output fits to output files
 #include <omp.h>
 #include <thread>
 #include <mutex>
+#include <cmath>
 //#include <cosmo.h>
 //#include "grid_maintenance.h"
 //#include "gridmap.h"
@@ -102,38 +103,29 @@ int main(int arg,char **argv){
     {
 
         // Arrays containing avgs, binned
-        double *  gTotArr ;
-        double *  gTanArr ;
-        double *  gTotStd ;
-        double *  gTanStd ;
-        double *     dArr ;
+        double *  gTotArr    ;
+        double *  gTanArr    ;
+        double *  gTotStdArr ;
+        double *  gTanStdArr ;
+        double *     dArr    ;
 
 
         haloInfo *     myHalo ;
 
 
-        gTotArr = new   double[ userInput.getNbins() ] () ;
-        gTanArr = new   double[ userInput.getNbins() ] () ;
-        gTotStd = new   double[ userInput.getNbins() ] () ;
-        gTanStd = new   double[ userInput.getNbins() ] () ;
+        gTotArr    = new double[ userInput.getNbins() ] () ;
+        gTanArr    = new double[ userInput.getNbins() ] () ;
+        gTotStdArr = new double[ userInput.getNbins() ] () ;
+        gTanStdArr = new double[ userInput.getNbins() ] () ;
 
-           dArr = new   double[ userInput.getNbins() ] () ;
+           dArr    = new double[ userInput.getNbins() ] () ;
 
-         myHalo = new haloInfo ;
+         myHalo    = new haloInfo ;
 
-         N_lines_read = readSources( userInput, dArr, gTotArr, gTanArr, gTotStd, gTanStd, myHalo, N_lines_read );
+         N_lines_read = readSources( userInput, dArr, gTotArr, gTanArr, gTotStdArr, gTanStdArr, myHalo, N_lines_read );
 
         if ( N_lines_read == -1 )
             break;
-        /*
-        delete gTotArr;
-delete gTanArr;
-delete gTotStd;
-delete gTanStd;
-delete dArr;
-        //*/
-    }
-        /*
 
             ///////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////
@@ -170,48 +162,23 @@ delete dArr;
                 // Arrays to populate by calculating averages at index w/ collapsed M
                 double *gTot = new double[ userInput.getNbins() ] ();
                 double *gTan = new double[ userInput.getNbins() ] ();
-                double *dArr = new double[ userInput.getNbins() ] ();
-                int    *N_arr= new int   [ userInput.getNbins() ] ();
+                double *gTotS= new double[ userInput.getNbins() ] ();
+                double *gTanS= new double[ userInput.getNbins() ] ();
+                double *   d = new double[ userInput.getNbins() ] ();
 
+                // Get size of the arrays
                 for ( int r = 0; r < userInput.getNbins() ; ++r )
                 {
-                    int index = userInput.getSrcBin( j, r );
-                    gTot[r]   = gTotJackArr[index];
-                    gTan[r]   = gTanJackArr[index];
-                    dArr[r]   =    dJackArr[index];
-                   N_arr[r]   =    nJackArr[index];
+
+                    if (( r * userInput.getJacknifeBins() / userInput.getNbins() ) != omitIndex )
+                    {
+                        gTot [r]   =    gTotArr   [r];
+                        gTan [r]   =    gTanArr   [r];
+                        gTotS[r]   =    gTotStdArr[r];
+                        gTanS[r]   =    gTanStdArr[r];
+                        d    [r]   =       dArr   [r];
+                    }
                 }
-
-                // Uncertainty array
-                double *eArr = gaussUncertaintyArr(       userInput.getShapeNoise(), N_arr, userInput.getNbins() );
-
-                if ( userInput.getUseNoise() == 1 )
-                {
-                            addgaussUncertaintyArr( gTot, userInput.getShapeNoise(), N_arr, userInput.getNbins() ); // Adds random amount of noise to bin
-                            addgaussUncertaintyArr( gTan, userInput.getShapeNoise(), N_arr, userInput.getNbins() );
-                }
-
-
-                nfwFits_tot[ omitIndex + 1 ].setR_max( (*myHalo).getRmax() );
-                nfTFits_tot[ omitIndex + 1 ].setR_max( (*myHalo).getRmax() );
-                einFits_tot[ omitIndex + 1 ].setR_max( (*myHalo).getRmax() );
-                nfwFits_tan[ omitIndex + 1 ].setR_max( (*myHalo).getRmax() );
-                nfTFits_tan[ omitIndex + 1 ].setR_max( (*myHalo).getRmax() );
-                einFits_tan[ omitIndex + 1 ].setR_max( (*myHalo).getRmax() );
-
-                nfwFits_tot[ omitIndex + 1 ].setM_enc( (*myHalo).getM   () );
-                nfTFits_tot[ omitIndex + 1 ].setM_enc( (*myHalo).getM   () );
-                einFits_tot[ omitIndex + 1 ].setM_enc( (*myHalo).getM   () );
-                nfwFits_tan[ omitIndex + 1 ].setM_enc( (*myHalo).getM   () );
-                nfTFits_tan[ omitIndex + 1 ].setM_enc( (*myHalo).getM   () );
-                einFits_tan[ omitIndex + 1 ].setM_enc( (*myHalo).getM   () );
-
-                nfwFits_tot[ omitIndex + 1 ].setC    ( (*myHalo).getC   () );
-                nfTFits_tot[ omitIndex + 1 ].setC    ( (*myHalo).getC   () );
-                einFits_tot[ omitIndex + 1 ].setC    ( (*myHalo).getC   () );
-                nfwFits_tan[ omitIndex + 1 ].setC    ( (*myHalo).getC   () );
-                nfTFits_tan[ omitIndex + 1 ].setC    ( (*myHalo).getC   () );
-                einFits_tan[ omitIndex + 1 ].setC    ( (*myHalo).getC   () );
 
                 nfwFits_tot[ omitIndex + 1 ].setType( 1 ); // Sets as full  NFW
                 nfTFits_tot[ omitIndex + 1 ].setType( 0 ); // Sets as trunc NFW
@@ -225,27 +192,27 @@ delete dArr;
 
                             std::cout <<"  Calculating NFW fit..." << std::endl;
                 logMessage( std::string("  Calculating NFW fit...") );
-                rollingFitDensProfile( nfwFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
-                rollingFitDensProfile( nfwFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
+                rollingFitDensProfile( nfwFits_tot[ omitIndex + 1], userInput, gTot, d, gTotStdArr );
+                rollingFitDensProfile( nfwFits_tan[ omitIndex + 1], userInput, gTan, d, gTanStdArr );
 
 
                             std::cout <<"  Calculating NFW trunc fit..." << std::endl;
                 logMessage( std::string("  Calculating NFW trunc fit...") );
-                rollingFitDensProfile( nfTFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
-                rollingFitDensProfile( nfTFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
+                rollingFitDensProfile( nfTFits_tot[ omitIndex + 1], userInput, gTot, d, gTotStdArr );
+                rollingFitDensProfile( nfTFits_tan[ omitIndex + 1], userInput, gTan, d, gTanStdArr );
 
                             std::cout <<"  Calculating EIN fit..." << std::endl;
                 logMessage( std::string("  Calculating EIN fit...") );
-                rollingFitDensProfile( einFits_tot[ omitIndex + 1], userInput, gTot, dArr, eArr );
-                rollingFitDensProfile( einFits_tan[ omitIndex + 1], userInput, gTan, dArr, eArr );
+                rollingFitDensProfile( einFits_tot[ omitIndex + 1], userInput, gTot, d, gTotStdArr );
+                rollingFitDensProfile( einFits_tan[ omitIndex + 1], userInput, gTan, d, gTanStdArr );
 
                 std::cout << std::endl ;
 
-                delete [] eArr  ;
                 delete [] gTot  ;
                 delete [] gTan  ;
-                delete [] dArr  ;
-                delete [] N_arr ;
+                delete [] gTotS ;
+                delete [] gTanS ;
+                delete [] d     ;
 
 
             }
@@ -275,9 +242,22 @@ delete dArr;
 
             char     fileName[500] ;
 
-            sprintf( fileName, "%sDensFitTot_ID%010i_I%06.1f.dat" ,  userInput.getOutputPath().c_str(),
-                                                                     (*myHalo).getID()    ,
-                                                                     (*myHalo).getInteg() );
+
+            if ( (*myHalo).getGamma() < 0.001 )
+            {
+
+                sprintf( fileName, "%sDensFits_I%05.1f_M%05.2f_B%05.3f.dat",  userInput.getOutputPath().c_str(),
+                                                                              (*myHalo).getInteg() ,
+                                                                   std::log10((*myHalo).getM())    ,
+                                                                              (*myHalo).getBA()    );
+            }else
+            {
+                sprintf( fileName, "%sDensFits_I%05.1f_M%05.2f_B%05.3f_G%05.3f.dat",  userInput.getOutputPath().c_str(),
+                                                                                      (*myHalo).getInteg() ,
+                                                                           std::log10((*myHalo).getM())    ,
+                                                                                      (*myHalo).getBA()    ,
+                                                                                      (*myHalo).getGamma() );
+            }
 
             writeProfileFits(       fileName   ,
                                     userInput  ,
@@ -287,30 +267,28 @@ delete dArr;
                                 nfTFits_tot[0] ,
                                  einErr_tot    ,
                                  nfwErr_tot    ,
-                                 nfTErr_tot    );
-
-            sprintf( fileName, "%sDensFitTan_ID%010i_I%06.1f.dat" ,  userInput.getOutputPath().c_str(),
-                                                                     (*myHalo).getID()    ,
-                                                                     (*myHalo).getInteg() );
-
-            writeProfileFits(       fileName   ,
-                                    userInput  ,
-                                    *myHalo    ,
+                                 nfTErr_tot    ,
                                 einFits_tan[0] ,
                                 nfwFits_tan[0] ,
                                 nfTFits_tan[0] ,
                                  einErr_tan    ,
                                  nfwErr_tan    ,
-                                 nfTErr_tan    );
+                                 nfTErr_tan    ,
+                                          dArr ,
+                                       gTotArr ,
+                                    gTotStdArr ,
+                                       gTanArr ,
+                                    gTanStdArr );
 
             std::cout << std::endl;
 
-        delete[] gTotJackArr ;
-        delete[] gTanJackArr ;
-        delete[]    dJackArr ;
-        delete[]    nJackArr ;
-    }
+        delete[]    gTotArr ;
+        delete[]    gTanArr ;
+        delete[] gTotStdArr ;
+        delete[] gTanStdArr ;
+        delete[]       dArr ;
         //*/
+    }
   exit(0);
   return 0;
 
