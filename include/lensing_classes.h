@@ -217,7 +217,7 @@ class userInfo{
 
     double getSrcBin   (  int j, int bin ) { return   j * N_bins + bin; }
 
-
+    int   getN_list() { return n_list; }
 
 
 
@@ -254,7 +254,7 @@ class userInfo{
     int    B_Nbins  ;
     int    G_Nbins  ;
     int    I_Nbins  ;
-
+    int    n_list   ;
 
     // Chi2 & genetic algorithm fitting boundaries
     double     cMin ;

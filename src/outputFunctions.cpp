@@ -121,17 +121,17 @@ void writeProfileFits( char       fileName[500] ,   // Filename of output file
                     log10( tan_ein.getM_enc() ), tan_ein.getC(), tan_ein.getR_max(), tan_ein.getAlpha(), tan_einErr[1], tan_einErr[0], tan_einErr[3], tan_einErr[2]);
 
 // d tot std NFWt NFWf Ein tan std NFWt NFWf Ein
-    double * totEinVals = generateEinRTS( tot_ein, u, dList, u.getSigmaCrit() );
-    double * tanEinVals = generateEinRTS( tan_ein, u, dList, u.getSigmaCrit() );
+    double * totEinVals = generateEinRTS( tot_ein, u, u.getN_list(),  dList, u.getSigmaCrit() );
+    double * tanEinVals = generateEinRTS( tan_ein, u, u.getN_list(),  dList, u.getSigmaCrit() );
 
-    double * totNFWVals =      generateNFWRTS( tot_nfw, u.getNbins(), dList, u.getSigmaCrit() );
-    double * tanNFWVals =      generateNFWRTS( tan_nfw, u.getNbins(), dList, u.getSigmaCrit() );
+    double * totNFWVals =      generateNFWRTS( tot_nfw, u.getN_list(), dList, u.getSigmaCrit() );
+    double * tanNFWVals =      generateNFWRTS( tan_nfw, u.getN_list(), dList, u.getSigmaCrit() );
 
-    double * totNFTVals = generateNFWTruncRTS( tot_nfT, u.getNbins(), dList, u.getSigmaCrit() );
-    double * tanNFTVals = generateNFWTruncRTS( tan_nfT, u.getNbins(), dList, u.getSigmaCrit() );
+    double * totNFTVals = generateNFWTruncRTS( tot_nfT, u.getN_list(), dList, u.getSigmaCrit() );
+    double * tanNFTVals = generateNFWTruncRTS( tan_nfT, u.getN_list(), dList, u.getSigmaCrit() );
 
 
-    for ( int i = 0 ; i < u.getNbins(); ++i )
+    for ( int i = 0 ; i < u.getN_list(); ++i )
     {
         fprintf(pFile, "%12.6e %12.6e %12.6e %12.6e %12.6e %12.6e %12.6e %12.6e %12.6e %12.6e %12.6e\n", dList[i] ,
                                            totList[i], totStdList[i], totNFTVals[i], totNFWVals[i], totEinVals[i] ,

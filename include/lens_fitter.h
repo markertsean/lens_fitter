@@ -91,6 +91,12 @@ double *generateEinRTS(
             const userInfo             u,  //Info from user
 		    const double     *sourceDist,  //Projected radial distance of sources to lens centers
 		    const double        sourceSc); //Critical surface density of a source
+double *generateEinRTS(
+		    const densProfile      &lens,  //Input density profile
+                    const userInfo             u,  //Info from user
+                    const int                  N,
+		    const double     *sourceDist,  //Projected radial distance of sources to lens centers
+		    const double        sourceSc); //Critical surface density of a source
 
 
 double interpolateEinRTS(  double        x ,  // r/r_s

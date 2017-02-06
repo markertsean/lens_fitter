@@ -155,7 +155,7 @@ bool readMapFile(   FILE      * pFile ,
         tanS[i] = atof( inpC5 ) ;
 
         ++i;
-	if ( i >= u.getNbins() )
+	if ( i >= u.getN_list() )
 	  break;
     }
 

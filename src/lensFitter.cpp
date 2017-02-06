@@ -411,7 +411,7 @@ void rollingFitDensProfile(
   // Sets the IC of balls
   for (int i = 0; i  <  u.getNchrome() ; ++i){
 
-    ball[i].setM_enc( pow( 10, randVal( u.getMassMin () , u.getMassMax () ) ) );
+    ball[i].setM_enc( pow( 10, randVal( 13.5 , 14.5 ) ) );
     ball[i].setR_max(          cosmoRvir( ball[i].getM_enc(), 0.5         )   ); // Rmax wholly dependant on mass
 
 
@@ -1220,6 +1220,53 @@ double * generateEinRTS(
 
   return gArr;
 }
+
+
+
+
+
+
+double * generateEinRTS(
+                    const densProfile     &lens ,  // Input density profile to generate profile for
+                    const userInfo            u ,  // Information from the user
+                    const int                 N ,  // number of elements to return 
+                    const double    *sourceDist ,  // Projected distances between source and lens
+                    const double     sourceSc   ){ // Critical surface density for the sources
+
+  double *gArr = new double [ N ] ();
+//double *gArr = new double [ 20 ] ();
+
+
+  // Constant part of kappa_c, divided by gamma(1/alpha) * sqrt pi, a constant for easier kappas
+  // Modified kappa_c, kappa_c * sqrt(pi) / Gamma(1/alpha), just need to multiply by H function
+
+  double kappa_c = lens.getRho_o() * lens.getR_s  ()   * exp( 2./lens.getAlpha() )       *
+                         pow(        lens.getAlpha()/2.,      1./lens.getAlpha() - 1.0 ) *
+                         tgamma( 1./ lens.getAlpha() ) / sourceSc;
+
+
+  double modKappa_c = kappa_c * std::sqrt( M_PI ) / tgamma( 1. / lens.getAlpha() )
+*M_PI;
+
+  for ( int i = 0; i < N; ++i ){
+//for ( int i = 0; i < 20; ++i ){
+
+    double        x = sourceDist[i]  /  lens.getR_s();
+    double    mod_x = sourceDist[i]  /  lens.getR_s() * pow( 2. / lens.getAlpha(), 1. / lens.getAlpha() ) ;
+
+    double kappa    = modKappa_c     * pow( 10, interpolateEinRTS( x, lens.getAlpha(), einKappa    ) ); // Interpolate table of Kappa    values
+    double kappaAvg = modKappa_c * x * pow( 10, interpolateEinRTS( x, lens.getAlpha(), einKappaAvg ) ); // Interpolate table of KappaAvg values
+
+    gArr[i] = ( kappaAvg - kappa ) / ( 1 - kappa );
+
+//printf( "%5.2f %5.2f %14.6e %14.6e %14.6e\n", sourceDist[i], x, kappa, kappaAvg, gArr[i] );
+
+  }
+
+  return gArr;
+}
+
+
 
 
 

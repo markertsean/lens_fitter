@@ -113,12 +113,12 @@ int main(int arg,char **argv){
         haloInfo *     myHalo ;
 
 
-        gTotArr    = new double[ userInput.getNbins() ] () ;
-        gTanArr    = new double[ userInput.getNbins() ] () ;
-        gTotStdArr = new double[ userInput.getNbins() ] () ;
-        gTanStdArr = new double[ userInput.getNbins() ] () ;
+        gTotArr    = new double[ userInput.getN_list() ] () ;
+        gTanArr    = new double[ userInput.getN_list() ] () ;
+        gTotStdArr = new double[ userInput.getN_list() ] () ;
+        gTanStdArr = new double[ userInput.getN_list() ] () ;
 
-           dArr    = new double[ userInput.getNbins() ] () ;
+           dArr    = new double[ userInput.getN_list() ] () ;
 
          myHalo    = new haloInfo ;
 
