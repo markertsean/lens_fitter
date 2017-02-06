@@ -172,11 +172,11 @@ int main(int arg,char **argv){
 
                     if (( r * userInput.getJacknifeBins() / userInput.getNbins() ) != omitIndex )
                     {
-                        gTot [r]   =    gTotArr   [r];
-                        gTan [r]   =    gTanArr   [r];
-                        gTotS[r]   =    gTotStdArr[r];
-                        gTanS[r]   =    gTanStdArr[r];
-                        d    [r]   =       dArr   [r];
+                        gTot [r]   =     gTotArr   [r];
+                        gTan [r]   =     gTanArr   [r];
+                        gTotS[r]   = 1./(gTotStdArr[r]);
+                        gTanS[r]   = 1./(gTanStdArr[r]);
+                        d    [r]   =        dArr   [r];
                     }
                 }
 
