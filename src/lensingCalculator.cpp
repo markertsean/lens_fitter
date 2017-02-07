@@ -174,8 +174,8 @@ int main(int arg,char **argv){
                     {
                         gTot [r]   =     gTotArr   [r];
                         gTan [r]   =     gTanArr   [r];
-                        gTotS[r]   = 1./(gTotStdArr[r]);
-                        gTanS[r]   = 1./(gTanStdArr[r]);
+                        gTotS[r]   = (gTotStdArr[r]/gTotArr[r]);
+                        gTanS[r]   = (gTanStdArr[r]/gTanArr[r]);
                         d    [r]   =        dArr   [r];
                     }
                 }

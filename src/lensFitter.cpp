@@ -420,7 +420,7 @@ void rollingFitDensProfile(
         ball[i].setC( klypinC( ball[i].getM_enc() ) );                  // If only fitting mass, C is estimated from mass
     } else // 2 free params
     {
-        ball[i].setC( randVal( u.getConMin  () , u.getConMax  () )   ); // Otherwise, probe range
+      ball[i].setC( randVal( 2.9, 3.6 ) ); // Otherwise, probe range
     }
 
 
